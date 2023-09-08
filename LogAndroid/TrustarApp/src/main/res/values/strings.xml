@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_string" translatable="false" />
+    <string name="app_name">Trustar</string>
+    <string name="trustar">Trustar</string>
+    <string name="company_id">企業ID</string>
+    <string name="user_id">ユーザーID</string>
+    <string name="password">パスワード</string>
+    <string name="login">ログイン</string>
+    <string name="switch_user">ユーザー切替</string>
+    <string name="login_footer_info">パスワードを忘れた方は、\nサポートに連絡してください。</string>
+    <string name="login_auth_err">認証エラー</string>
+    <string name="login_auth_wrong_msg">IDまたはパスワードが間違っています。</string>
+    <string name="login_auth_invalid_account_msg">アカウントが失効しています。</string>
+    <string name="login_auth_password_expired_msg">パスワードの有効期限が切れています。</string>
+    <string name="s1_field_required">%sを入力してください</string>
+    <string name="terminal_id_s1">端末ID：%s</string>
+    <string name="login_sso_alert_msg">既にログインされています。現在のログイン情報は破棄されますがよろしいですか？</string>
+    <string name="login_disabled">ログイン権限がありません。</string>
+
+    <string name="notice_mark_read">お知らせを確認した</string>
+    <string name="tf_weather_today">本日のお天気は？</string>
+    <string name="goto_home_dashboard">ダッシュボードへ</string>
+    <string name="weather_m_d_ww">%d月%d日 %s</string>
+
+    <string name="home_navigation_dashboard">ダッシュボード</string>
+    <string name="home_navigation_deliver">配送計画</string>
+    <string name="home_navigation_operation">作業入力</string>
+    <string name="home_navigation_refuel">給油</string>
+    <string name="settings">設定</string>
+
+    <string name="ask_for_support">システムの問い合わせ</string>
+    <string name="weather_settings">天気を変更する</string>
+    <string name="dashboard_normal">通常</string>
+    <string name="dashboard_important">重要</string>
+    <string name="change_vehicle">車両変更</string>
+    <string name="choose_vehicle">車両選択</string>
+
+    <string name="weather_setup_close">天気を設定する</string>
+
+    <string name="weather_hare">晴れ</string>
+    <string name="weather_kumori">曇り</string>
+    <string name="weather_ame">雨</string>
+    <string name="weather_yuki">雪</string>
+    <string name="weather_hare_kumori">晴れ時々曇り</string>
+    <string name="weather_kumori_hare">曇り時々晴れ</string>
+    <string name="weather_need_to_be_set_msg">天候が未設定です。設定画面から天候を設定してください</string>
+
+    <string name="today_operation_amount_d">本日の運行：%d件</string>
+    <string name="today_operation_remain_d">残り：%d件</string>
+    <string name="show_all">全て表示</string>
+    <string name="operation_add_unscheduled">計画なし運行追加</string>
+    <string name="server_connection_err">通信エラー</string>
+    <string name="start_bin_connection_err_alert_msg">運行開始に失敗しました。電波状況を確認し、オンライン状態で再度実行してください。</string>
+    <string name="sync_connection_err_alert_msg">通信に失敗しました。電波状況を確認し、オンライン状態で再度実行してください。</string>
+
+    <string name="operation_start">運行開始</string>
+    <string name="operation_end">運行終了</string>
+    <string name="start_when_started_operation_exists_msg">他に運行中の配送があるため、運行を開始できません</string>
+    <string name="end_when_working_exists_msg">作業途中のため、運行を終了できません</string>
+    <string name="end_when_ready_exists_alert_title">確認【未作業あり】</string>
+    <string name="end_when_ready_exists_alert_msg">未作業の場所があります。運行を終了してもよろしいですか？</string>
+    <string name="operation_end_alert_msg">運行を終了してもよろしいですか？</string>
+
+    <string name="work_add">追加作業</string>
+    <string name="work_in_advance">早配</string>
+    <string name="work_delayed">遅配</string>
+    <string name="work_misdelivered">誤配</string>
+    <string name="work_notice_of_time">指定時間厳守でお願いします。</string>
+    <string name="work_mode_select_title">作業モードを選択して下さい</string>
+    <string name="work_mode_select_msg">※地点情報のない配送先があります。\n
+        自動モードを選択する場合は「地点情報なし」の表示のある配送先の到着時に行を押下して地点情報を登録してください。</string>
+
+    <string name="work_mode_automatic">自動モード</string>
+    <string name="work_mode_manual">手動モード</string>
+
+    <string name="work_move_to_destination_title">選択地に移動しますか？</string>
+    <string name="work_move_to_destination_msg">移動するとステータスが"移動中"に変更されます。</string>
+    <string name="work_move">移動</string>
+    <string name="cancel">キャンセル</string>
+    <string name="clear">クリア</string>
+    <string name="confirm">確認</string>
+    <string name="determine">確定</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="input_later">後で入力</string>
+
+    <string name="work_start_without_dest_location_msg">地点情報の仮登録を行います。配送先に登録していますか？</string>
+
+    <string name="work_misdelivered_alert_title">警告【誤配】</string>
+    <string name="work_misdelivered_alert_msg">現在地は予定された作業地ではない可能性があります。作業を開始しますか？</string>
+
+    <string name="work_before_operation_start_tip">運行を開始してください</string>
+    <string name="work_after_operation_finished_tip">既に運行が終了しています</string>
+
+    <string name="work_start_by_s1_alert_title">\"%s\"を開始しますか？</string>
+    <string name="work_start_alert_msg">開始すると作業中画面に切り替わります。</string>
+    <string name="move_work_when_working_exists_msg">作業途中のため、移動することはできません</string>
+    <string name="start">開始</string>
+    <string name="work_end">作業終了</string>
+
+    <string name="work_status_s1_ing">%s中</string>
+    <string name="work_status_s1_end">%s終了</string>
+    <string name="refuel_amount_of_the_operation">この運行での給油量</string>
+    <string name="refuel_amount_in_liter">給油量（L）</string>
+    <string name="amount_include_tax">金額（税込み支払金額）</string>
+    <string name="confirm_input">入力を確定する</string>
+    <string name="refuel_success_msg">給油情報を登録しました</string>
+
+    <string name="unselected">未選択</string>
+    <string name="f_liter">%.1fL</string>
+
+    <string name="current_vehicle">現在の車両</string>
+    <string name="vehicle_search_hint">車両コードまたは車両名を入力</string>
+    <string name="choose_target_vehicle">変更後の車両を選択</string>
+    <string name="vehicle_changed_msg">車両を変更しました</string>
+    <string name="operation_start_by_this_vehicle">この車両で運行を開始しますか？</string>
+
+    <string name="bin_untimely_delivered_reason">遅早配理由</string>
+    <string name="bin_untimely_delivered_reason_change">理由変更</string>
+    <string name="bin_service_order">計画運行順</string>
+    <string name="bin_operation_order">実績運行順</string>
+    <string name="bin_place_name">発着地</string>
+    <string name="bin_plan_time">指定時間</string>
+    <string name="bin_actual_time">実績時間</string>
+    <string name="bin_work_name">作業名</string>
+    <string name="bin_zip_code">郵便番号</string>
+    <string name="bin_place_address">住所</string>
+    <string name="bin_place_tel1">Tel</string>
+    <string name="bin_place_mail1">Mail</string>
+    <string name="bin_place_tel2">担当者Tel</string>
+    <string name="bin_place_mail2">担当者Mail</string>
+    <string name="bin_place_note1">備考1</string>
+    <string name="bin_place_note2">備考2</string>
+    <string name="bin_place_note3">備考3</string>
+    <string name="bin_additional_info">附帯情報</string>
+    <string name="bin_incidental">待機附帯</string>
+    <string name="bin_signature">署名</string>
+    <string name="bin_temperature">温度</string>
+    <string name="bin_memo">メモ</string>
+    <string name="bin_registered">登録あり</string>
+    <string name="empty_placeholder">(空)</string>
+    <string name="permission_request_msg_location">位置情報の権限を追加してください。</string>
+    <string name="permission_request_msg_notification">通知を許可してください。\n【許可しない】を選択した場合は通知が表示されません。</string>
+    <string name="app_settings_location_permission_msg">位置情報の権限画面でTrustarアプリに権限を追加してください。</string>
+    <string name="notification_battery_saver_is_on_title">バッテリーセーバーを解除してください。</string>
+    <string name="notification_battery_saver_is_on_text">バッテリーセーバーが位置情報の記録を妨げることがあります。</string>
+    <string name="notification_battery_saver_is_on_big_text">OS側のバッテリーセーバーが有効になっています。バッテリーセーバーがアプリケーションの位置情報の記録を妨げることがあります。OS側のバッテリーセーバーを解除してください。</string>
+
+    <string name="notice_send_data_alert_title">データ送信</string>
+    <string name="notice_send_data_alert_msg">アプリケーションのデータをシステム管理者に送信します。\nよろしいですか？</string>
+
+    <string name="invalid_account_alert_msg">ログアウトしました。もう一度ログインしてください。</string>
+
+    <string name="sign_place">署名欄</string>
+    <string name="sign_inside_area">枠内に署名してください</string>
+    <string name="shipper">荷主</string>
+    <string name="select_shipper">荷主選択</string>
+    <string name="change_shipper">荷主変更</string>
+
+    <string name="current_shipper">現在の荷主</string>
+    <string name="shipper_search_hint">荷主コードまたは荷主名を入力</string>
+    <string name="choose_target_shipper">変更後の荷主を選択</string>
+
+    <string name="update">更新</string>
+    <string name="edit">編集</string>
+    <string name="confirm_content">内容を確定する</string>
+    <string name="update_content">内容を更新する</string>
+    <string name="signed">署名済み</string>
+    <string name="unsigned">未署名</string>
+    <string name="set_time">時刻設定</string>
+    <string name="pick_start_time">開始時刻</string>
+    <string name="pick_end_time">終了時刻</string>
+    <string name="select_work">作業を選択</string>
+    <string name="tap_to_edit">タップしてください</string>
+
+    <string name="incidental_sheets">待機・附帯登録</string>
+    <string name="incidental_sheet_works_selection">実施した作業を選択</string>
+    <string name="incidental_back_sheet_list">一覧に戻る</string>
+    <string name="incidental_sheet_new_create">新規登録</string>
+    <string name="incidental_created">登録済みの荷主</string>
+    <string name="incidental_sheet_addition_work_">附帯作業内容：</string>
+    <string name="incidental_sheet_await">荷待待機</string>
+    <string name="incidental_sheet_addition_work">附帯作業</string>
+    <string name="incidental_sheet_signature">荷主担当者様の署名</string>
+    <string name="unregistered_placeholder">(未登録)</string>
+    <string name="invalid_time_range">開始時刻は終了時刻以前に設定してください。</string>
+    <string name="loading_image">画像の読み込み中</string>
+
+    <string name="outgoing_meter_input_title">出庫メーターを入力してください。</string>
+    <string name="outgoing_meter_in_km">出庫メーター(km)</string>
+    <string name="incoming_meter_input_title">入庫メーターを入力してください。</string>
+    <string name="incoming_meter_in_km">入庫メーター(km)</string>
+
+    <string name="bin_vehicle">車両名</string>
+    <string name="bin_start_scheduled_time">運行開始予定日時</string>
+    <string name="bin_end_scheduled_time">運行終了予定日時</string>
+    <string name="bin_start_time">運行開始日時</string>
+    <string name="bin_end_time">運行終了日時</string>
+    <string name="bin_crew">乗務員</string>
+    <string name="bin_crew2">副乗務員</string>
+    <string name="bin_note_1">備考1</string>
+    <string name="bin_outgoing_meter">出庫メーター</string>
+    <string name="bin_incoming_meter">入庫メーター</string>
+    <string name="data_resend">再送信</string>
+    <string name="data_end_data_sending">運行終了処理中です。</string>
+    <string name="data_end_data_sending_msg">運行終了処理中の間はアプリを落とさないで下さい。</string>
+
+    <string name="location_1">地点情報あり</string>
+    <string name="location_0">地点情報なし</string>
+
+    <string name="collections">集配物</string>
+    <string name="collections_edit">集配物登録</string>
+    <string name="expected_quantity">予定数</string>
+    <string name="actual_quantity">実績数</string>
+
+    <string name="auto_mode_do_not_show">次回から表示しない</string>
+    <string name="auto_mode_a_dialog_title">自動モードが有効になりました</string>
+    <string name="auto_mode_a_dialog_msg">※作業入力を自身で行う場合は手動モードに切り替えてください</string>
+    <string name="auto_mode_m_dialog_title">手動モードが有効になりました</string>
+    <string name="auto_mode_m_dialog_msg">※作業入力を自動で行う場合は自動モードに切り替えてください</string>
+
+
+    <string name="room_create_err_alert_msg">トークルームの作成に失敗しました。システム管理者に連絡してください</string>
+    <string name="room_add_user_err_alert_msg">ユーザーの追加に失敗しました。システム管理者に連絡してください</string>
+    <string name="room_quit_s1_alert_msg">「%s」から退出しますか？</string>
+    <string name="room_leave_err_alert_msg">退出に失敗しました。システム管理者に連絡してください</string>
+    <string name="room_update_settings_err_alert_msg">設定の変更に失敗しました。システム管理者に連絡してください</string>
+    <string name="chat_retry">ネットワーク接続が不安定です。\nタップしてメッセージを再取得します。</string>
+    <string name="msg_tap_to_retry">送信失敗。タップして再送信</string>
+    <string name="msg_sending">送信中</string>
+    <string name="msg_been_read">既読</string>
+    <string name="tap_to_download">タップしてダウンロード</string>
+    <string name="download">ダウンロード</string>
+    <string name="downloaded">ダウンロードしました</string>
+    <string name="downloading">ダウンロード中</string>
+    <string name="open_with">アプリケーションを選択</string>
+    <string name="new_d_messages">%d件の新着メッセージがあります</string>
+    <string name="network_error">ネットワークエラー</string>
+    <string name="msg_options_copy">コピー</string>
+    <string name="msg_options_copied">コピーしました</string>
+    <string name="msg_options_details">詳細を表示</string>
+    <string name="msg_details">詳細</string>
+    <string name="msg_options_sent_time">送信日時：%s</string>
+    <string name="app_permission_settings_location">この機器の位置情報へのアクセスをTrustarに許可してください。</string>
+    <string name="app_permission_settings_camera">写真と動画の撮影をTrustarに許可してください。</string>
+    <string name="app_permission_settings_storage">端末内の写真、メディア、ファイルへのアクセスをTrustarに許可してください。</string>
+    <string name="app_permission_settings_image">端末内の写真へのアクセスをTrustarに許可してください。</string>
+    <string name="app_permission_settings_audio_record">録音をTrustarに許可してください。</string>
+
+    <string name="search_by_name">名前で検索</string>
+    <string name="talk_history">トーク履歴</string>
+    <string name="logged_in_user">登録ユーザー</string>
+    <string name="talk_option">Option</string>
+    <string name="talk_room_settings">トークルーム設定</string>
+    <string name="create_talk_room">トークルームの作成</string>
+    <string name="allow_notification">通知を許可する</string>
+    <string name="quit_talk_room">トークルームから退出する</string>
+    <plurals name="members_of_room">
+        <item quantity="other">%d 人の参加者</item>
+    </plurals>
+    <plurals name="user_selected">
+        <item quantity="other">%d 名選択中</item>
+    </plurals>
+    <string name="add_user">ユーザーを追加する</string>
+    <string name="create_new_item">新しい項目の登録</string>
+    <string name="add">追加</string>
+    <string name="camera_roll">カメラロール</string>
+    　
+    <string name="determine2">確定</string>
+    <plurals name="item_selected">
+        <item quantity="other">%d 件選択中</item>
+    </plurals>
+    <string name="updating">更新処理中</string>
+    <string name="processing">処理中</string>
+    <string name="hint_input_text">内容を入力</string>
+    <string name="create">作成</string>
+    <string name="audio_file">音声ファイル</string>
+    <string name="preview">プレビュー</string>
+    <string name="share">共有</string>
+    <string name="delete">削除</string>
+    <string name="alert_delete_message_msg">このメッセージを削除しますか？</string>
+    <string name="quit">退出</string>
+    <string name="load_failed">情報の取得に失敗しました。</string>
+    <string name="talk">トーク</string>
+    <string name="navigation_message">メッセージ</string>
+
+    <string name="notification_location_is_off_title">位置情報の取得がOFFになっています。現在位置を取得するためにONにしてください。</string>
+
+    <string name="invalid_message">メッセージ無効</string>
+</resources>

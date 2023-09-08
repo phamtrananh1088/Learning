@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_request_msg_location_full">位置情報の権限は「常に許可する」を選択してください。</string>
+    <string name="app_settings_location_background_permission_msg">位置情報の権限画面で「常に許可する」を選択してください。</string>
+</resources>

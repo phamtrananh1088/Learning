@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="colorPrimary">#009af3</color>
+    <color name="colorPrimaryDark">#2a24a7</color>
+    <color name="textColorPrimary">#ffffff</color>
+    <color name="colorAccent">#ffffff</color>
+    <color name="accentOrange">#f79646</color>
+
+    <color name="textDark">#333333</color>
+    <color name="textDarkBold">#111111</color>
+    <color name="textSummary">#666666</color>
+    <color name="textHint">#cccccc</color>
+
+    <color name="home_bnv_bg">#ffe7f4fe</color>
+    <color name="bell_normal">#4B4B4B</color>
+    <color name="bell_important">#EE8833</color>
+    <color name="gray_out">#cccccccc</color>
+
+    <color name="orange_out">#EEDDBB</color>
+
+    <color name="defaultBackground">#F5F5F5</color>
+    <color name="listItem">#FFFFFF</color>
+    <color name="textColor">#6d6d6d</color>
+    <color name="lightText">#ffffff</color>
+    <color name="primaryLight">#68bded</color>
+    <color name="grayBackground">#E6E6E6</color>
+</resources>

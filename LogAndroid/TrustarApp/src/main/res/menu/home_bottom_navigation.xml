@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@string/home_navigation_dashboard"
+        android:icon="@drawable/dashboard_24dp"
+        android:title="@string/home_navigation_dashboard" />
+    <item
+        android:id="@string/home_navigation_deliver"
+        android:icon="@drawable/document_24dp"
+        android:title="@string/home_navigation_deliver" />
+    <item
+        android:id="@string/home_navigation_operation"
+        android:icon="@drawable/toolbox_24dp"
+        android:title="@string/home_navigation_operation" />
+    <item
+        android:id="@string/home_navigation_refuel"
+        android:icon="@drawable/fill_tank_24dp"
+        android:title="@string/home_navigation_refuel" />
+    <item
+        android:id="@string/navigation_message"
+        android:icon="@drawable/round_chat_24"
+        android:title="@string/navigation_message" />
+</menu>

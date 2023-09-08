@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="LargerHint" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="SmallLabel" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">9sp</item>
+    </style>
+
+    <style name="LargeLabel" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">9sp</item>
+    </style>
+</resources>

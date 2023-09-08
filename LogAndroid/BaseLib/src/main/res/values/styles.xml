@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PrivateResource">
+
+    <style name="ScrollbarRecyclerView" parent="android:Widget">
+        <item name="android:scrollbars">vertical</item>
+    </style>
+
+    <style name="MaterialAlertDialogWithMaterialButton" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonOutlined</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonUnelevated</item>
+    </style>
+
+    <style name="DialogButtonOutlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_marginStart">@dimen/mtrl_btn_text_btn_padding_left</item>
+        <item name="android:layout_marginLeft">@dimen/mtrl_btn_text_btn_padding_left</item>
+    </style>
+
+    <style name="DialogButtonUnelevated" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_marginStart">@dimen/mtrl_btn_text_btn_padding_left</item>
+        <item name="android:layout_marginLeft">@dimen/mtrl_btn_text_btn_padding_left</item>
+    </style>
+
+    <style name="OutlinedButtonIconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+</resources>
