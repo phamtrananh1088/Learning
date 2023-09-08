@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unsatisfied_json_data">データが不正です</string>
+</resources>

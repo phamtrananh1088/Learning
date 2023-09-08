@@ -1,0 +1,166 @@
+[versions]
+agp = "8.1.0"
+kotlin = "1.9.0"
+dexcountGradlePlugin = "4.0.0"
+googleServices = "4.3.15"
+# https://mvnrepository.com/artifact/com.google.devtools.ksp/com.google.devtools.ksp.gradle.plugin
+symbolProcessingApi = "1.9.0-1.0.13"
+# https://mvnrepository.com/artifact/androidx.compose.compiler/compiler
+composeCompilerVersion = "1.5.1"
+# https://mvnrepository.com/artifact/com.android.tools/desugar_jdk_libs
+desugar_jdk_libs = "2.0.3"
+
+junit = "4.13.2"
+# https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-android
+coroutines = "1.7.3"
+# https://mvnrepository.com/artifact/com.google.accompanist/accompanist-permissions
+accompanist = "0.30.1"
+# https://mvnrepository.com/artifact/androidx.core/core-ktx
+core = "1.11.0-beta02"
+# https://mvnrepository.com/artifact/androidx.appcompat/appcompat
+appcompat = "1.6.1"
+# https://mvnrepository.com/artifact/com.google.android.exoplayer/exoplayer
+exoplayer = "2.19.0"
+# https://mvnrepository.com/artifact/com.squareup.moshi/moshi
+moshi = "1.15.0"
+# https://mvnrepository.com/artifact/com.google.android.gms/play-services-location
+location = "21.0.1"
+# https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+okhttp = "5.0.0-alpha.11"
+# https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxandroid
+rxAndroid = "3.0.2"
+# https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxjava
+rxJava = "3.1.6"
+# https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
+retrofit = "2.9.0"
+# https://mvnrepository.com/artifact/com.github.bumptech.glide/glide
+glide = "4.15.1"
+# https://mvnrepository.com/artifact/androidx.paging/paging-runtime-ktx
+paging = "3.2.0"
+# https://mvnrepository.com/artifact/com.microsoft.appcenter/appcenter
+appcenter = "5.0.2"
+# https://mvnrepository.com/artifact/androidx.room/room-ktx
+room = "2.6.0-alpha02"
+# https://mvnrepository.com/artifact/androidx.camera/camera-camera2
+camerax = "1.2.3"
+# https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-common
+lifecycle = "2.6.1"
+# https://mvnrepository.com/artifact/androidx.startup/startup-runtime
+startup = "1.2.0-alpha02"
+
+# https://mvnrepository.com/artifact/io.github.raamcosta.compose-destinations/core
+destinations = "1.9.51"
+# https://jitpack.io/#sebaslogen/resaca
+resaca = "2.4.4"
+# https://mvnrepository.com/artifact/io.github.dokar3/sheets
+sheets = "0.4.6"
+# https://mvnrepository.com/artifact/com.github.skgmn/composetooltip
+composetooltip = "0.2.0"
+# https://mvnrepository.com/artifact/com.louiscad.splitties/splitties-views
+splitties = "3.0.0"
+
+# https://mvnrepository.com/artifact/com.google.firebase/firebase-messaging
+firebaseMessaging = "23.2.1"
+# https://mvnrepository.com/artifact/androidx.compose.material/material-icons-extended
+materialIconsExtended = "1.4.3"
+# https://mvnrepository.com/artifact/com.google.android.material/material
+materialComponents = "1.9.0"
+# https://mvnrepository.com/artifact/com.github.bumptech.glide/compose
+glideCompose = "1.0.0-alpha.3"
+# https://mvnrepository.com/artifact/androidx.compose.runtime/runtime
+compose = "1.6.0-alpha02"
+activityCompose = "1.7.2"
+# https://mvnrepository.com/artifact/org.jetbrains.compose.ui/ui-util
+uiUtil = "1.5.0-beta01"
+material3 = "1.2.0-alpha04"
+navigationCompose = "2.7.0-rc01"
+
+
+[plugins]
+androidApp = { id = "com.android.application", version.ref = "agp" }
+androidLib = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+googleKsp = { id = "com.google.devtools.ksp", version.ref = "symbolProcessingApi" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+dexcount = { id = "com.getkeepsafe.dexcount", version.ref = "dexcountGradlePlugin" }
+
+
+[libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-core = { module = "androidx.core:core", version.ref = "core" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
+androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
+androidx-lifecycle-reactivestreams-ktx = { module = "androidx.lifecycle:lifecycle-reactivestreams-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+
+androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
+androidx-runtime-rxjava3 = { module = "androidx.compose.runtime:runtime-rxjava3", version.ref = "compose" }
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
+androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "compose" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+glideCompose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
+composetooltip = { module = "com.github.skgmn:composetooltip", version.ref = "composetooltip" }
+destinations = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
+destinations-animations-core = { module = "io.github.raamcosta.compose-destinations:animations-core", version.ref = "destinations" }
+destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
+
+exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+exoplayer-ui = { module = "com.google.android.exoplayer:exoplayer-ui", version.ref = "exoplayer" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-rx3 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-rx3", version.ref = "coroutines" }
+
+material = { module = "com.google.android.material:material", version.ref = "materialComponents" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
+
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
+paging-rxjava3 = { module = "androidx.paging:paging-rxjava3", version.ref = "paging" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "location" }
+resaca = { module = "com.github.sebaslogen.resaca:resaca", version.ref = "resaca" }
+retrofit2 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit2-adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "retrofit" }
+
+appcenter-analytics = { module = "com.microsoft.appcenter:appcenter-analytics", version.ref = "appcenter" }
+appcenter-crashes = { module = "com.microsoft.appcenter:appcenter-crashes", version.ref = "appcenter" }
+appcenter-distribute = { module = "com.microsoft.appcenter:appcenter-distribute", version.ref = "appcenter" }
+
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
+
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
+
+
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
+
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
+
+rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxJava" }
+rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxAndroid" }
+sheets = { module = "io.github.dokar3:sheets", version.ref = "sheets" }
+splitties-views-dsl-material = { module = "com.louiscad.splitties:splitties-views-dsl-material", version.ref = "splitties" }
+ui-util = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "uiUtil" }
+symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "symbolProcessingApi" }
