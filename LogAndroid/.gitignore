@@ -1,9 +1,0 @@
-/.gradle
-/.idea
-/captures
-/local.properties
-*.iml
-/gradlew
-/gradlew.bat
-build/
-/gradle/wrapper/gradle-wrapper.jar
