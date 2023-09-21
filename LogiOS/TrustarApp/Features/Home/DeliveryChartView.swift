@@ -263,7 +263,7 @@ struct EditDeliveryChartView: View {
                 }
             }
             
-            PopUpWindow(popupVm: vm.popupVm, show: $vm.isShowingAlert)
+            PopUpBottomView(popupVm: vm.popupVm, show: $vm.isShowingAlert)
             
             // Image Picker
             if isShowPhotoLibrary {

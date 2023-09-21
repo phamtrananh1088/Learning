@@ -343,4 +343,5 @@ class Resources
     static let copy_clipboard = "クリップボードにコピーしました。"
     static let update_version_title = "アプリアップデート"
     static let update_version_content = "新しいバージョンのアプリがあります。\nアップデートしてください。"
+    static let close = "CLOSE"
 }
