@@ -26,57 +26,59 @@ class RawChart: Codable {
     }
     
     func charts() -> [DeliveryChart]? {
-           var chartArr:[DeliveryChart] = [];
-   
-           for item in self.binCharts.chartHeaders {
-               do {
-                   let chartMemos = self.binCharts.chartMemos.filter{$0.chartCD == item.chartCD}
-                       
-                   var memos: [ChartMemos] = []
+        var chartArr:[DeliveryChart] = [];
+        guard let chartHeader = self.binCharts.chartHeaders else {
+            return chartArr
+        }
+
+       for item in chartHeader {
+           do {
+               var memos: [ChartMemos] = []
+               var imgs: [ChartImageFile] = []
+               if let chartMemos = self.binCharts.chartMemos?.filter({$0.chartCD == item.chartCD}) {
                    for mm in chartMemos {
                        let extraMM = "{\"MkTimeStamp\":\"\(mm.mkTimeStamp ?? "")\",\"MkUserId\":\"\(mm.mkUserID ?? "")\",\"MkPrgNm\":\"\(mm.mkPrgNm ?? "")\"}"
                        memos.append(ChartMemos(label: mm.title ?? "", note: mm.note ?? "",
                                                higtlight: mm.highLightFlag == 1, extra: extraMM))
                    }
-   
-                   let files = self.binCharts.chartFiles.filter{
-                       $0.chartCD == item.chartCD
-                   }
-                   var imgs: [ChartImageFile] = []
+               }
+
+               if let files = self.binCharts.chartFiles?.filter({$0.chartCD == item.chartCD}) {
                    for file in files {
                        let extraImg = "{\"MkTimeStamp\":\"\(file.mkTimeStamp ?? "")\",\"MkUserId\":\"\(file.mkUserID ?? "")\",\"MkPrgNm\":\"\(file.mkPrgNm ?? "")\"}"
                        imgs.append(ChartImageFile(
                         dbStoreFile: StoredFile.ByKey(key: file.fileID ?? "").asDbStoredFile(), extra: extraImg))
                    }
-   
-                   let jsonEn = JSONEncoder()
-                   let chart = DeliveryChart()
-                   chart.chartCd = item.chartCD
-                   chart.placeCd = item.placeCD ?? ""
-                   chart.dest = item.chartNm ?? ""
-                   chart.addr1 = item.chartAddr1 ?? ""
-                   chart.addr2 = item.chartAddr2 ?? ""
-                   chart.tel = item.chartTel ?? ""
-                   chart.carrier = item.chargeNm ?? ""
-                   chart.carrierTel = item.chargeTel ?? ""
-                   chart.memos = try String(data: jsonEn.encode(memos), encoding: .utf8)!
-                   chart.images = try String(data: jsonEn.encode(imgs), encoding: .utf8)!
-                   let extra = "{\"mkTimeStamp\":\"\(item.mkTimeStamp ?? "")\",\"mkUserId\":\"\(item.mkUserID ?? "")\",\"mkPrgNm\":\"\(item.mkPrgNm ?? "")\"}"
-                   chart.extra = extra
-                   chartArr.append(chart)
-               } catch {
-                   print(error)
                }
+
+               let jsonEn = JSONEncoder()
+               let chart = DeliveryChart()
+               chart.chartCd = item.chartCD
+               chart.placeCd = item.placeCD ?? ""
+               chart.dest = item.chartNm ?? ""
+               chart.addr1 = item.chartAddr1 ?? ""
+               chart.addr2 = item.chartAddr2 ?? ""
+               chart.tel = item.chartTel ?? ""
+               chart.carrier = item.chargeNm ?? ""
+               chart.carrierTel = item.chargeTel ?? ""
+               chart.memos = try String(data: jsonEn.encode(memos), encoding: .utf8)!
+               chart.images = try String(data: jsonEn.encode(imgs), encoding: .utf8)!
+               let extra = "{\"mkTimeStamp\":\"\(item.mkTimeStamp ?? "")\",\"mkUserId\":\"\(item.mkUserID ?? "")\",\"mkPrgNm\":\"\(item.mkPrgNm ?? "")\"}"
+               chart.extra = extra
+               chartArr.append(chart)
+           } catch {
+               print(error)
            }
-           return chartArr
        }
+       return chartArr
+   }
 }
 
 // MARK: - BinCharts
 class BinCharts: Codable {
-   let chartHeaders: [ChartHeader]
-   let chartMemos: [ChartMemo]
-   let chartFiles: [ChartFile]
+   let chartHeaders: [ChartHeader]?
+   let chartMemos: [ChartMemo]?
+   let chartFiles: [ChartFile]?
 }
 
 // MARK: - ChartHeader

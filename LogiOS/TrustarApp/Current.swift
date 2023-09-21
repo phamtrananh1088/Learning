@@ -118,8 +118,11 @@ public class Current: ObservableObject {
     
     func logout() {
         stopInterval()
+        sync?.dispose()
+        sync = nil
         resetLastUserLogin()
         getLastUserLogin()
+        sync?.dispose()
         sync = nil
         messageTask?.dispose()
     }
@@ -156,6 +159,18 @@ public class Current: ObservableObject {
         
         sync!.syncMaster(callBack: callBack)
     }
+        
+    func syncGeo(callBack: @escaping (Bool, NetworkError?)->()) {
+        if loggedUser?.token == nil || loggedUser!.token.isEmpty {
+            return
+        }
+        
+        if sync == nil {
+            sync = SyncData()
+        }
+        
+        sync!.syncGeo(callBack: callBack)
+    }
     
     func syncNotice(callBack: @escaping (Bool, NetworkError?)->()) {
         if loggedUser?.token == nil || loggedUser!.token.isEmpty {
@@ -183,7 +198,8 @@ public class Current: ObservableObject {
                 callBack(isOk,Error)
             } else {
                 if sync != nil {
-                    sync?.syncCollection(callBack: callBack)    
+                    //sync?.syncCollection(callBack: callBack)
+                    sync?.syncIncidental(callBack: callBack)
                     sync?.syncDeliveryChart(callBack: callBack)
                 }
             }

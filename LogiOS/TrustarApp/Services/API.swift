@@ -17,7 +17,7 @@ enum MethodEnum {
 class API: NSObject
 {
     static public let shared = API()
-    
+    static var count: Int = 0
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     
@@ -69,7 +69,9 @@ class API: NSObject
 
                 #if DEBUG
 //                if endPoint == .postDeliveryChart {
-//                    debugPrint(String(decoding: data, as: UTF8.self))
+//                String(decoding: data, as: UTF8.self)
+                API.count += 1
+                debugPrint("call API", NSDate(), endPoint.path() , API.count, separator: ":")
 //                }
                 #endif
                 
@@ -162,6 +164,13 @@ class API: NSObject
                 }
                 #endif
                 
+#if DEBUG
+//                if endPoint == .postDeliveryChart {
+//                String(decoding: data, as: UTF8.self)
+API.count += 1
+debugPrint("call API", NSDate(), endPoint.path() , API.count, separator: ":")
+//                }
+#endif
                 return data
             }
             .decode(type: R.self, decoder: JSONDecoder())
@@ -468,7 +477,13 @@ class API: NSObject
                     if httpResponse.statusCode == 500 {
                         debugPrint(String(decoding: data!, as: UTF8.self))
                     }
-                    
+#if DEBUG
+//                if endPoint == .postDeliveryChart {
+//                String(decoding: data, as: UTF8.self)
+API.count += 1
+debugPrint("call API", NSDate(), endPoint.path() , API.count, separator: ":")
+//                }
+#endif
                 }                 
             }.resume()
         }.eraseToAnyPublisher()

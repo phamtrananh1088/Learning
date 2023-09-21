@@ -49,9 +49,9 @@ class HomeViewModel: BaseViewModel, ObservableObject {
     private var disableChangeToDesignationView: Bool = true
     @Published var tabDisplay: ScreenDisplay = .None {
         willSet {
-            if tabDisplay == .DashBoard || tabDisplay == .Deliver || tabDisplay == .Operation {
-                current.syncBin(callBack: {(_,_) in})
-            }
+            //if tabDisplay == .DashBoard || tabDisplay == .Deliver || tabDisplay == .Operation {
+                //current.syncBin(callBack: {(_,_) in})
+            //}
             
             if newValue == .Operation {
                 let working = goDefault ? startedBinDetailListOfSelectedBinHeader.first : nil

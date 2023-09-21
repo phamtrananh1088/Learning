@@ -16,7 +16,7 @@ enum CollectionResultColumns: String, ColumnExpression {
 class CollectionResult: BaseEntity, Codable {
     var allocationNo: String = Resources.strEmpty
     var allocationRowNo: Int = Resources.zeroNumber
-    var json: [RowCollectionResult] = []
+    var json: [RowCollectionResult] = [] { didSet { recordChanged() } }
     
     override init() {
         super.init()

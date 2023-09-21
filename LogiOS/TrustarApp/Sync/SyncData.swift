@@ -234,7 +234,7 @@ class SyncData {
         resultDb.commonKyuyuDao?.setPending()
         let pending = resultDb.commonKyuyuDao?.getPending()
         
-        if pending != nil {
+        if pending != nil && pending!.count > 0 {
             let f = FuelInfo(Kyuyus: pending!, clientInfo: Config.Shared.clientInfo)
             Config.Shared.post.postFuel(fuelInfo: f)
                 .receive(on: DispatchQueue.main)
@@ -956,7 +956,7 @@ class SyncData {
         let l = resultDb.collectionResultDao?.getPending()
         let u = Current.Shared.loggedUser?.userInfo
         
-        if l != nil {
+        if l != nil && l!.count > 0 {
             Config.Shared.post.postCollection(collectionPost: CollectionPost(userInfo: u, collections: l!))
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { err in
@@ -1124,5 +1124,11 @@ class SyncData {
         } else {
             self.callBackRest!(true, nil)
         }
+    }
+    
+    func dispose() {
+        bag.forEach { $0.cancel()}
+        intervalRun?.invalidate()
+        intervalRun = nil
     }
 }
