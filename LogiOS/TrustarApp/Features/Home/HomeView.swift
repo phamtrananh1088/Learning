@@ -124,7 +124,8 @@ struct HomeView: View {
                     })
                     .edgesIgnoringSafeArea(.horizontal)
                     
-                    PopUpWindow(popupVm: homeVm.popupVm, show: $homeVm.isShowingAlert)
+                    PopUpBottomView(popupVm:homeVm.popupVm, show: $homeVm.isShowingAlert)
+                    //PopUpWindow(popupVm: homeVm.popupVm, show: $homeVm.isShowingAlert)
                     
                     if homeVm.isShowBinStartProgress{
                         Color.black.opacity(0.5)
@@ -206,6 +207,9 @@ struct HomeView: View {
                 }
                  .frame(maxWidth: .infinity, maxHeight: 110)
             })
+        }
+        .onAppear(){
+            homeVm.tabDisplay = .Deliver
         }
     }
     

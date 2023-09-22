@@ -26,23 +26,13 @@ struct PopUpBottomView: View {
                                 if popupVm.autoClose {
                                     show = false
                                 }
-                                if popupVm.leftBtnClick != nil {
-                                    popupVm.leftBtnClick!()
-                                }
                             }
                         }
                     
                     VStack {
                         ScrollView {
                             VStack(alignment: .trailing, spacing: 10) {
-                                if(popupVm.isShowTitle) {
-                                    Text(popupVm.title)
-                                        .font(Font.system(size: textFontSize))
-                                        .foregroundColor(Color(Resources.colorPrimary))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .padding(.horizontal)
-                                }
-                                
+
                                 Text(popupVm.message)
                                     .font(Font.system(size: textFontSize))
                                     .foregroundColor(Color(Resources.textColor))
@@ -51,34 +41,33 @@ struct PopUpBottomView: View {
                                 
                                
                             }
-                            .background(Color(red: 33, green: 33, blue: 33))
+                            //.background(Color(red: 33, green: 33, blue: 33))
                         }
                     }
+                    .background(Color(Resources.grayBackground))
                     .frame(width: gp.size.width, height: 400)
-                    .background(Color(red: 33, green: 33, blue: 33))
+                    
                     .offset(y: -50)
                     
-                    VStack {
+                    VStack(alignment: .center) {
                         Divider()
                         
-                        HStack {
+                     
                             Button(action: {
                                 show = false
                             }, label: {
-                                Text(Resources.close)
-                                    .frame(width: gp.size.width, height: 35)
+                                Text(Resources.close).foregroundColor(Color(Resources.lightText))
+                                    .frame(width: gp.size.width - 40, height: 35)
                                     .cornerRadius(10)
-                                    .background(Color(red: 44, green: 151, blue: 215))
-                                    .padding([.leading, .trailing], 20)
+                                    .background(Color(Resources.colorPrimaryDark))
                             
                             })
-                            .frame(width: gp.size.width, height: 40)
-                            .background(Color(red: 48, green: 165, blue: 230))
+                            .frame(width: gp.size.width - 40, height: 40)
+                            .background(Color(Resources.colorPrimary))
                             .cornerRadius(10)
-                        }
+                       
                     }
                     .frame(width: gp.size.width, height: 50)
-                     .background(Color(red: 33, green: 33, blue: 33))
                     
                 }
             }

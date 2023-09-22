@@ -114,6 +114,7 @@
 		085D9700292787C10073D892 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 085D96FF292787C10073D892 /* FirebaseMessaging */; };
 		0860ACEA29CC125D00FC913B /* Detect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0860ACE929CC125D00FC913B /* Detect.swift */; };
 		0860ACEC29CC746800FC913B /* SensorRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0860ACEB29CC746800FC913B /* SensorRecord.swift */; };
+		0865F7842ABC1E08003E336F /* PopUpBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0865F7832ABC1E08003E336F /* PopUpBottomView.swift */; };
 		086ACE202942D8020052004F /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 086ACE1F2942D8020052004F /* VideoPlayerView.swift */; };
 		0872C9D927D4AE5400BBEB4C /* Grid+Inits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872C9C727D4AE5400BBEB4C /* Grid+Inits.swift */; };
 		0872C9DA27D4AE5400BBEB4C /* StaggeredGridStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0872C9C927D4AE5400BBEB4C /* StaggeredGridStyle.swift */; };
@@ -499,6 +500,7 @@
 		085D382A27A2A74E00B983AA /* BaseDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDb.swift; sourceTree = "<group>"; };
 		0860ACE929CC125D00FC913B /* Detect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detect.swift; sourceTree = "<group>"; };
 		0860ACEB29CC746800FC913B /* SensorRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorRecord.swift; sourceTree = "<group>"; };
+		0865F7832ABC1E08003E336F /* PopUpBottomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpBottomView.swift; sourceTree = "<group>"; };
 		086ACE1F2942D8020052004F /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		0872C9C727D4AE5400BBEB4C /* Grid+Inits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Grid+Inits.swift"; sourceTree = "<group>"; };
 		0872C9C927D4AE5400BBEB4C /* StaggeredGridStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaggeredGridStyle.swift; sourceTree = "<group>"; };
@@ -1307,6 +1309,7 @@
 			isa = PBXGroup;
 			children = (
 				08AB38572799184000F6885F /* PopUpWindow.swift */,
+				0865F7832ABC1E08003E336F /* PopUpBottomView.swift */,
 				08AB38582799184000F6885F /* PopupViewModel.swift */,
 				184FF74E27CDC061005160BE /* BinDetailDialog.swift */,
 				184FF74C27CDC031005160BE /* BinDetailDialogModel.swift */,
@@ -2022,6 +2025,7 @@
 				08566FC42935A549006CFC37 /* ChatOptionVM.swift in Sources */,
 				08BC49B7292DEF2E000C6E4A /* DefaultPostContent.swift in Sources */,
 				08AB38792799184000F6885F /* Fetch.swift in Sources */,
+				0865F7842ABC1E08003E336F /* PopUpBottomView.swift in Sources */,
 				08AB38C1279969B400F6885F /* Enum.swift in Sources */,
 				08AB38952799184000F6885F /* CollectionResult.swift in Sources */,
 				31ECC8862A7CAFC2006C8DA6 /* DeliveryChartViewModel.swift in Sources */,
