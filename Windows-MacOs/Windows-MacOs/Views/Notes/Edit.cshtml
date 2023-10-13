@@ -1,0 +1,11 @@
+﻿@model WinMacOs.Models.NoteModel
+@{
+    ViewBag.Title = "Notes";
+}
+@section SPAViews {
+    @Html.Partial("_Notes", Model)
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/knockout")
+    @*@Scripts.Render("~/bundles/app")*@
+}

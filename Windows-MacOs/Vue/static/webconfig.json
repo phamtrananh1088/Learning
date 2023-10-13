@@ -1,0 +1,17 @@
+{
+    "baseURL_development":"http://localhost:3000/",
+    "baseURL_debug":"http://localhost:3000/",
+    "baseURL_production":"http://localhost:3000/",
+    "client_host":"localhost",
+    "client_port":8888,
+    "manual_W_path1":"\\10.57.62.178\\work\\マニュアル_OT\\W\\【Reafs】フェーズ2_Reafs-W_画面操作説明書Ver1.00.pdf",
+    "manual_T_path1":"\\10.57.62.178\\work\\マニュアル_OT\\T\\【Reafs】フェーズ2_Reafs-T_画面操作説明書Ver1.00.pdf",
+    "manual_R_path1":"\\10.57.62.178\\work\\マニュアル_OT\\R_Web\\【Reafs】フェーズ2_Reafs-R_画面操作説明書Ver1.00_タブレット.pdf",
+    "Reafs_W_BaseURL":"http://localhost:3000/Reafs_W/",
+    "Reafs_T_BaseURL":"http://localhost:3000/Reafs_T/",
+    "Reafs_R_BaseURL":"http://localhost:3000/Reafs_R_Web/",
+    "subsite_development": "/",
+    "subsite_debug": "/",
+    "subsite_production": "/dist/"
+
+}

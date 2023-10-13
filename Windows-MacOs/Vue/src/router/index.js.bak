@@ -1,0 +1,342 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import store from '@/store'
+
+import redirect from './redirect'
+Vue.use(Router)
+
+const router = new Router({
+  mode: 'history',
+  routes: [
+    // テスト機能
+    {
+      path: '/',
+      name: 'Index',
+      component: () => import('@/views/Index'),
+      redirect: '/home',
+      children: [
+        ...redirect,
+        {
+          path: '/home',
+          name: 'home',
+          component: () => import('@/views/Home.vue')
+        }, {
+          path: '/home2',
+          name: 'home2',
+          component: () => import('@/views/Home2.vue')
+        }, {
+          path: '/form',
+          name: 'form',
+          component: () => import('@/views/Form.vue')
+        }, {
+          path: '/form2',
+          name: 'form2',
+          component: () => import('@/views/Form2.vue')
+        }, {
+          path: '/Grid',
+          name: 'grid',
+          component: () => import('@/views/Grid.vue')
+        }, {
+          path: '/Grid2',
+          name: 'grid2',
+          component: () => import('@/views/Grid2.vue')
+        }, {
+          path: '/syuzenIraiSansyoShonin',
+          name: 'syuzenIraiSansyoShonin',
+          component: () => import('@/views/WD00100/syuzenIraiSansyoShonin.vue')
+        }, {
+          path: '/rd00802',
+          name: 'rd00802sub',
+          component: () => import('@/views/RD00802/rd00802.vue')
+        },
+        // ,{
+        //   path: '/Mitsumorinyuuryoku',
+        //   name: 'Mitsumorinyuuryoku',
+        //   component: () => import('@/views/Mitsumorinyuuryoku.vue')
+        // }
+      ]
+    },
+    // テスト機能ログイン
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    // Reafs-W機能
+    {
+      path: '/Reafs_T',
+      name: 'TIndex',
+      component: () => import('@/views/Index'),
+      redirect: '/Reafs_T/home',
+      children: [
+        ...redirect,
+        {
+          path: '/Reafs_T/home',
+          name: 'Thome',
+          component: () => import('@/views/home.vue')
+        },
+        {
+          path: '/Reafs_T/MainMenu',
+          name: 'TD00001',
+          component: () => import('@/views/Reafs-T/common/TD00001/MainMenu.vue')
+        },
+        {
+          path: '/Reafs_T/ShokaiTouroku',
+          name: 'TD00005',
+          component: () => import('@/views/Reafs-T/common/TD00005/ShokaiTouroku.vue')
+        },
+        {
+          path: '/Reafs_T/YuzaJohoHenko',
+          name: 'TD00003',
+          component: () => import('@/views/Reafs-T/common/TD00003/YuzaJohoHenko.vue')
+        },
+        {
+          path: '/Reafs_T/OshiraseHyouji',
+          name: 'TD00002',
+          component: () => import('@/views/Reafs-T/common/TD00002/OshiraseHyouji.vue')
+        }
+      ]
+    },
+    {
+      path: '/Reafs_T/login',
+      name: 'TD00000',
+      component: () => import('@/views/Reafs-T/common/TD00000/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    {
+      path: '/Reafs_T/PasuwadoRimainda',
+      name: 'TD00006',
+      component: () => import('@/views/Reafs-T/common/TD00006/PasuwadoRimainda.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    {
+      path: '/Reafs_W',
+      name: 'Index_W',
+      component: () => import('@/views/IndexW.vue'), // W用のINDEXを利用する
+      redirect: '/Reafs_W/home',
+      children: [
+        ...redirect,
+        {
+          path: '/Reafs_W/home',
+          name: 'WD00001',
+          component: () => import('@/views/Reafs-W/common/WD00010/Top.vue')
+        },
+        {
+          path: '/Reafs_W/common/Top',
+          name: 'WD00001',
+          component: () => import('@/views/Reafs-W/common/WD00010/Top.vue')
+        },
+        {
+          path: '/Reafs_W/IraiNyuryoku',
+          name: 'WD00110',
+          component: () => import('@/views/Reafs-W/irai/WD00110/IraiNyuryoku.vue')
+        }
+      ]
+    },
+    // FOR POPUP
+    {
+      path: '/Reafs_W',
+      name: 'WIndex',
+      component: () => import('@/views/PcIndex'), 
+      redirect: '/Reafs_W/home',
+      children: [
+        ...redirect,
+        {
+          path: '/Reafs_W/home',
+          name: 'Whome',
+          component: () => import('@/views/home.vue')
+        },
+        {
+          path: '/Reafs_W/IraiTenpuTouroku',
+          name: 'WD00120',
+          component: () => import('@/views/Reafs-W/irai/WD00120/IraiTenpuTouroku.vue')
+        }
+      ]
+    },
+    // Reafs-W機能ログイン
+    {
+      path: '/Reafs_W/login',
+      name: 'WD00000',
+      component: () => import('@/views/Reafs-W/common/WD00000/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    // Reafs-R-Web機能
+    {
+      path: '/Reafs_R_Web',
+      name: 'Index_R',
+      component: () => import('@/views/IndexR.vue'), // Mobile用のINDEXを利用する
+      redirect: '/Reafs_R_Web/mobile/Top',
+      children: [
+        ...redirect,
+        {
+          path: '/Reafs_R_Web/mobile',
+          name: 'Rhome',
+          component: () => import('@/views/Home.vue')
+        },
+        {
+          path: '/Reafs_R_Web/mobile/Top',
+          name: 'RD00801',
+          component: () => import('@/views/Reafs-R-Web/mobile/RD00801/Menu.vue')
+        },
+        {
+          path: '/Reafs_R_Web/mobile/MishoninIchiran',
+          name: 'RD00802',
+          component: () => import('@/views/Reafs-R-Web/mobile/RD00802/MishoninIchiran.vue')
+        }
+      ]
+    },
+    // Reafs-R-Web機能ログイン
+    {
+      path: '/Reafs_R_Web/login',
+      name: 'RD00800',
+      component: () => import('@/views/Reafs-R-Web/mobile/RD00800/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    // Reafs-T機能
+    {
+      path: '/Reafs_T',
+      name: 'Index_T',
+      component: () => import('@/views/IndexT.vue'),// T用のINDEXを利用する
+      redirect: '/Reafs_T/home',
+      children: [
+        ...redirect,
+        {
+          path: '/Reafs_T/home',
+          name: 'Thome',
+          component: () => import('@/views/Home.vue')
+        },
+        {
+          path: '/Reafs_T/MainMenu',
+          name: 'TD00001',
+          component: () => import('@/views/Reafs-T/common/TD00001/MainMenu.vue')
+        },
+        {
+          path: '/Reafs_T/ShokaiTouroku',
+          name: 'TD00005',
+          component: () => import('@/views/Reafs-T/common/TD00005/ShokaiTouroku.vue')
+        },
+        {
+          path: '/Reafs_T/YuzaJohoHenko',
+          name: 'TD00003',
+          component: () => import('@/views/Reafs-T/common/TD00003/YuzaJohoHenko.vue')
+        },
+        {
+          path: '/Reafs_T/PasuwadoRimainda',
+          name: 'TD00003',
+          component: () => import('@/views/Reafs-T/common/TD00006/PasuwadoRimainda.vue')
+        },
+        {
+          // 定期見積入力
+          path: '/Reafs_T/TeikiMitsumoriNyuryoku',
+          name: 'TD00302',
+          component: () => import('@/views/Reafs-T/mitsumori/TD00302/TeikiMitsumoriNyuryoku.vue'),
+        },
+        {
+          // 作業状況一覧
+          path: '/Reafs_T/SagyoJokyoIchiran',
+          name: 'TD00400',
+          component: () => import('@/views/Reafs-T/sagyo/TD00400/SagyoJokyoIchiran.vue'),
+        },
+      ]
+    },
+    {
+      path: '/Reafs_T/login',
+      name: 'TD00000',
+      component: () => import('@/views/Reafs-T/common/TD00000/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    {
+      path: '/Reafs_T/PasuwadoRimainda',
+      name: 'TD00006',
+      component: () => import('@/views/Reafs-T/common/TD00006/PasuwadoRimainda.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    // MobileSample
+    {
+      path: '/Mobile',
+      name: 'Index',
+      component: () => import('@/views/Index.vue'),
+      redirect: '/Mobile/home',
+      children: [
+        ...redirect,
+        {
+          path: '/Mobile/home',
+          name: 'home',
+          component: () => import('@/views/RD00801/Home.vue')
+        }
+      ]
+    },
+    {
+      path: '/Mobile/login',
+      name: 'login',
+      component: () => import('@/views/RD00800/Login.vue'),
+      meta: {
+        anonymous: true
+      }
+    },
+    //* 404は最後
+    {
+      path: '*',
+      component: () => import('@/views/redirect/404.vue')
+    }
+  ]
+})
+
+router.beforeEach((to, from, next) => {
+  store.getters.getUserInfo()
+  if (to.matched.length === 0) return next({ path: '/404' })
+  store.dispatch('onLoading', true)
+  if ((to.hasOwnProperty('meta') && to.meta.anonymous) || store.getters.isLogin()) {
+    return next()
+  }
+  if (to.matched[0].path === '/Reafs_T') {
+    next({ name: 'TD00000', query: { redirect: Math.random() } })
+  } else {
+    next({ path: '/login', query: { redirect: Math.random() } })
+  }
+  if (to.matched[0].path === '/Reafs_W') {
+    next({ name: 'WD00000', query: { redirect: Math.random() } });
+  } else if(to.matched[0].path === '/Reafs_R_Web') {
+    next({ name: 'RD00800', query: { redirect: Math.random() } });
+  } else if(to.matched[0].path === '/Reafs_T') {
+    next({ name: 'TD00000', query: { redirect: Math.random() } });
+  } else {
+    next({ path: '/login', query: { redirect: Math.random() } })
+  }  
+})
+
+router.afterEach((to, from) => {
+  store.dispatch('onLoading', false)
+  const oldPath = store.getters.getOldPath()
+  if (to.fullPath !== oldPath) {
+    store.commit('setPageData', {})
+  }
+  store.commit('setOldPath', to.fullPath)
+})
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g
+  const isChunkLoadFailed = error.message.match(pattern)
+  const targetPath = router.history.pending.fullPath
+  console.log(error.message)
+  console.log(targetPath)
+  if (isChunkLoadFailed) {
+    window.location.replace(window.location.href)
+  }
+})
+
+export default router

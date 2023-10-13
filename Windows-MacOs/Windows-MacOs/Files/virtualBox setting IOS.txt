@@ -1,0 +1,22 @@
+cd "C:\Program Files\Oracle\VirtualBox\"
+VBoxManage.exe modifyvm "macOS Monterey" --cpuidset 00000001 000106e5 00100800 0098e3fd bfebfbff
+VBoxManage setextradata "macOS Monterey" "VBoxInternal/Devices/efi/0/Config/DmiSystemProduct" "iMac19,1"
+VBoxManage setextradata "macOS Monterey" "VBoxInternal/Devices/efi/0/Config/DmiSystemVersion" "1.0"
+VBoxManage setextradata "macOS Monterey" "VBoxInternal/Devices/efi/0/Config/DmiBoardProduct" "Mac-AA95B1DDAB278B95"
+VBoxManage setextradata "macOS Monterey" "VBoxInternal/Devices/smc/0/Config/DeviceKey" "ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc"
+VBoxManage setextradata "macOS Monterey" "VBoxInternal/Devices/smc/0/Config/GetKeyFromRealSMC" 1
+
+
+
+
+
+
+//VBoxManage modifyhd "D:\Users\AnhPT\VirtualBox VMs\macOS Monterey\macOS Monterey.vdi" --resize 102400
+
+cd "C:\Program Files\Oracle\VirtualBox\"
+VBoxManage.exe modifyvm "macOS Ventura" --cpuidset 00000001 000106e5 00100800 0098e3fd bfebfbff
+VBoxManage setextradata "macOS Ventura" "VBoxInternal/Devices/efi/0/Config/DmiSystemProduct" "iMac19,1"
+VBoxManage setextradata "macOS Ventura" "VBoxInternal/Devices/efi/0/Config/DmiSystemVersion" "1.0"
+VBoxManage setextradata "macOS Ventura" "VBoxInternal/Devices/efi/0/Config/DmiBoardProduct" "Mac-AA95B1DDAB278B95"
+VBoxManage setextradata "macOS Ventura" "VBoxInternal/Devices/smc/0/Config/DeviceKey" "ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc"
+VBoxManage setextradata "macOS Ventura" "VBoxInternal/Devices/smc/0/Config/GetKeyFromRealSMC" 1

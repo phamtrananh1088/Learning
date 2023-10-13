@@ -1,0 +1,115 @@
+﻿@using System.Globalization;
+
+@{
+    @model WinMacOs.Models.NoteModel
+    ViewBag.Title = "Note";
+}
+@*<div class="title"><h2><span class="ispc">Note<i class="fa-solid fa-chevron-right"></i></span>Note Input</h2></div>*@
+<div class="wrapper-result">
+    <div class="row flex flex-wrap">
+        <div class="col-md-12">
+            <div class="w100 mw100 center">
+                @{
+                    if (Model.IsCreateNew)
+                    {
+                        <span class="title-item">
+                            @DateTime.Now.ToString("f", CultureInfo.GetCultureInfo("en-US"))
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="title-item">
+                            @Model.CreateDate.ToString("f", CultureInfo.GetCultureInfo("en-US"))
+                        </span>
+                    }
+                }
+            </div>
+            @Html.TextAreaFor(model => model.Data, new
+            {
+                @class = "item w100 mw100",
+                @tabindex = "1",
+                rows = "28",
+            })
+        </div>
+        @Html.HiddenFor(mode => mode.IsCreateNew)
+        @Html.HiddenFor(mode => mode.FileName)
+    </div>
+    <br />
+    <div class="row flex flex-wrap">
+        <div class="col-md-12">
+            <div id="result" style="display:none;font-weight:800;color:blue;">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var insertNote = '@Url.Action("InsertNote")'
+    var deleteNote = '@Url.Action("DeleteNote")'
+    $(document).ready(function () {
+        $('#Data').focus()
+        $('#Data').change(function () {
+            var data = {
+                Data: encodeURIComponent($('#Data').val()),
+                IsCreateNew: $('#IsCreateNew').val(),
+                FileName: $('#FileName').val(),
+
+            }
+            if (!!data.Data) {
+                $("#result").html("doing ...").fadeIn(0)
+
+                TorihikiUtils.ajaxEx({
+                    url: insertNote,
+                    data: data,
+                    success: function (data) {
+                        $("#result").html(data.message).fadeIn("slow").fadeOut(3000, function () {
+                            if (data.success) {
+                                $('#IsCreateNew').val(false)
+                                let da = JSON.parse(data.data)
+                                $('#FileName').val(da.FileName)
+                            }
+                        });
+
+                    },
+                    error: function (data) {
+                        $("#result").html(data.message).fadeIn("slow").fadeOut(3000);
+                    },
+                    complete: function () {
+                        TorihikiUtils.hideLoading();
+                    }
+                });
+            } else if (data.IsCreateNew == false) {
+                $("#result").html("doing ...").fadeIn(0)
+
+                TorihikiUtils.ajaxEx({
+                    url: deleteNote,
+                    data: data,
+                    success: function (data) {
+                        $("#result").html(data.message).fadeIn("slow").fadeOut(3000, function () {
+                            if (data.success) {
+                                $('#IsCreateNew').val(true)
+                                $('#FileName').val('')
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        $("#result").html(data.message).fadeIn("slow").fadeOut(3000);
+                    },
+                    complete: function () {
+                        TorihikiUtils.hideLoading();
+                    }
+                });
+            }
+        });
+    });
+</script>
+<style>
+    .is-dragover {
+        /*background-color: #d8d8d8 !important;*/
+        border: dashed 2px lightblue !important;
+    }
+
+    #dropArea {
+        border: dashed 2px rgb(100,100,100);
+    }
+</style>

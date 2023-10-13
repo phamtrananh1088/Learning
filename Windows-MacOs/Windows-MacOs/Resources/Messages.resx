@@ -1,0 +1,606 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="KYE000006" xml:space="preserve">
+    <value>{0}は{1}以上を入力してください。</value>
+  </data>
+  <data name="DateTypeError" xml:space="preserve">
+    <value>{0}に日付を入力してください。</value>
+  </data>
+  <data name="ExceptionError" xml:space="preserve">
+    <value>エラーが発生しました。ログファイルを参照してください。</value>
+  </data>
+  <data name="Logined" xml:space="preserve">
+    <value>他の端末でログインしました。\nログインするときに、他の端末をサインアウトされます。\nログインしましょうか？</value>
+  </data>
+  <data name="KYE000004" xml:space="preserve">
+    <value>{0}は{1}文字以内で入力してください。</value>
+  </data>
+  <data name="KYE000001" xml:space="preserve">
+    <value>{0}を入力してください。</value>
+  </data>
+  <data name="TelPhoneError" xml:space="preserve">
+    <value>{0}は不正です。</value>
+  </data>
+  <data name="ZipCodeError" xml:space="preserve">
+    <value>{0}は不正です。</value>
+  </data>
+  <data name="LoginedWithSameIP" xml:space="preserve">
+    <value>この端末にユーザーはすでにログインしました。</value>
+  </data>
+  <data name="EqualTo" xml:space="preserve">
+    <value>{0}と{1}の値は同じではありません。</value>
+  </data>
+  <data name="MinLength" xml:space="preserve">
+    <value>{0}は{1}文字以上で入力してください。</value>
+  </data>
+  <data name="NoSearchConditionSetted" xml:space="preserve">
+    <value>データ件数が多いですので、検索条件を設定してください。</value>
+  </data>
+  <data name="NeedLogin" xml:space="preserve">
+    <value>ログイン必要。</value>
+  </data>
+  <data name="NoKengen" xml:space="preserve">
+    <value>権限なし。</value>
+  </data>
+  <data name="GreaterTranMaxRowCount" xml:space="preserve">
+    <value>対象データが多いため検索結果を表示できません。&lt;br /&gt;上限件数：{0}&lt;br /&gt;対象データ件数：{1}</value>
+  </data>
+  <data name="KYC000004" xml:space="preserve">
+    <value>削除します。よろしいですか？</value>
+  </data>
+  <data name="ResponseErrorStatus0" xml:space="preserve">
+    <value>サーバに正常接続できません。</value>
+  </data>
+  <data name="ResponseErrorStatus404" xml:space="preserve">
+    <value>お探しのページは見つかりませんでした。</value>
+  </data>
+  <data name="LogExistedCheck" xml:space="preserve">
+    <value>{0}存在チェック。{1}</value>
+  </data>
+  <data name="LogExistedCheckFailed" xml:space="preserve">
+    <value>{0}存在チェックは失敗しました。{1}</value>
+  </data>
+  <data name="LogSuccess" xml:space="preserve">
+    <value>{0}は成功しました。{1}</value>
+  </data>
+  <data name="NoSearchRecord" xml:space="preserve">
+    <value>該当するレコードが見つかりません。</value>
+  </data>
+  <data name="ActionSuccess" xml:space="preserve">
+    <value>実行しました。</value>
+  </data>
+  <data name="KYC000001" xml:space="preserve">
+    <value>確定します。よろしいですか？</value>
+  </data>
+  <data name="WarekiDateError" xml:space="preserve">
+    <value>{0}に日付を入力してください。</value>
+  </data>
+  <data name="LogoutConfirm" xml:space="preserve">
+    <value>ログアウトします。よろしいでしょうか？</value>
+  </data>
+  <data name="ListDetailsSelectedRequired" xml:space="preserve">
+    <value>明細データを選択してください。</value>
+  </data>
+  <data name="KYE000018" xml:space="preserve">
+    <value>{0}がすでに登録済みです。</value>
+  </data>
+  <data name="ExceptionError2" xml:space="preserve">
+    <value>エラーが発生しました。&lt;br/&gt;{0}</value>
+  </data>
+  <data name="DataNotExisted2" xml:space="preserve">
+    <value>データが存在していない、または削除しました。ご確認ください。</value>
+  </data>
+  <data name="PlaceHolderMaxLength" xml:space="preserve">
+    <value>{0}文字</value>
+  </data>
+  <data name="KYI000001" xml:space="preserve">
+    <value>{0}を確定しました。</value>
+  </data>
+  <data name="KYI000004" xml:space="preserve">
+    <value>{0}を削除しました。</value>
+  </data>
+  <data name="KYE000020" xml:space="preserve">
+    <value>{0}選択することはできません。</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>{0}に失敗しました。</value>
+  </data>
+  <data name="ActionSuccess2" xml:space="preserve">
+    <value>{0}を成功に実行しました。</value>
+  </data>
+  <data name="SessionTimeOutLogin" xml:space="preserve">
+    <value>セッションタイムアウトしました。再度ログインしてください。</value>
+  </data>
+  <data name="CancelSuccess" xml:space="preserve">
+    <value>取消しました。</value>
+  </data>
+  <data name="KyakkaConfirm" xml:space="preserve">
+    <value>却下します。よろしいでしょうか。</value>
+  </data>
+  <data name="KyakkaSuccess" xml:space="preserve">
+    <value>却下しました。</value>
+  </data>
+  <data name="KyakkaSuccess2" xml:space="preserve">
+    <value>{0}を却下しました。</value>
+  </data>
+    <data name="JitaiSuccess" xml:space="preserve">
+    <value>辞退しました</value>
+  </data>
+    <data name="JitaiSuccess2" xml:space="preserve">
+    <value>{0}を辞退しました</value>
+  </data>
+    <data name="KakuninSuccess" xml:space="preserve">
+    <value>内容確認しました。</value>
+  </data>
+    <data name="KakuninSuccess2" xml:space="preserve">
+    <value>{0}を内容確認しました。</value>
+  </data>
+  <data name="KYC000003" xml:space="preserve">
+    <value>申請します。よろしいですか？</value>
+  </data>
+  <data name="KYI000003" xml:space="preserve">
+    <value>{0}を申請しました。</value>
+  </data>
+  <data name="ShouninSuccess" xml:space="preserve">
+    <value>承認しました。</value>
+  </data>
+  <data name="ShouninSuccess2" xml:space="preserve">
+    <value>{0}を承認しました。</value>
+  </data>
+  <data name="ShouninConfirm" xml:space="preserve">
+    <value>承認します。よろしいでしょうか。</value>
+  </data>
+  <data name="SessionTimeOutError" xml:space="preserve">
+    <value>セッションタイムアウトしました。</value>
+  </data>
+  <data name="NumberError" xml:space="preserve">
+    <value>{0}には数字を入力してください</value>
+  </data>
+  <data name="ExecuteConfirm" xml:space="preserve">
+    <value>実行します。よろしいでしょうか。</value>
+  </data>
+  <data name="KYC000002" xml:space="preserve">
+    <value>保存します。よろしいですか？</value>
+  </data>
+  <data name="DataNotExisted3" xml:space="preserve">
+    <value>{0}は{1}にデータが存在していません。ご確認ください。</value>
+  </data>
+  <data name="GreaterThan" xml:space="preserve">
+    <value>{0}が{1}より大きなのように入力してください。</value>
+  </data>
+  <data name="MultiAddSuccess" xml:space="preserve">
+    <value>行を追加しました。</value>
+  </data>
+  <data name="Regular" xml:space="preserve">
+    <value>{0}は正規表現 "{1}" と一致する必要があります。</value>
+  </data>
+  <data name="EmailError" xml:space="preserve">
+    <value>正しいメールアドレスを入力してください。</value>
+  </data>
+  <data name="RowsCopySuccess" xml:space="preserve">
+    <value>行をコピーしました。</value>
+  </data>
+  <data name="ControllerSettingError" xml:space="preserve">
+    <value>コントローラーが設定されません。</value>
+  </data>
+  <data name="KYE000003" xml:space="preserve">
+    <value>{0}を指定してください。</value>
+  </data>
+  <data name="KYI000002" xml:space="preserve">
+    <value>{0}を保存しました。</value>
+  </data>
+  <data name="KYE000019" xml:space="preserve">
+    <value>{0}と{1}は同時に設定できません。</value>
+  </data>
+  <data name="KYE000007" xml:space="preserve">
+    <value>{0}は{1}以降の日付で入力してください。</value>
+  </data>
+  <data name="KYE000008" xml:space="preserve">
+    <value>{0}は{1}以前の日付で入力してください。</value>
+  </data>
+  <data name="KYC000005" xml:space="preserve">
+    <value>{0}を確定しました。&lt;br /&gt;続けて{1}を行いますか？</value>
+  </data>
+  <data name="KYC000006" xml:space="preserve">
+    <value>編集中データがあります。&lt;br /&gt;破棄しますか？</value>
+  </data>
+  <data name="KYC000007" xml:space="preserve">
+    <value>{0}を行います。よろしいですか？</value>
+  </data>
+  <data name="KYC000008" xml:space="preserve">
+    <value>{0}をコピーしますか？</value>
+  </data>
+  <data name="KYC000009" xml:space="preserve">
+    <value>{0}を超えています。よろしいですか？</value>
+  </data>
+  <data name="KYE000002" xml:space="preserve">
+    <value>{0}を選択してください。</value>
+  </data>
+  <data name="KYE000005" xml:space="preserve">
+    <value>{0}は{1}から{2}の間で入力してください。</value>
+  </data>
+  <data name="KYE000009" xml:space="preserve">
+    <value>{0}は{1}より未来の日付で入力してください。</value>
+  </data>
+  <data name="KYE000010" xml:space="preserve">
+    <value>{0}は{1}より過去の日付で入力してください。</value>
+  </data>
+  <data name="KYE000012" xml:space="preserve">
+    <value>{0}を選択もしくは入力してください。</value>
+  </data>
+  <data name="KYE000011" xml:space="preserve">
+    <value>{0}が{1}の場合、{2}を入力してください。</value>
+  </data>
+  <data name="KYE000014" xml:space="preserve">
+    <value>対象データは１件のみ選択してください。</value>
+  </data>
+  <data name="KYE000015" xml:space="preserve">
+    <value>{0}は登録できません。</value>
+  </data>
+  <data name="KYE000016" xml:space="preserve">
+    <value>{0}の為、登録できません。</value>
+  </data>
+  <data name="KYE000017" xml:space="preserve">
+    <value>{0}が異なる明細は同時に登録できません。</value>
+  </data>
+  <data name="KYE000021" xml:space="preserve">
+    <value>伝票Noを跨いで選択することはできません。</value>
+  </data>
+  <data name="KYE000022" xml:space="preserve">
+    <value>{0}は変更できません。</value>
+  </data>
+  <data name="KYE000023" xml:space="preserve">
+    <value>{0}が{1}と一致していません。</value>
+  </data>
+  <data name="KYE000024" xml:space="preserve">
+    <value>{0}を超える{1}は入力できません。</value>
+  </data>
+  <data name="KYE000025" xml:space="preserve">
+    <value>{0}に{1}を設定できません。</value>
+  </data>
+  <data name="KYE000026" xml:space="preserve">
+    <value>{0}は参照できません。</value>
+  </data>
+  <data name="KYE000027" xml:space="preserve">
+    <value>{0}の為、参照できません。</value>
+  </data>
+  <data name="KYE000028" xml:space="preserve">
+    <value>{0}は出力できません。</value>
+  </data>
+  <data name="KYE000029" xml:space="preserve">
+    <value>{0}の為、出力できません。</value>
+  </data>
+  <data name="KYE000030" xml:space="preserve">
+    <value>出力対象外です。</value>
+  </data>
+  <data name="KYI000005" xml:space="preserve">
+    <value>{0}が完了しました。</value>
+  </data>
+  <data name="LessTran" xml:space="preserve">
+    <value>{0}が{1}より小さなのように入力してください。</value>
+  </data>
+  <data name="KYE000031" xml:space="preserve">
+    <value>{0}の為、{1}できません。{2}を行ってください。</value>
+  </data>
+  <data name="KYC000010" xml:space="preserve">
+    <value>既に出力しています。再出力しますか？</value>
+  </data>
+  <data name="KYC000011" xml:space="preserve">
+    <value>取消します。よろしいですか？</value>
+  </data>
+  <data name="KYE000032" xml:space="preserve">
+    <value>{0}は{1}以上を入力してください。{2}</value>
+  </data>
+  <data name="KYE000033" xml:space="preserve">
+    <value>{0}は{1}以下を入力してください。{2}</value>
+  </data>
+  <data name="KYI000006" xml:space="preserve">
+    <value>{0}を取消しました。</value>
+  </data>
+  <data name="NotEqualTo" xml:space="preserve">
+    <value>{0}が{1}と一致ことはできません。</value>
+  </data>
+  <data name="KYE000034" xml:space="preserve">
+    <value>{0}は存在しません。</value>
+  </data>
+  <data name="KYE000035" xml:space="preserve">
+    <value>{0}の為、削除できません。</value>
+  </data>
+  <data name="FormatError" xml:space="preserve">
+    <value>{0}のフォーマットは不正です。</value>
+  </data>
+  <data name="LengthCheck" xml:space="preserve">
+    <value>{0}に{1}桁を入力してください。</value>
+  </data>
+  <data name="DataNotExisted" xml:space="preserve">
+    <value>データが存在していません。</value>
+  </data>
+  <data name="KYC000012" xml:space="preserve">
+    <value>解除します。よろしいですか？</value>
+  </data>
+  <data name="KYE000036" xml:space="preserve">
+    <value>{0}の場合のみ、{1}ができます。</value>
+  </data>
+  <data name="KYI000007" xml:space="preserve">
+    <value>{0}を解除しました。</value>
+  </data>
+  <data name="CsvFormatError" xml:space="preserve">
+    <value>ファイルフォーマットエラー</value>
+  </data>
+  <data name="NotesServerConnectFailure" xml:space="preserve">
+    <value>Notesサーバに正常接続できません。</value>
+  </data>
+  <data name="SameUserLogined" xml:space="preserve">
+    <value>他の端末にログインしたので、この端末で開いている画面はすべて閉じられます。</value>
+  </data>
+  <data name="KYE000037" xml:space="preserve">
+    <value>{0}登録してください。</value>
+  </data>
+  <data name="NotAllow" xml:space="preserve">
+    <value>{0}は{1}以外を入力してください。</value>
+  </data>
+  <data name="KYE000061" xml:space="preserve">
+    <value>Notesとの連携に失敗しました。&lt;br /&gt;Notesエラーメッセージ：{0}</value>
+  </data>
+  <data name="KYE000013" xml:space="preserve">
+    <value>{0}削除できません。</value>
+  </data>
+  <data name="KYI000008" xml:space="preserve">
+    <value>{0}を即承認しました。</value>
+  </data>
+  <data name="KYE000038" xml:space="preserve">
+    <value>{0}承認できません。</value>
+  </data>
+  <data name="KYE000039" xml:space="preserve">
+    <value>{0}がありません。</value>
+  </data>
+  <data name="KYE000040" xml:space="preserve">
+    <value>{0}取消できません。</value>
+  </data>
+  <data name="KYE000041" xml:space="preserve">
+    <value>{0}は{1}以降の時間で入力してください。</value>
+  </data>
+  <data name="KYE000042" xml:space="preserve">
+    <value>{0}は{1}以前の時間で入力してください。</value>
+  </data>
+  <data name="PageSessionError" xml:space="preserve">
+    <value>画面の引数にエラーがあります。ご確認ください。</value>
+  </data>
+  <data name="KYE000043" xml:space="preserve">
+    <value>{0}の為、解除できません。</value>
+  </data>
+  <data name="KYC000013" xml:space="preserve">
+    <value>{0}が未登録です。確定してもよろしいですか？</value>
+  </data>
+  <data name="KYE000045" xml:space="preserve">
+    <value>{0}の為、{1}できません。{2}</value>
+  </data>
+  <data name="RowsAddSuccess" xml:space="preserve">
+    <value>行を追加しました。</value>
+  </data>
+  <data name="RowsInsertSuccess" xml:space="preserve">
+    <value>行を挿入しました。</value>
+  </data>
+  <data name="RowsMoveDownSuccess" xml:space="preserve">
+    <value>行を下に移動しました。</value>
+  </data>
+  <data name="RowsMoveUpSuccess" xml:space="preserve">
+    <value>行を上に移動しました。</value>
+  </data>
+  <data name="KYC000014" xml:space="preserve">
+    <value>{0}が未登録です。出力してもよろしいですか？</value>
+  </data>
+  <data name="KYE000046" xml:space="preserve">
+    <value>{0}は{1}で入力してください。</value>
+  </data>
+  <data name="KYE000047" xml:space="preserve">
+    <value>更新処理に失敗しました。</value>
+  </data>
+  <data name="UploadFilesMaxCount" xml:space="preserve">
+    <value>アップロードできるファイル数の上限({0})を超えています。</value>
+  </data>
+  <data name="UploadFileTypeLimit" xml:space="preserve">
+    <value>選択されたファイルタイプは不正です。</value>
+  </data>
+  <data name="AzureConnectFailed" xml:space="preserve">
+    <value>Azureサーバーに接続できません。更新し直して下さい。</value>
+  </data>
+  <data name="DocumentListNonUpate" xml:space="preserve">
+    <value>ドキュメント更新はできません。</value>
+  </data>
+  <data name="KYC000015" xml:space="preserve">
+    <value>{0}が含まれています。削除してもよろしいですか？</value>
+  </data>
+  <data name="KYE000048" xml:space="preserve">
+    <value>{0}正しくありません。</value>
+  </data>
+  <data name="KYE000049" xml:space="preserve">
+    <value>パスワードをルールに従って入力してください。&lt;br /&gt;　１、6文字以上英数字混在。&lt;br /&gt;　２、同じ文字は3文字以上使用不可。</value>
+  </data>
+  <data name="KYW000001" xml:space="preserve">
+    <value>{0}設定してください。</value>
+  </data>
+  <data name="KYW000002" xml:space="preserve">
+    <value>{0}変更してください。</value>
+  </data>
+  <data name="PasswordBeenChanged" xml:space="preserve">
+    <value>パスワードが変更されました。</value>
+  </data>
+  <data name="NYE000001" xml:space="preserve">
+    <value>{0}を正しく入力してください。</value>
+  </data>
+  <data name="KYE000050" xml:space="preserve">
+    <value>{0}してください。</value>
+  </data>
+  <data name="KYC000016" xml:space="preserve">
+    <value>{0}が含まれています。出力してもよろしいですか？</value>
+  </data>
+  <data name="KYI000009" xml:space="preserve">
+    <value>{0}を取込ました。</value>
+  </data>
+  <data name="KYC000017" xml:space="preserve">
+    <value>編集中データがあります。確定してもよろしいですか？</value>
+  </data>
+  <data name="KYE000051" xml:space="preserve">
+    <value>{0}できません。</value>
+  </data>
+  <data name="KYE000052" xml:space="preserve">
+    <value>{0}為、出力できません。</value>
+  </data>
+  <data name="KYE000053" xml:space="preserve">
+    <value>{0}為、登録できません。</value>
+  </data>
+  <data name="KYE000054" xml:space="preserve">
+    <value>{0}は{1}以降の日付で入力してください。{2}</value>
+  </data>
+  <data name="KYE000055" xml:space="preserve">
+    <value>{0}は{1}以前の日付で入力してください。{2}</value>
+  </data>
+  <data name="KYE000056" xml:space="preserve">
+    <value>{0}は{1}より未来の日付で入力してください。{2}</value>
+  </data>
+  <data name="KYE000057" xml:space="preserve">
+    <value>{0}は{1}より過去の日付で入力してください。{2}</value>
+  </data>
+  <data name="KYE000058" xml:space="preserve">
+    <value>他の端末にて更新済みのため、更新できません。</value>
+  </data>
+  <data name="GetPrinterInfoFailed" xml:space="preserve">
+    <value>プリンター情報を取得出来ません。&lt;br/&gt;SVF Web Direct Printを起動してください。</value>
+  </data>
+  <data name="KYE000059" xml:space="preserve">
+    <value>プリンター情報を取得出来ません。{0}プリンターを設定してください。</value>
+  </data>
+  <data name="KYE000060" xml:space="preserve">
+    <value>選択しているプリンターがプリンターマスタに登録されていません。</value>
+  </data>
+  <data name="KYC000018" xml:space="preserve">
+    <value>{0}を確定しました。&lt;br /&gt;{1}&lt;br /&gt;続けて{2}を行いますか？</value>
+  </data>
+  <data name="KYI000010" xml:space="preserve">
+    <value>{0}を確定しました。&lt;br /&gt;{1}</value>
+  </data>
+  <data name="ApiResponseSuccess" xml:space="preserve">
+    <value>正常に連携されました。</value>
+  </data>
+  <data name="ApiError" xml:space="preserve">
+    <value>{0}に失敗しました。</value>
+  </data>
+</root>

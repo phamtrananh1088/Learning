@@ -1,0 +1,63 @@
+﻿
+<div class="row">
+    <a href='@Url.Action("","Files")'><i class="fa-solid fa-paperclip"></i>Files</a>
+    <div id="dropArea">
+        <h4 class="title-pin">
+
+            @*<input type="file" id="upload_file" class="" style="display:none" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">*@
+            @*<label for="btnUpload" class="btn-pin center">ファイルを選択</label>*@
+            <a class="btn btn-pin center" style="border: 1px solid; border-radius: 4px; padding: 5px; height: 100px;" id="btnUpload">Select File(s)...</a>
+            OR Drag & Drop Files
+        </h4>
+        <div id="upload_result" style="display:none;font-weight:800;color:blue;">
+            Upload Status.
+        </div>
+    </div>
+</div>
+
+<script>
+    var uploadAttachedFile = '@Url.Action("UploadAttachedFile")'
+    $(document).ready(function () {
+        var torihikiuploadfile = new TorihikiUploadFile({
+            dropArea: $('#dropArea'),
+            submit: async function (fileUpload) {
+                if (!fileUpload[0]) {
+                    //TorihikiUtils.hideLoading();
+                    return;
+                }
+
+                //TorihikiUtils.saveCurrentData($('form')[0]);
+                if (fileUpload && fileUpload.length > 0) {
+                    $("#upload_result").html("uploading ...").fadeIn(0)
+                    // var file = await TorihikiUtils.dataUrlToBase64(fileUpload[0])
+                    var data = new FormData()
+                    data.append('File', fileUpload[0])
+                    // data.append('orgFileName', fileUpload[0].name)
+
+                    TorihikiUtils.ajaxFileEx({
+                        url: uploadAttachedFile,
+                        data: data,
+                        isFormData: true,
+                        success: function (data) {
+                            //$('#listAttachedFilemeisai').html(data);
+                            $("#upload_result").html(data.message).fadeIn("slow").fadeOut(4000);
+                        },
+                        complete: function () {
+                            TorihikiUtils.hideLoading();
+                        }
+                    });
+                }
+            }
+        });
+
+    });
+</script>
+<style>
+    .is-dragover {
+        /*background-color: #d8d8d8 !important;*/
+        border: dashed 2px lightblue !important;
+    }
+    #dropArea {
+        border: dashed 2px rgb(100,100,100);
+    }
+</style>
