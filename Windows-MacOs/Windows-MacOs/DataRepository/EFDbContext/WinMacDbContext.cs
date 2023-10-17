@@ -41,7 +41,7 @@ namespace WinMacOs.DataRepository.EFDbContext
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SrtModel>()
+            modelBuilder.Entity<Srt>()
              .HasKey(c => new { c.JI_NO });
         }
     }

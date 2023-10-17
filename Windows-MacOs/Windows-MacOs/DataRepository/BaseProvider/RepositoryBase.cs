@@ -13,7 +13,6 @@ using WinMacOs.DataRepository.EFDbContext;
 using WinMacOs.DataRepository.DBManager;
 using WinMacOs.Utility.Enums;
 using WinMacOs.Utility.Extensions;
-using Microsoft.EntityFramework.Query;
 using System.Data.Entity.Infrastructure;
 using WinMacOs.DataRepository.Utilities;
 using System.Data.SqlClient;

@@ -21,7 +21,7 @@ namespace WinMacOs.Controllers
         }
         public ActionResult Index()
         {
-            return File("~/dist/index.html", "text/html");
+            return File("~/vue/index.html", "text/html");
         }
 
         [HttpGet, HttpPost, Route("getAllMenu"), AllowAnonymous]

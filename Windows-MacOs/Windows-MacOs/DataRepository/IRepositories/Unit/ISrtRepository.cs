@@ -8,7 +8,7 @@ using WinMacOs.Utility.TableModels;
 
 namespace WinMacOs.DataRepository.IRepositories
 {
-    public partial interface ISrtRepository : IRepository<SrtModel>
+    public partial interface ISrtRepository : IRepository<Srt>
     {
     }
 }

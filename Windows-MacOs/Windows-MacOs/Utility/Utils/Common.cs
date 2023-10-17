@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -166,6 +167,7 @@ namespace WinMacOs.Utility.Utils
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return null;
             }
         }

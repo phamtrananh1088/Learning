@@ -55,10 +55,10 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../../Windows-MacOs/dist/index.html'),
+    index: path.resolve(__dirname, '../../Windows-MacOs/vue/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../../Windows-MacOs/dist'),
+    assetsRoot: path.resolve(__dirname, '../../Windows-MacOs/vue'),
     assetsSubDirectory: 'static',
     assetsPublicPath: webconfig.subsite_production,
 

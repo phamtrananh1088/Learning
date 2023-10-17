@@ -191,6 +191,7 @@ const router = new Router({
 })
 
 router.beforeEach(async (to, from, next) => {
+  console.log(to)
   store.getters.getUserInfo()
   if (to.matched.length === 0) return next({ path: re('/404') })
   store.dispatch('onLoading', true)

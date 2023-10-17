@@ -11,6 +11,7 @@ using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 using WinMacOs.Utility.CacheManager;
 using System.Web;
+using WinMacOs.Utility.Security.Claims;
 
 namespace WinMacOs.DataRepository.Utilities
 {
@@ -239,13 +240,20 @@ namespace WinMacOs.DataRepository.Utilities
             CacheService.Remove(key);
         }
 
+        public ClaimsPrincipal User
+        {
+            get
+            {
+                return HttpContext.User as ClaimsPrincipal;
+            }
+        }
         #region ユーザー情報プロパティ
         public string ログインID
         {
             get
             {
-                return (HttpContext.User.FindFirstValue(/*JwtRegisteredClaimNames.Jti*/"Jti")
-                    ?? HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier))?.ToString();
+                return (User.FindFirstValue(/*JwtRegisteredClaimNames.Jti*/"Jti")
+                    ?? User.FindFirstValue(ClaimTypes.NameIdentifier))?.ToString();
             }
         }
         public string 社員ID
@@ -264,7 +272,7 @@ namespace WinMacOs.DataRepository.Utilities
         {
             get
             {
-                return HttpContext.User.FindFirstValue(ClaimTypes.Role);
+                return User.FindFirstValue(ClaimTypes.Role);
             }
         }
         #endregion

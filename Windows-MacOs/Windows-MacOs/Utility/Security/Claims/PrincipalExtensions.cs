@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
+using System.Security.Claims;
 using System.Web;
 
 namespace WinMacOs.Utility.Security.Claims
@@ -26,11 +26,9 @@ namespace WinMacOs.Utility.Security.Claims
         // Returns:
         //     The value of the first instance of the specified claim type, or null if the claim
         //     is not present.
-        public static string FindFirstValue(this IPrincipal principal, string claimType)
+        public static string FindFirstValue(this ClaimsPrincipal principal, string claimType)
         {
-            //TODO
-            return "";
-            //return principal.Claims.Where(x => x.Type == claimType).FirstOrDefault().Value;
+            return principal.Claims.FirstOrDefault((m) => m.Type == claimType).Value;
         }
     }
 }

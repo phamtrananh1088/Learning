@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFramework.Query;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -153,7 +152,7 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         Task<bool> ExistsAsync<TExists>(Expression<Func<TExists, bool>> predicate) where TExists : class;
 
-        IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty);
+        IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty);
         /// <summary>
         /// 
         /// </summary>

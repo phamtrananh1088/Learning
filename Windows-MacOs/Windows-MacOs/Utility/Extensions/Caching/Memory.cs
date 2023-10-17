@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿/*
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -455,3 +456,4 @@ namespace WinMacOs.Utility.Extensions.Caching
         bool TryGetValue(object key, out object value);
     }
 }
+*/
