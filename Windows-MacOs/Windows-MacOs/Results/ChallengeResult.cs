@@ -5,27 +5,29 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
 
 namespace WinMacOs.Results
 {
     public class ChallengeResult : IHttpActionResult
     {
-        public ChallengeResult(string loginProvider, ApiController controller)
+        public ChallengeResult(string loginProvider, Controller controller)
         {
             LoginProvider = loginProvider;
-            Request = controller.Request;
+            HttpContext = controller.HttpContext;
         }
 
         public string LoginProvider { get; set; }
-        public HttpRequestMessage Request { get; set; }
+        public HttpContextBase HttpContext { get; set; }
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {
-            Request.GetOwinContext().Authentication.Challenge(LoginProvider);
+            HttpContext.GetOwinContext().Authentication.Challenge(LoginProvider);
 
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
-            response.RequestMessage = Request;
+            response.RequestMessage = HttpContext.Items["MS_HttpRequestMessage"] as HttpRequestMessage;
             return Task.FromResult(response);
         }
     }

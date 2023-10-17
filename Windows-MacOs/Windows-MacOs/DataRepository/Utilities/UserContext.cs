@@ -1,9 +1,8 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Collections.Generic;
-using System.Web;
 using System.Web.Mvc;
 using WinMacOs.DataRepository.AutofacManager;
 using WinMacOs.Utility.DomainModels;
@@ -11,6 +10,7 @@ using WinMacOs.DataRepository.DBManager;
 using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 using WinMacOs.Utility.CacheManager;
+using System.Web;
 
 namespace WinMacOs.DataRepository.Utilities
 {
@@ -30,13 +30,12 @@ namespace WinMacOs.DataRepository.Utilities
             }
         }
 
-        private static HttpContext Context
+        public UserContext(HttpContextBase Context)
         {
-            get
-            {
-                return HttpContext.Current;
-            }
+            this.HttpContext = Context ?? throw new Exception("HttpContextBaseはインスタンス化されません。");
         }
+
+        private HttpContextBase HttpContext { get; set; }
 
         private static ICacheService CacheService
         {
@@ -136,7 +135,7 @@ namespace WinMacOs.DataRepository.Utilities
             return _userInfo ?? new UserInfo();
         }
 
-        public ログイン情報 ログイン情報
+        public LoginInfo LoginInfo
         {
             get
             {
@@ -148,9 +147,9 @@ namespace WinMacOs.DataRepository.Utilities
             }
         }
 
-        private ログイン情報 _ログイン情報 { get; set; }
+        private LoginInfo _ログイン情報 { get; set; }
 
-        public ログイン情報 Get部署情報()
+        public LoginInfo Get部署情報()
         {
             if (_ログイン情報 != null) return _ログイン情報;
 
@@ -220,7 +219,7 @@ namespace WinMacOs.DataRepository.Utilities
                                     + x.GetValue("課コード")?.ToString()
                                     + x.GetValue("係コード")?.ToString()
                                     == 所属部署コード)
-                                    .Select(o => new ログイン情報
+                                    .Select(o => new LoginInfo
                                     {
                                         事務所コード = o.GetValue("事務所コード")?.ToString(),
                                         営業所コード = o.GetValue("営業所コード")?.ToString(),
@@ -232,7 +231,7 @@ namespace WinMacOs.DataRepository.Utilities
                                         社員名 = o.GetValue("社員名")?.ToString()
                                     }).FirstOrDefault();
 
-            return _ログイン情報 ?? new ログイン情報();
+            return _ログイン情報 ?? new LoginInfo();
         }
 
         public void LogOut(string key)
@@ -245,8 +244,8 @@ namespace WinMacOs.DataRepository.Utilities
         {
             get
             {
-                return (Context.User.FindFirstValue(JwtRegisteredClaimNames.Jti)
-                    ?? Context.User.FindFirstValue(ClaimTypes.NameIdentifier))?.ToString();
+                return (HttpContext.User.FindFirstValue(/*JwtRegisteredClaimNames.Jti*/"Jti")
+                    ?? HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier))?.ToString();
             }
         }
         public string 社員ID
@@ -265,7 +264,7 @@ namespace WinMacOs.DataRepository.Utilities
         {
             get
             {
-                return Context.User.FindFirstValue(ClaimTypes.Role);
+                return HttpContext.User.FindFirstValue(ClaimTypes.Role);
             }
         }
         #endregion

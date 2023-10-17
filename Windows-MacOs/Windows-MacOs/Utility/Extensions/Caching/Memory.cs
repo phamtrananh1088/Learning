@@ -1,4 +1,4 @@
-﻿/*
+﻿using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Microsoft.Extensions.Caching.Memory
+namespace WinMacOs.Utility.Extensions.Caching
 {
     public static class MemoryCacheEntryExtensions
     {
@@ -455,4 +455,3 @@ namespace Microsoft.Extensions.Caching.Memory
         bool TryGetValue(object key, out object value);
     }
 }
-*/

@@ -1,5 +1,4 @@
-﻿using IOS.Models;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -11,8 +10,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using WinMacOs.Models;
 
-namespace IOS
+namespace WinMacOs
 {
     public class EmailService : IIdentityMessageService
     {
