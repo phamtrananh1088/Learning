@@ -10,7 +10,7 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: webconfig.subsite_development,
+    assetsPublicPath: webconfig.spa_folder,
     proxyTable: {
       '/api':{
         // target: 'http://10.251.38.62:3000',
@@ -55,12 +55,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../../Windows-MacOs/vue/index.html'),
+    index: path.resolve(__dirname, '../../Windows-MacOs' + webconfig.spa_folder + 'index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../../Windows-MacOs/vue'),
+    assetsRoot: path.resolve(__dirname, '../../Windows-MacOs' + webconfig.spa_folder),
     assetsSubDirectory: 'static',
-    assetsPublicPath: webconfig.subsite_production,
+    assetsPublicPath: webconfig.spa_folder,
 
     /**
      * Source Maps

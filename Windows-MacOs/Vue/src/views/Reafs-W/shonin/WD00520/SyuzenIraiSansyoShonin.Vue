@@ -2240,8 +2240,8 @@ var $select検収回数value
 
 export default {
   activated () {
-    if (localStorage.getItem('KeepAliveFlag') == 0 && this.isMounted == false) {
-      localStorage.setItem('KeepAliveFlag', 1)
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1)
       this.initOnMounted()
     }
     this.isMounted = false
@@ -2979,19 +2979,7 @@ export default {
         検収回数: this.$route.query.検収回数,
         tabFocus: this.$route.query.tabFocus
       }
-      // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」Start
-      // this.sessionPageDataBack = localStorage.getItem('WD00510_MishoninShoninIchiran')
-      // if (this.sessionPageDataBack) {
-      //   this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-      //   localStorage.removeItem('WD00510_MishoninShoninIchiran')
-      // } else if (localStorage.getItem('WD00210_IchiranKensaku')) {
-      //   this.sessionPageDataBack = localStorage.getItem('WD00210_IchiranKensaku')
-      //   if (this.sessionPageDataBack) {
-      //     this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-      //     localStorage.removeItem('WD00210_IchiranKensaku')
-      //   }
-      // }
-      // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」End
+
       if (this.queryParams.工事依頼No && this.queryParams.tabFocus === 'sagyo') {
         this.doActiveName = 'sagyo'
         this.oldSelectedTab = 'sagyo'
@@ -4714,11 +4702,9 @@ export default {
       this.showDialogHatchuShoUkesho = true
     },
     async onBack () {
-      localStorage.setItem('KeepAliveFlag', 0)
-      localStorage.setItem('RouterBackFlag', 1)
-      // if (this.sessionPageDataBack) {
-      //   localStorage.setItem('WD00520_SyuzenIraiSansyoShonin', JSON.stringify(this.sessionPageDataBack))
-      // }
+      this.$store.commit('setKeepAliveFlag', 0)
+      this.$store.commit('setRouterBackFlag', 1)
+
       if (this.activeName === 'hatchu') {
         if (this.checkChangeTabHatchu() || this.checkChangeFooter()) {
           if (await this.confirm((await this.getMsg('K000001')).data)) {

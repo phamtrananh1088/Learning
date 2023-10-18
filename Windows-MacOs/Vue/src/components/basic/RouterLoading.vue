@@ -13,7 +13,7 @@ export default {
   },
   
   created() {
-    let theme = localStorage.getItem("main_theme");
+    let theme = this.$store.getters.getMainTheme();
     if (theme) {
       this.theme = theme;
     }

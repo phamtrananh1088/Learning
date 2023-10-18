@@ -133,7 +133,7 @@ export default {
     window.addEventListener('resize', this.resizeScreen)
   },
   created () {
-    let theme = localStorage.getItem('main_theme')
+    let theme = this.$store.getters.getMainTheme()
     if (theme) {
       this.theme = theme
     }
@@ -189,7 +189,7 @@ export default {
         this.theme = name
       }
       this.menu_theme = this.theme == 'white' ? 'dark' : 'light'
-      localStorage.setItem('main_theme', name)
+      this.$store.commit('setMainTheme', name)
     },
     to (item) {
       if (typeof item === 'string' || item.path == '/login') {

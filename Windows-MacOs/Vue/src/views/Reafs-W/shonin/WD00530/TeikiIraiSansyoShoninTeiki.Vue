@@ -1518,8 +1518,8 @@ var $thisValue;
 
 export default {
   activated() {
-    if (localStorage.getItem("KeepAliveFlag") == 0 && this.isMounted == false) {
-      localStorage.setItem("KeepAliveFlag", 1);
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1);
       this.initialize();
     }
     this.isMounted = false;
@@ -3985,8 +3985,8 @@ export default {
       this.onSearch();
     },
     async onBack() {
-      localStorage.setItem("KeepAliveFlag", 0);
-      localStorage.setItem("RouterBackFlag", 1);
+      this.$store.commit('setKeepAliveFlag', 0);
+      this.$store.commit('setRouterBackFlag', 1);
       this.loadingBack = true;
       let isChange = false;
 
@@ -4026,8 +4026,8 @@ export default {
           // }else{
           //   this.$router.push({ name: 'WD00010' })
           // }
-          localStorage.setItem("KeepAliveFlag", 0);
-          localStorage.setItem("RouterBackFlag", 1);
+          this.$store.commit('setKeepAliveFlag', 0);
+          this.$store.commit('setRouterBackFlag', 1);
           this.$router.back();
         } else {
           // this.loadingBack = false
@@ -4041,8 +4041,8 @@ export default {
         // }else{
         //   this.$router.push({ name: 'WD00010' })
         // }
-        localStorage.setItem("KeepAliveFlag", 0);
-        localStorage.setItem("RouterBackFlag", 1);
+        this.$store.commit('setKeepAliveFlag', 0);
+        this.$store.commit('setRouterBackFlag', 1);
         this.$router.back();
       }
     },

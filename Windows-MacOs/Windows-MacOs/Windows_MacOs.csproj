@@ -235,6 +235,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Controllers\Reafs_WController.cs" />
     <Compile Include="DataRepository\AutofacManager\AutofacContainerModule.cs" />
     <Compile Include="DataRepository\BaseProvider\IRepository.cs" />
     <Compile Include="DataRepository\BaseProvider\RepositoryBase.cs" />
@@ -258,7 +259,7 @@
     <Compile Include="DataRepository\IRepositories\Unit\ISrtRepository.cs" />
     <Compile Include="Controllers\BaseVueController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\VueController.cs" />
+    <Compile Include="Controllers\Reafs_TController.cs" />
     <Compile Include="Controllers\NotesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DataRepository\Utilities\ActionObserver.cs" />

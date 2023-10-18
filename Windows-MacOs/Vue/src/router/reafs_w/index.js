@@ -34,12 +34,12 @@ const router = new Router({
         //   component: () => import('@/views/Reafs-W/common/WD00010/Top.vue')
         // },
         {
-          path: re('/Reafs_W/common/WD00011/OsiraseIchiran'),
+          path: re('/Reafs_W/OsiraseIchiran'),
           name: 'WD00011',
           component: () => import('@/views/Reafs-W/common/WD00011/OsiraseIchiran.vue')
         },
         {
-          path: re('/Reafs_W/common/WD00012/OsiraseIchiran'),
+          path: re('/Reafs_W/OsiraseTouroku'),
           name: 'WD00012',
           component: () => import('@/views/Reafs-W/common/WD00012/OsiraseTouroku.vue')
         },
@@ -160,9 +160,9 @@ const router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   store.getters.getUserInfo()
-  if (localStorage.getItem('routerParams')) {
-    const params = JSON.parse(localStorage.getItem('routerParams'))
-    localStorage.removeItem('routerParams')
+  if (store.getters.getRouterParams()) {
+    const params = store.getters.getRouterParams()
+    store.commit('setRouterParams', null)
     router.push({name: to.name, params})
     return
   }
@@ -185,13 +185,13 @@ router.beforeEach(async (to, from, next) => {
       }
     })
 
-  if (store.getters.isLogin() && to.name === 'WD00000' && localStorage.getItem('isBackToLogin') != '1' && to.query.redirect) {
+  if (store.getters.isLogin() && to.name === 'WD00000' && store.getters.getIsBackToLogin() != '1' && to.query.redirect) {
     return next({ name: 'WD00010' })
   }
-  localStorage.setItem('isBackToLogin', '0')
+  store.commit('setIsBackToLogin', '0')
   if ((to.hasOwnProperty('meta') && to.meta.anonymous) || store.getters.isLogin()) {
     if (to.query.guid && to.name !== 'WD00000') {
-      localStorage.setItem('isBackToLogin', '1')
+      store.commit('setIsBackToLogin', '1')
       return next({ name: 'WD00000', query: { redirect: to.path, guid: to.query.guid } })
     } else {
       return next()

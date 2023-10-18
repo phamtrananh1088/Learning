@@ -367,8 +367,8 @@ import screenPopup from '../../common/ScreenPopup/ScreenPopup.vue'
 
 export default {
   async activated () {
-    if (localStorage.getItem('KeepAliveFlag') == 0 && this.isMounted == false) {
-      localStorage.setItem('KeepAliveFlag', 1)
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1)
       await this.initOnMounted()
       document.querySelector('.ve-table-container').scrollTop = this.scrollTop
     }
@@ -1194,8 +1194,8 @@ export default {
   },
   methods: {
     async initOnMounted () {
-      if (localStorage.getItem('RouterBackFlag') == 1) {
-        localStorage.setItem('RouterBackFlag', 0)
+      if (this.$store.getters.getRouterBackFlag() == 1) {
+        this.$store.commit('setRouterBackFlag', 0)
         // ハノイ側修正2022/12/08　STEP2_W　課題管理表№240：設計書「修正履歴」シートの「2022/12/07仕様変更分」「他画面から戻ってきた際の再検索処理が常に実行されてしまう。」Start
         if (this.pageData.承認種類) {
           await this.onSearch()
@@ -1207,37 +1207,6 @@ export default {
       this.pageData.修繕_定期 = '全て'
       this.dsp工事依頼No = '（工事）依頼№'
 
-      // this.sessionPageData = localStorage.getItem('WD00520_SyuzenIraiSansyoShonin')
-      // if (this.sessionPageData) {
-      //   this.sessionPageData = JSON.parse(this.sessionPageData)
-      //   localStorage.removeItem('WD00520_SyuzenIraiSansyoShonin')
-      //   this.pageData = this.sessionPageData.pageData
-      //   this.onSearch()
-      // } else if (localStorage.getItem('WD00111_SyuzenIraiSansyoShonin')) {
-      //   this.sessionPageData = localStorage.getItem('WD00111_SyuzenIraiSansyoShonin')
-      //   if (this.sessionPageData) {
-      //     this.sessionPageData = JSON.parse(this.sessionPageData)
-      //     localStorage.removeItem('WD00111_SyuzenIraiSansyoShonin')
-      //     this.pageData = this.sessionPageData.pageData
-      //     this.onSearch()
-      //   }
-      // } else if (localStorage.getItem('WD00311_TeikiIraiSansyoShonin')) {
-      //   this.sessionPageData = localStorage.getItem('WD00311_TeikiIraiSansyoShonin')
-      //   if (this.sessionPageData) {
-      //     this.sessionPageData = JSON.parse(this.sessionPageData)
-      //     localStorage.removeItem('WD00311_TeikiIraiSansyoShonin')
-      //     this.pageData = this.sessionPageData.pageData
-      //     this.onSearch()
-      //   }
-      // } else {
-      //   this.sessionPageData = localStorage.getItem('WD00530_TeikiIraiSansyoShonin')
-      //   if (this.sessionPageData) {
-      //     this.sessionPageData = JSON.parse(this.sessionPageData)
-      //     localStorage.removeItem('WD00530_TeikiIraiSansyoShonin')
-      //     this.pageData = this.sessionPageData.pageData
-      //     this.onSearch()
-      //   }
-      // }
       if (this.$route.query.承認種類) {
       // ハノイ側修正2022/08/05　STEP2_W　課題管理表№24：設計書「修正履歴」シートの「2022/08/03仕様変更分」◆TOPページ（WD00010）の件数カウントからの画面遷移時の初期表示条件について　追加 Start
         this.pageData.承認種類 = this.$route.query.承認種類
@@ -1757,11 +1726,9 @@ export default {
           // this.$router.push({ name: 'WD00130', params: { 工事依頼No: row.工事依頼NO } })
         }
       } else {
-        localStorage.setItem('KeepAliveFlag', 0)
+        this.$store.commit('setKeepAliveFlag', 0)
         this.scrollTop = document.querySelector('.ve-table-container').scrollTop
-        // create session and send
-        // const sessionPageData = {pageData: JSON.parse(JSON.stringify(this.pageData)), scrollTop: document.querySelector('.ve-table-container').scrollTop}
-        // localStorage.setItem('WD00510_MishoninShoninIchiran', JSON.stringify(sessionPageData))
+
         if (this.pageData.承認種類 == this.ApprovalType.依頼承認) {
         // ハノイ側修正2022/07/28　STEP2_W　課題管理表№14：設計書「修正履歴」シートの「2022/07/14仕様変更分」「№15,16,18修正  №27追加」Start
         // ハノイ側修正2022/08/17　STEP2_W　課題管理表№38：設計書「修正履歴」シートの「2022/08/16仕様変更分」承認種類＝「10：依頼承認」のリンククリック時の遷移先を修正 Start

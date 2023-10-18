@@ -40,11 +40,6 @@ export default {
       tabFocus: this.$route.query.tabFocus
     }
 
-    // this.sessionPageDataBack = localStorage.getItem('WD00510_MishoninShoninIchiran')
-    // if (this.sessionPageDataBack) {
-    //   this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-    //   localStorage.removeItem('WD00510_MishoninShoninIchiran')
-    // }
     if (this.queryParams.工事依頼No && this.queryParams.発注サブNo && this.queryParams.検収回数) {
       this.activeName = 'sagyo'
       this.oldSelectedTab = 'sagyo'
@@ -68,9 +63,6 @@ export default {
   },
   methods: {
     async onBack () {
-      // if (this.sessionPageDataBack) {
-      //   localStorage.setItem('WD00530_TeikiIraiSansyoShonin', JSON.stringify(this.sessionPageDataBack))
-      // }
       if (this.activeName === 'sagyo') {
         if (this.queryParams.tabFocus === 'sagyo') {
           this.$router.push({ name: 'WD00510' })

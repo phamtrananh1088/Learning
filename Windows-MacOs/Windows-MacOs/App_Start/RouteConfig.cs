@@ -14,9 +14,15 @@ namespace WinMacOs
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                name: "Vue3",
-                url: "vue/{action}/{id}",
-                defaults: new { controller = "Vue", action = "Index", id = UrlParameter.Optional }
+                name: "Reafs_T",
+                url: "Reafs_T/{path}",
+                defaults: new { controller = "Reafs_T", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "Reafs_W",
+                url: "Reafs_W/{path}",
+                defaults: new { controller = "Reafs_W", action = "Index" }
             );
 
             routes.MapRoute(

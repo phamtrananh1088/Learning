@@ -12,6 +12,7 @@
     "Reafs_R_BaseURL":"http://localhost:3000/Reafs_R_Web/",
     "subsite_development": "/",
     "subsite_debug": "/",
-    "subsite_production": "/vue/"
+    "subsite_production": "/",
+    "spa_folder": "/Reafs_W/"
 
 }

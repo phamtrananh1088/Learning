@@ -84,13 +84,13 @@ router.beforeEach(async (to, from, next) => {
         store.commit('setpageTitle', '')
       }
     })
-  if (store.getters.isLogin() && to.name === 'RD00800' && localStorage.getItem('isBackToLogin') != '1' && to.query.redirect) {
+  if (store.getters.isLogin() && to.name === 'RD00800' && store.getters.getIsBackToLogin() != '1' && to.query.redirect) {
     return next({ name: 'RD00801' })
   }
-  localStorage.setItem('isBackToLogin', '0')
+  store.commit('setIsBackToLogin', '0')
   if ((to.hasOwnProperty('meta') && to.meta.anonymous) || store.getters.isLogin()) {
     if (to.query.guid && to.name !== 'RD00800') {
-      localStorage.setItem('isBackToLogin', '1')
+      store.commit('setIsBackToLogin', '1')
       return next({ name: 'RD00800', query: { redirect: to.path, guid: to.query.guid } })
     } else {
       return next()

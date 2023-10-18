@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import data from './data.js'
+const webconfig = require('../../static/webconfig.json')
 
 Vue.use(Vuex)
 
@@ -12,8 +13,16 @@ function getUserInfo (state) {
   }
   return state.userInfo
 }
-const keys = { USER: 'user' }
-
+const keys = { USER: webconfig.spa_folder === '/Reafs_W/' ? 'userW' : 'user' }
+const appSetting = {
+  PAGEDATA: webconfig.spa_folder === '/Reafs_W/' ? 'pageDataW' : 'pageData',
+  OLDPATH: webconfig.spa_folder === '/Reafs_W/' ? 'oldPathW' : 'oldPath',
+  ISBACKTOLOGIN: webconfig.spa_folder === '/Reafs_W/' ? 'isBackToLoginW' : 'isBackToLogin',
+  MAIN_THEME: webconfig.spa_folder === '/Reafs_W/' ? 'main_themeW' : 'main_theme',
+  KEEPALIVEFLAG: webconfig.spa_folder === '/Reafs_W/' ? 'KeepAliveFlagW' : 'KeepAliveFlag',
+  ROUTERBACKFLAG: webconfig.spa_folder === '/Reafs_W/' ? 'RouterBackFlagW' : 'RouterBackFlag',
+  ROUTERPARAMS: webconfig.spa_folder === '/Reafs_W/' ? 'routerParamsW' : 'routerParams'
+}
 function getMenuInfo (state) {
   if (state.menuInfo) return state.menuInfo
   let menuInfo = localStorage.getItem(menus.MENU)
@@ -30,7 +39,47 @@ function getPageTitle (state) {
   }
   return state.pagetitle
 }
-const menus = { MENU: 'menu', PAPGETITLE: 'pagetitle' }
+function getIsBackToLogin (state) {
+  if (state.isBackToLogin) return state.isBackToLogin
+  let data = localStorage.getItem(appSetting.ISBACKTOLOGIN)
+  if (data) {
+    state.isBackToLogin = data
+  }
+  return state.isBackToLogin
+}
+function getMainTheme (state) {
+  if (state.main_theme) return state.main_theme
+  let data = localStorage.getItem(appSetting.main_theme)
+  if (data) {
+    state.main_theme = data
+  }
+  return state.isBackToLogin
+}
+function getKeepAliveFlag (state) {
+  if (state.KeepAliveFlag) return state.KeepAliveFlag
+  let data = localStorage.getItem(appSetting.KEEPALIVEFLAG)
+  if (data) {
+    state.KeepAliveFlag = data
+  }
+  return state.KeepAliveFlag
+}
+function getRouterBackFlag (state) {
+  if (state.RouterBackFlag) return state.RouterBackFlag
+  let data = localStorage.getItem(appSetting.ROUTERBACKFLAG)
+  if (data) {
+    state.RouterBackFlag = data
+  }
+  return state.RouterBackFlag
+}
+function getRouterParams (state) {
+  if (state.routerParams) return state.routerParams
+  let data = localStorage.getItem(appSetting.ROUTERPARAMS)
+  if (data) {
+    state.routerParams = JSON.parse(data)
+  }
+  return state.routerParams
+}
+const menus = { MENU: webconfig.spa_folder === '/Reafs_W/' ? 'menuW' : 'menu', PAPGETITLE: webconfig.spa_folder === '/Reafs_W/' ? 'pagetitleW' : 'pagetitle' }
 // this.$store.system(systemは名称)
 const system = {
   state: {
@@ -39,7 +88,12 @@ const system = {
     menuInfo: null,
     IpAddress: '',
     pageData: {},
-    oldPath: ''
+    oldPath: '',
+    isBackToLogin: false,
+    main_theme: 'orange',
+    KeepAliveFlag: 0,
+    RouterBackFlag: 0,
+    routerParams: null
   },
   mutations: {
     setUserInfo (state, data) {
@@ -69,12 +123,32 @@ const system = {
       state.IpAddress = data
     },
     setPageData (state, data) {
-      window.sessionStorage.setItem('pageData', JSON.stringify(data))
+      window.sessionStorage.setItem(appSetting.PAGEDATA, JSON.stringify(data))
       // state.pageData = data
     },
     setOldPath (state, data) {
-      window.sessionStorage.setItem('oldPath', JSON.stringify(data))
+      window.sessionStorage.setItem(appSetting.OLDPATH, JSON.stringify(data))
       // state.oldPath = data
+    },
+    setIsBackToLogin (state, data) {
+      state.isBackToLogin = data
+      localStorage.setItem(appSetting.ISBACKTOLOGIN, JSON.stringify(data))
+    },
+    setMainTheme (state, data) {
+      state.main_theme = data
+      localStorage.setItem(appSetting.MAIN_THEME, JSON.stringify(data))
+    },
+    setKeepAliveFlag (state, data) {
+      state.KeepAliveFlag = data
+      localStorage.setItem(appSetting.KEEPALIVEFLAG, JSON.stringify(data))
+    },
+    setRouterBackFlag (state, data) {
+      state.RouterBackFlag = data
+      localStorage.setItem(appSetting.ROUTERBACKFLAG, JSON.stringify(data))
+    },
+    setRouterParams (state, data) {
+      state.routerParams = data
+      localStorage.setItem(appSetting.ROUTERPARAMS, JSON.stringify(data))
     }
   },
   getters: {
@@ -119,11 +193,26 @@ const system = {
       return state.IpAddress
     },
     getPageData: (state) => () => {
-      return JSON.parse(window.sessionStorage.getItem('pageData'))
+      return JSON.parse(window.sessionStorage.getItem(appSetting.PAGEDATA))
     },
     getOldPath: (state) => () => {
-      return JSON.parse(window.sessionStorage.getItem('oldPath'))
+      return JSON.parse(window.sessionStorage.getItem(appSetting.OLDPATH))
       // return state.oldPath
+    },
+    getIsBackToLogin: (state) => () => {
+      return getIsBackToLogin(state)
+    },
+    getMainTheme: (state) => () => {
+      return getMainTheme(state)
+    },
+    getKeepAliveFlag: (state) => () => {
+      return getKeepAliveFlag(state)
+    },
+    getRouterBackFlag: (state) => () => {
+      return getRouterBackFlag(state)
+    },
+    getRouterParams: (state) => () => {
+      return getRouterParams(state)
     }
   },
   actions: {

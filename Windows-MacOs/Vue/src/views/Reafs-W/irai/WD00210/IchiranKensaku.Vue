@@ -451,8 +451,8 @@ import reafsinputnumber from '@/components/basic/ReafsControl/ReafsInputNumber.v
 
 export default {
   async activated () {
-    if (localStorage.getItem('KeepAliveFlag') == 0 && this.isMounted == false) {
-      localStorage.setItem('KeepAliveFlag', 1)
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1)
       await this.initOnMounted()
       document.querySelector('.ve-table-container').scrollTop = this.scrollTop
     }
@@ -974,8 +974,8 @@ export default {
   },
   methods: {
     async initOnMounted () {
-      if (localStorage.getItem('RouterBackFlag') == 1) {
-        localStorage.setItem('RouterBackFlag', 0)
+      if (this.$store.getters.getRouterBackFlag() == 1) {
+        this.$store.commit('setRouterBackFlag', 0)
         // ハノイ側修正2022/12/08　STEP2_W　課題管理表№240：設計書「修正履歴」シートの「2022/12/07仕様変更分」「他画面から戻ってきた際の再検索処理が常に実行されてしまう。」Start
         if (this.pageData.tableData.length > 0) {
           await this.onSearch()
@@ -1115,12 +1115,8 @@ export default {
         return
       }
       // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」Start
-      // create session and send
-      // const sessionPageData = {pageData: JSON.parse(JSON.stringify(this.pageData)), scrollTop: document.querySelector('.ve-table-container').scrollTop}
-      // delete sessionPageData.pageData.tableData
-      // localStorage.setItem('WD00210_IchiranKensaku', JSON.stringify(sessionPageData))
 
-      localStorage.setItem('KeepAliveFlag', 0)
+      this.$store.commit('setKeepAliveFlag', 0)
       this.scrollTop = document.querySelector('.ve-table-container').scrollTop
       if (row.工事区分.includes('一般') || row.工事区分.includes('緊急') || row.工事区分.includes('スポット')) {
         if (row.承認フラグ == 0) {

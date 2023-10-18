@@ -12,16 +12,16 @@ using WinMacOs.Models;
 namespace WinMacOs.Controllers
 {
     //[Authorize]
-    public class VueController : BaseVueController<IUnitOfWork>
+    public class Reafs_TController : BaseVueController<IUnitOfWork>
     {
-        public VueController(IUnitOfWork repository)
+        public Reafs_TController(IUnitOfWork repository)
              : base(repository)
         {
             
         }
-        public ActionResult Index()
+        public ActionResult Index(String path)
         {
-            return File("~/vue/index.html", "text/html");
+            return File("~/Reafs_T/index.html", "text/html");
         }
 
         [HttpGet, HttpPost, Route("getAllMenu"), AllowAnonymous]

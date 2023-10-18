@@ -2078,8 +2078,8 @@ export default {
           // } else {
           //   this.$router.push({ name: 'WD00010' })
           // }
-          localStorage.setItem('KeepAliveFlag', 0)
-          localStorage.setItem('RouterBackFlag', 1)
+          this.$store.commit('setKeepAliveFlag', 0)
+          this.$store.commit('setRouterBackFlag', 1)
           this.$router.back()
         } else {
           this.loadingBack = false
@@ -2091,8 +2091,8 @@ export default {
         // } else {
         //   this.$router.push({ name: 'WD00010' })
         // }
-        localStorage.setItem('KeepAliveFlag', 0)
-        localStorage.setItem('RouterBackFlag', 1)
+        this.$store.commit('setKeepAliveFlag', 0)
+        this.$store.commit('setRouterBackFlag', 1)
         this.$router.back()
         //WD00510からも呼ばれるはずなのでそちらに戻る処理も必要
       }

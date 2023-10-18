@@ -592,8 +592,8 @@ var $select中止保留区分value
 
 export default {
   activated () {
-    if (localStorage.getItem('KeepAliveFlag') == 0 && this.isMounted == false) {
-      localStorage.setItem('KeepAliveFlag', 1)
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1)
       this.initOnMounted()
     }
     this.isMounted = false
@@ -974,20 +974,6 @@ export default {
         工事依頼No: this.$route.query.工事依頼No,
         page: this.$route.query.page
       }
-
-      // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」Start
-      // this.sessionPageDataBack = localStorage.getItem('WD00510_MishoninShoninIchiran')
-      // if (this.sessionPageDataBack) {
-      //   this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-      //   localStorage.removeItem('WD00510_MishoninShoninIchiran')
-      // } else if (localStorage.getItem('WD00210_IchiranKensaku')) {
-      //   this.sessionPageDataBack = localStorage.getItem('WD00210_IchiranKensaku')
-      //   if (this.sessionPageDataBack) {
-      //     this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-      //     localStorage.removeItem('WD00210_IchiranKensaku')
-      //   }
-      // }
-      // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」End
 
       if (this.$route.query && this.$route.query.page) {
         this.searchForm.koujiiraiNo = this.$route.query.工事依頼No.substring(0, 2)
@@ -2517,11 +2503,9 @@ export default {
       this.onSearch()
     },
     async onBack () {
-      localStorage.setItem('KeepAliveFlag', 0)
-      localStorage.setItem('RouterBackFlag', 1)
-      // if (this.sessionPageDataBack) {
-      //   localStorage.setItem('WD00111_SyuzenIraiSansyoShonin', JSON.stringify(this.sessionPageDataBack))
-      // }
+      this.$store.commit('setKeepAliveFlag', 0)
+      this.$store.commit('setRouterBackFlag', 1)
+
       this.loadingBack = true
       let isChange = false
       if (!this.iraiForm.依頼No) {

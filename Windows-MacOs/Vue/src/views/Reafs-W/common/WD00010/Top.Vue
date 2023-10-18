@@ -344,7 +344,7 @@ export default {
       if (Number(scope.row[key].replaceAll(",", "")) <= 0) {
         return false
       }
-      localStorage.setItem('KeepAliveFlag', 0)
+      this.$store.commit('setKeepAliveFlag', 0)
       console.log('onJumpTo:'+ scope.row.ROWTYPE + ', ' + key)
       let jumpParamWD00510 = {
         name: null,

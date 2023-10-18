@@ -232,12 +232,12 @@ const router = new Router({
           component: () => import('@/views/Reafs-W/common/WD00010/Top.vue')
         },
         {
-          path: re('/Reafs_W/common/WD00011/OsiraseIchiran'),
+          path: re('/Reafs_W/OsiraseIchiran'),
           name: 'WD00011',
           component: () => import('@/views/Reafs-W/common/WD00011/OsiraseIchiran.vue')
         },
         {
-          path: re('/Reafs_W/common/WD00012/OsiraseIchiran'),
+          path: re('/Reafs_W/OsiraseTouroku'),
           name: 'WD00012',
           component: () => import('@/views/Reafs-W/common/WD00012/OsiraseTouroku.vue')
         },

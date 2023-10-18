@@ -617,8 +617,8 @@ var $select中止保留区分value
 
 export default {
   activated () {
-    if (localStorage.getItem('KeepAliveFlag') == 0 && this.isMounted == false) {
-      localStorage.setItem('KeepAliveFlag', 1)
+    if (this.$store.getters.getKeepAliveFlag() == 0 && this.isMounted == false) {
+      this.$store.commit('setKeepAliveFlag', 1)
       this.initOnMounted()
     }
     this.isMounted = false
@@ -1018,12 +1018,6 @@ export default {
         工事依頼No: this.$route.query.工事依頼No,
         page: this.$route.query.page
       }
-
-      // this.sessionPageDataBack = localStorage.getItem('WD00510_MishoninShoninIchiran')
-      // if (this.sessionPageDataBack) {
-      //   this.sessionPageDataBack = JSON.parse(this.sessionPageDataBack)
-      //   localStorage.removeItem('WD00510_MishoninShoninIchiran')
-      // }
 
       if (this.$route.query && this.$route.query.工事依頼No) {
         this.searchForm.koujiiraiNo = this.$route.query.工事依頼No.substring(0, 2)
@@ -2572,8 +2566,8 @@ export default {
         })
     },
     async onBack () {
-      localStorage.setItem('KeepAliveFlag', 0)
-      localStorage.setItem('RouterBackFlag', 1)
+      this.$store.commit('setKeepAliveFlag', 0)
+      this.$store.commit('setRouterBackFlag', 1)
       this.loadingBack = true
       let isChange = false
       if (!this.iraiForm.依頼No) {
