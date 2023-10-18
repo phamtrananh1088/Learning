@@ -6,9 +6,9 @@ import ElementUI from 'element-ui'//reafs デスクトップ用UI
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/ja' // 日本語にロケール変換
 // import router from './router' // 適用router：開発用
-import router from './router/reafs_t' // 適用router：Reafs-Tの場合
+// import router from './router/reafs_t' // 適用router：Reafs-Tの場合
 // import router from './router/reafs_w' // 適用router：Reafs-Wの場合
-// import router from './router/reafs_r_web' // 適用router：Reafs-Rの場合
+import router from './router/reafs_r_web' // 適用router：Reafs-Rの場合
 import http from './api/http'
 import commonFunctionUI from './api/commonFunctionUI'
 import store from './store/index'

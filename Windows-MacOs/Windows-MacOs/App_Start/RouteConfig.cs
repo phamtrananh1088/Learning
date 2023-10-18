@@ -26,6 +26,12 @@ namespace WinMacOs
             );
 
             routes.MapRoute(
+                name: "Reafs_R_Web",
+                url: "Reafs_R_Web/{path}",
+                defaults: new { controller = "Reafs_R_Web", action = "Index" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

@@ -13,15 +13,19 @@ function getUserInfo (state) {
   }
   return state.userInfo
 }
-const keys = { USER: webconfig.spa_folder === '/Reafs_W/' ? 'userW' : 'user' }
+function defKey (key) {
+  return key + appSubfix
+}
+const appSubfix = webconfig.spa_folder === '/Reafs_W/' ? 'W' : webconfig.spa_folder === '/Reafs_R_Web/' ? 'R_Web' : ''
+const keys = { USER: defKey('user') }
 const appSetting = {
-  PAGEDATA: webconfig.spa_folder === '/Reafs_W/' ? 'pageDataW' : 'pageData',
-  OLDPATH: webconfig.spa_folder === '/Reafs_W/' ? 'oldPathW' : 'oldPath',
-  ISBACKTOLOGIN: webconfig.spa_folder === '/Reafs_W/' ? 'isBackToLoginW' : 'isBackToLogin',
-  MAIN_THEME: webconfig.spa_folder === '/Reafs_W/' ? 'main_themeW' : 'main_theme',
-  KEEPALIVEFLAG: webconfig.spa_folder === '/Reafs_W/' ? 'KeepAliveFlagW' : 'KeepAliveFlag',
-  ROUTERBACKFLAG: webconfig.spa_folder === '/Reafs_W/' ? 'RouterBackFlagW' : 'RouterBackFlag',
-  ROUTERPARAMS: webconfig.spa_folder === '/Reafs_W/' ? 'routerParamsW' : 'routerParams'
+  PAGEDATA: defKey('pageData'),
+  OLDPATH: defKey('oldPath'),
+  ISBACKTOLOGIN: defKey('isBackToLogin'),
+  MAIN_THEME: defKey('main_theme'),
+  KEEPALIVEFLAG: defKey('KeepAliveFlag'),
+  ROUTERBACKFLAG: defKey('RouterBackFlag'),
+  ROUTERPARAMS: defKey('routerParams')
 }
 function getMenuInfo (state) {
   if (state.menuInfo) return state.menuInfo
@@ -79,7 +83,7 @@ function getRouterParams (state) {
   }
   return state.routerParams
 }
-const menus = { MENU: webconfig.spa_folder === '/Reafs_W/' ? 'menuW' : 'menu', PAPGETITLE: webconfig.spa_folder === '/Reafs_W/' ? 'pagetitleW' : 'pagetitle' }
+const menus = { MENU: defKey('menu'), PAPGETITLE: defKey('pagetitle') }
 // this.$store.system(systemは名称)
 const system = {
   state: {
