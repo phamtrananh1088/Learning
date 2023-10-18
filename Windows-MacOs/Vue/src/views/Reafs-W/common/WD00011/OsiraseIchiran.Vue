@@ -1,5 +1,5 @@
 <template>
-  <div class="home-contianer">
+  <div class="home-contianer OsiraseIchiran">
     <!-- 検索部 -->
     <!-- :rules="rules" -->
     <el-form
@@ -7,30 +7,24 @@
       ref="searchForm"
       label-width="120px"
       class="search-form-class"
-      :rules="rules"
     >
       <el-row>
         <!-- left -->
         <el-col :span="12">
-          <el-col :span="16"
-            ><el-form-item label="適用日" prop="tekiyouDate">
-              <nengetsu
-                v-model="searchForm.tekiyouDate"
-                ref="selectDate"
-                :required="true"
-                type="daterange"
-                format="yyyy/MM/dd"
-                :clearable="false"
-                :width="'260px'"
-                range-separator="~"
-                @input="onInput"
-              ></nengetsu> </el-form-item
-          ></el-col>
+          <el-col :span="14">
+            <el-form-item label="適用日" prop="tekiyouDate">
+              <div style="display: flex;">
+                <el-date-picker v-model="searchForm.tekiyouDateStart" ref="refTekiyouDateStart" required type="date" format="yyyy/MM/dd" value-format="yyyy/MM/dd"
+                  class="date-picker date-range" />
+                <span style="margin: 0 2px">～</span>
+                <el-date-picker v-model="searchForm.tekiyouDateEnd" ref="refTekiyouDateEnd" required type="date" format="yyyy/MM/dd" value-format="yyyy/MM/dd"
+                  class="date-picker date-range" />
+              </div>
+            </el-form-item>
+          </el-col>
           <el-col :span="1">
             <el-form-item prop="keijiFlg" label-width="0">
-              <el-checkbox v-model="searchForm.keijiFlg"
-                >現在掲示期間のみ表示</el-checkbox
-              >
+              <el-checkbox v-model="searchForm.keijiFlg">現在掲示期間のみ表示</el-checkbox>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -144,22 +138,20 @@
       </el-table-column>
     </el-table>
     <el-button @click="onSakusei" >新規作成</el-button>
-    <el-button @click="onClickBack" :loading="loadingBack" style="float: right" >戻る</el-button>
+    <el-button @click="onClickBack" style="float: right" >戻る</el-button>
   </div>
 </template>
 
 <script>
 import reafsinputtext from "@/components/basic/ReafsControl/ReafsInputText.vue";
 import opensearch from "@/components/basic/openSearch.vue";
-import nengetsu from "@/components/basic/Nengetsu.vue";
 
 var $thisValue;
 
 export default {
   components: {
     reafsinputtext,
-    opensearch,
-    nengetsu,
+    opensearch
   },
   props: {
     showNo: {
@@ -169,15 +161,6 @@ export default {
   },
 
   data() {
-    const validaTetekiyouDate = (rule, value, callback) => {
-      if (!value) {
-        this.MsgInfo({
-          title: this.$store.getters.getPageTitle(),
-          message: rule.popMessage,
-        });
-        callback(new Error(" "));
-      }
-    };
     // var validateuserName = (rule, value, callback) => {
     //   if (value === "") {
     //     callback(new Error("担当者コードを入力してください"));
@@ -200,22 +183,7 @@ export default {
       tourokuTantoiNm: "", // 登録者NM
       total: 0, // 明細CNT
       tableData: [], //明細データ
-      loading: false,
-      rules: {
-        tekiyouDate: {
-          validator: validaTetekiyouDate,
-          popMessage: "適用日（ＳＴ）を正しく入力して下さい。",
-          trigger: "blur",
-        },
-        tekiyouDateStart: {
-          validator: validaTetekiyouDate,
-          popMessage: "適用日（ＳＴ）を正しく入力して下さい。",
-        },
-        tekiyouDateEnd: {
-          validator: validaTetekiyouDate,
-          popMessage: "適用日（ＥＤ）を正しく入力して下さい。",
-        },
-      },
+      loading: false
     };
   },
   created() {
@@ -243,7 +211,7 @@ export default {
       let qs = require("qs");
 
       if (from && from.name == "WD00012") {
-        if ($thisValue.searchForm.tekiyouDate) {
+        if ($thisValue.searchForm.tekiyouDateStart && $thisValue.searchForm.tekiyouDateEnd) {
           this.onSearchSubmit();
         }
       } else {
@@ -273,32 +241,28 @@ export default {
     onSearchSubmit() {
       $thisValue = this;
 
-      // Form CHECK
-      let formCheckErrFlg = false;
-      $thisValue.$refs["searchForm"].validate((valid) => {
-        if (valid) {
-        } else {
-          formCheckErrFlg = true;
-        }
-      });
-      if (formCheckErrFlg) {
-        return false;
+      if (!$thisValue.searchForm.tekiyouDateStart) {
+        this.showError("適用日（ＳＴ）を正しく入力して下さい。", {
+          callback: () => {
+            this.$refs.refTekiyouDateStart.focus()
+          }
+        })
+        return false
+      }
+
+      if (!$thisValue.searchForm.tekiyouDateEnd) {
+        this.showError("適用日（ＥＤ）を正しく入力して下さい。", {
+          callback: () => {
+            this.$refs.refTekiyouDateEnd.focus()
+          }
+        })
+        return false
       }
 
       $thisValue.loading = true;
       $thisValue.total = 0;
       $thisValue.tableData = undefined;
 
-      $thisValue.searchForm.tekiyouDateStart = $thisValue.formateDate(
-        $thisValue.searchForm.tekiyouDate
-          ? $thisValue.searchForm.tekiyouDate[0]
-          : ""
-      );
-      $thisValue.searchForm.tekiyouDateEnd = $thisValue.formateDate(
-         $thisValue.searchForm.tekiyouDate
-          ? $thisValue.searchForm.tekiyouDate[1]
-          : ""
-      );
       this.http
         .post("api/Reafs_W/Common/WD00011/search", this.searchForm)
         .then((result) => {
@@ -316,19 +280,6 @@ export default {
           }
           $thisValue.loading = false;
         });
-    },
-    onInput(...args) {
-      let $thisValue = this;
-      $thisValue.searchForm.tekiyouDateStart = $thisValue.formateDate(
-        $thisValue.searchForm.tekiyouDate
-          ? $thisValue.searchForm.tekiyouDate[0]
-          : ""
-      );
-      $thisValue.searchForm.tekiyouDateEnd = $thisValue.formateDate(
-         $thisValue.searchForm.tekiyouDate
-          ? $thisValue.searchForm.tekiyouDate[1]
-          : ""
-      );
     },
     onDownLoadFile(row) {
       let $thisValue = this;
@@ -393,6 +344,16 @@ export default {
       this.searchForm.tourokuTantoiCd = obj.txtCd;
       this.tourokuTantoiNm = obj.lblNm;
     },
+    showError (message, option = null, title = this.$store.getters.getPageTitle()) {
+      var self = this
+      this.MsgErr({ title,
+        message,
+        callback: function (a, b) {
+          if (option && typeof (option.callback) === 'function') {
+            option.callback()
+          }
+        }})
+    }
   },
 };
 </script>
@@ -444,5 +405,16 @@ export default {
   border-right-style: solid;
   border-right-width: 1px;
   border-right-color: rgb(235, 238, 245);
+}
+</style>
+
+<style>
+.OsiraseIchiran .el-date-editor .el-input__inner {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+.OsiraseIchiran .el-date-editor.el-input,
+.OsiraseIchiran .el-date-editor.el-input__inner {
+  width: 115px;
 }
 </style>

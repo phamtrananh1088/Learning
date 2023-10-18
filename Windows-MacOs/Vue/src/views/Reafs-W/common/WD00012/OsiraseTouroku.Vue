@@ -6,7 +6,6 @@
       ref="oshiraseHyoji"
       label-width="120px"
       class="search-form-class"
-      :rules="rules"
     >
       <el-row>
         <el-col :span="21" :xs="24">
@@ -25,19 +24,12 @@
 
             <el-form-item label="適用日" prop="適用日">
               <div style="display: flex">
-                <nengetsu
-                  id="txtTekiyobi"
-                  v-model="oshiraseHyoji.適用日"
-                  :required="true"
-                  type="date"
-                  format="yyyy/MM/dd" 
-                  value-format="yyyy/MM/dd"
-                  :width="'120px'"
-                ></nengetsu>
+                <el-date-picker v-model="oshiraseHyoji.適用日" ref="ref適用日" required type="date" format="yyyy/MM/dd" value-format="yyyy/MM/dd"
+                  class="date-picker date-range" />
 
                 <el-checkbox
                   v-model="oshiraseHyoji.重要フラグ"
-                  style="margin-left: 30px"
+                  style="margin-left: 17px"
                 ></el-checkbox>
                 <label style="margin-left: -20px"
                   >重要度の高い掲示の場合、チェックを入れて下さい。</label
@@ -46,17 +38,13 @@
             </el-form-item>
 
             <el-form-item label="掲示期間" prop="掲示期間">
-              <nengetsu
-                v-model="oshiraseHyoji.掲示期間"
-                :required="true"
-                type="daterange"
-                format="yyyy/MM/dd"
-                value-format="yyyy/MM/dd"
-                :clearable="true"
-                :width="'260px'"
-                range-separator="~"
-                @input="daterangeChange"
-              ></nengetsu>
+              <div style="display: flex;">
+                <el-date-picker v-model="oshiraseHyoji.掲示開始日" ref="ref掲示開始日" required type="date" format="yyyy/MM/dd" value-format="yyyy/MM/dd"
+                  class="date-picker date-range" />
+                <span style="margin: 0 2px">～</span>
+                <el-date-picker v-model="oshiraseHyoji.掲示終了日" ref="ref掲示終了日" required type="date" format="yyyy/MM/dd" value-format="yyyy/MM/dd"
+                  class="date-picker date-range" />
+              </div>
             </el-form-item>
             <el-col :span="16">
               <el-form-item label="件名" prop="件名">
@@ -66,6 +54,7 @@
                   v-model="oshiraseHyoji.件名"
                   :width="'100%'"
                   maxlength="50"
+                  ref="ref件名"
                 ></reafsinputtext>
               </el-form-item>
               <el-form-item
@@ -80,6 +69,7 @@
                   maxlength="400"
                   show-word-limit
                   :autosize="{ minRows: 8 }"
+                  ref="ref内容"
                 >
                 </el-input>
               </el-form-item>
@@ -184,7 +174,7 @@
                 <el-button @click="btnSakujo_Click()"
                   >削除</el-button
                 >
-                <el-button @click="onClickBack" :loading="loadingBack" style="float: right">戻る </el-button>
+                <el-button @click="onClickBack" style="float: right">戻る </el-button>
               </el-row>
             </el-col>
           </el-col>
@@ -195,7 +185,6 @@
 </template>
 <script>
 import reafsinputtext from "@/components/basic/ReafsControl/ReafsInputText.vue";
-import nengetsu from "@/components/basic/Nengetsu.vue";
 
 var $thisValue;
 var $userInfo = {
@@ -207,21 +196,10 @@ var $userInfo = {
 
 export default {
   components: {
-    reafsinputtext,
-    nengetsu,
+    reafsinputtext
   },
 
   data() {
-    const validaTetekiyouDate = (rule, value, callback) => {
-      if (value == "" || value == null) {
-        // this.MsgInfo({
-        //   title: this.$store.getters.getPageTitle(),
-        //   message: rule.message,
-        // });
-        callback(new Error(rule.message));
-      }
-    };
-
     return {
       oshiraseHyoji: {
         掲示ID: "",
@@ -268,28 +246,6 @@ export default {
         imgUploadName: "",
       },
       fileList: [],
-      rules: {
-        適用日: {
-          validator: validaTetekiyouDate,
-          message: "適用日を正しく入力して下さい。",
-          trigger: "blur",
-        },
-        掲示期間: {
-          validator: validaTetekiyouDate,
-          message: "掲示を正しく入力して下さい。",
-          trigger: "blur",
-        },
-        件名: {
-          validator: validaTetekiyouDate,
-          message: "件名を入力して下さい。",
-          trigger: "blur",
-        },
-        内容: {
-          validator: validaTetekiyouDate,
-          message: "内容を入力して下さい。",
-          trigger: "blur",
-        },
-      },
       dropActive: false,
       dragArea1: false,
       MSC_5MB_LengthByte: 5245329,
@@ -372,10 +328,8 @@ export default {
     init() {
       this.oshiraseHyoji.掲示ID = "";
       this.oshiraseHyoji.適用日 = this.base.formatCurrDate();
-      this.oshiraseHyoji.掲示期間 = [
-        this.base.formatCurrDate(),
-        this.getDay(this.base.formatCurrDate(), 10),
-      ];
+      this.oshiraseHyoji.掲示開始日 = this.base.formatCurrDate();
+      this.oshiraseHyoji.掲示終了日 = this.getDay(this.base.formatCurrDate(), 10);
       this.oshiraseHyoji.重要フラグ = false;
       this.oshiraseHyoji.添付ファイル名 = "";
       this.oshiraseHyoji.フルパス = "";
@@ -453,24 +407,22 @@ export default {
           }
           this.checkList = arr1;
 
-          let arr2 = [];
           if (
             response.data.掲示開始日 != "" &&
             response.data.掲示開始日 != null
           ) {
-            arr2.push(response.data.掲示開始日);
+            this.oshiraseHyoji.掲示開始日 = response.data.掲示開始日;
           } else {
-            arr2.push("");
+            this.oshiraseHyoji.掲示開始日 = "";
           }
           if (
             response.data.掲示終了日 != "" &&
             response.data.掲示終了日 != null
           ) {
-            arr2.push(response.data.掲示終了日);
+            this.oshiraseHyoji.掲示終了日 = response.data.掲示終了日;
           } else {
-            arr2.push("");
+            this.oshiraseHyoji.掲示終了日 = "";
           }
-          this.oshiraseHyoji.掲示期間 = arr2;
 
           this.pageData.添付元ファイル名 = response.data.添付ファイル名;
           this.pageData.ファイル名 = response.data.添付ファイル名;
@@ -494,32 +446,35 @@ export default {
         this.oshiraseHyoji.適用日 == null ||
         this.oshiraseHyoji.適用日.toString().trim().length == 0
       ) {
-        this.MsgErr({
-          title: this.$store.getters.getPageTitle(),
-          message: "適用日を正しく入力して下さい。", //E010267
-        });
+        this.showError("適用日を正しく入力して下さい。", {
+          callback: () => {
+            this.$refs.ref適用日.focus()
+          }
+        })
         return false;
       }
 
       if (
-        this.oshiraseHyoji.掲示期間[0] == null ||
-        this.oshiraseHyoji.掲示期間[0].toString().trim().length == 0
+        this.oshiraseHyoji.掲示開始日 == null ||
+        this.oshiraseHyoji.掲示開始日.toString().trim().length == 0
       ) {
-        this.MsgErr({
-          title: this.$store.getters.getPageTitle(),
-          message: "掲示日（ＳＴ）を正しく入力して下さい。", //E010267
-        });
+        this.showError("掲示日（ＳＴ）を正しく入力して下さい。", {
+          callback: () => {
+            this.$refs.ref掲示開始日.focus()
+          }
+        })
         return false;
       }
 
       if (
-        this.oshiraseHyoji.掲示期間[1] == null ||
-        this.oshiraseHyoji.掲示期間[1].toString().trim().length == 0
+        this.oshiraseHyoji.掲示終了日 == null ||
+        this.oshiraseHyoji.掲示終了日.toString().trim().length == 0
       ) {
-        this.MsgErr({
-          title: this.$store.getters.getPageTitle(),
-          message: "掲示日（ＥＤ）を正しく入力して下さい。", //E010268
-        });
+        this.showError("掲示日（ＥＤ）を正しく入力して下さい。", {
+          callback: () => {
+            this.$refs.ref掲示終了日.focus()
+          }
+        })
         return false;
       }
 
@@ -527,10 +482,11 @@ export default {
         this.oshiraseHyoji.件名 == null ||
         this.oshiraseHyoji.件名.toString().trim().length == 0
       ) {
-        this.MsgErr({
-          title: this.$store.getters.getPageTitle(),
-          message: "件名を入力して下さい。",
-        });
+        this.showError("件名を入力して下さい。", {
+          callback: () => {
+            this.$refs.ref件名.focus()
+          }
+        })
         return false;
       }
 
@@ -538,10 +494,11 @@ export default {
         this.oshiraseHyoji.内容 == null ||
         this.oshiraseHyoji.内容.toString().trim().length == 0
       ) {
-        this.MsgErr({
-          title: this.$store.getters.getPageTitle(),
-          message: "内容を入力して下さい。",
-        });
+        this.showError("内容を入力して下さい。", {
+          callback: () => {
+            this.$refs.ref内容.focus()
+          }
+        })
         return false;
       }
 
@@ -558,7 +515,6 @@ export default {
       }
       return true;
     },
-
     Sakujo_Check() {
       if (
         this.oshiraseHyoji.掲示ID == null ||
@@ -576,16 +532,6 @@ export default {
     },
     async toroku_Click() {
       $thisValue = this;
-      let formCheckErrFlg = false;
-      $thisValue.$refs["oshiraseHyoji"].validate((valid) => {
-        if (valid) {
-        } else {
-          formCheckErrFlg = true;
-        }
-      });
-      if (formCheckErrFlg) {
-        return false;
-      }
 
       if (!this.toroku_Check()) {
         return;
@@ -610,8 +556,8 @@ export default {
                 const param = {
                   掲示ID: this.oshiraseHyoji.掲示ID,
                   適用日: this.oshiraseHyoji.適用日,
-                  掲示開始日: this.oshiraseHyoji.掲示期間[0],
-                  掲示終了日: this.oshiraseHyoji.掲示期間[1],
+                  掲示開始日: this.oshiraseHyoji.掲示開始日,
+                  掲示終了日: this.oshiraseHyoji.掲示終了日,
                   重要フラグ: this.oshiraseHyoji.重要フラグ ? 1 : 0,
                   件名: this.oshiraseHyoji.件名,
                   内容: this.oshiraseHyoji.内容,
@@ -705,8 +651,8 @@ export default {
             const param = {
               掲示ID: this.oshiraseHyoji.掲示ID,
               適用日: this.oshiraseHyoji.適用日,
-              掲示開始日: this.oshiraseHyoji.掲示期間[0],
-              掲示終了日: this.oshiraseHyoji.掲示期間[1],
+              掲示開始日: this.oshiraseHyoji.掲示開始日,
+              掲示終了日: this.oshiraseHyoji.掲示終了日,
               重要フラグ: this.oshiraseHyoji.重要フラグ ? 1 : 0,
               件名: this.oshiraseHyoji.件名,
               内容: this.oshiraseHyoji.内容,
@@ -1011,6 +957,23 @@ export default {
         return false;
       }
     },
+    showError (message, option = null, title = this.$store.getters.getPageTitle()) {
+      var self = this
+      this.MsgErr({
+        title,
+        message,
+        callback: function (a, b) {
+          self.hideLoading()
+          if (option && typeof (option.callback) === 'function') {
+            option.callback()
+          }
+        }
+      })
+    },
+    hideLoading () {
+      // eslint-disable-next-line no-return-assign
+      Object.keys(this.loading).forEach(v => this.loading[v] = false)
+    }
   },
 };
 </script>
@@ -1044,5 +1007,13 @@ export default {
 .OsiraseTouroku .el-upload--text,
 .el-upload-dragger {
   width: 100%;
+}
+.OsiraseTouroku .el-date-editor .el-input__inner {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+.OsiraseTouroku .el-date-editor.el-input,
+.OsiraseTouroku .el-date-editor.el-input__inner {
+  width: 115px;
 }
 </style>
