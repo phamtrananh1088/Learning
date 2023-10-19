@@ -100,7 +100,9 @@ export default {
       errorMessage: '',
       errorCnt: 0,
       oldID: '',
-      showPasswordReminder: false
+      showPasswordReminder: false,
+      guid: '',
+      path: ''
     }
   },
   directives: {

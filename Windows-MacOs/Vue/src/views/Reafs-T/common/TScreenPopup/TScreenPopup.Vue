@@ -23,7 +23,9 @@ export default {
   props: {
     params: {
       type: Object,
-      default: {}
+      default: () => {
+        return {}
+      }
     },
     dialogVisible: {
       type: Boolean,

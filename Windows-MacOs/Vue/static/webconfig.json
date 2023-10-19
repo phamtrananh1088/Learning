@@ -1,6 +1,6 @@
 {
     "baseURL_development":"http://localhost:3000/",
-    "baseURL_debug":"https://localhost:44372/vue/",
+    "baseURL_debug":"http://localhost:3000/",
     "baseURL_production":"http://localhost:3000/",
     "client_host":"localhost",
     "client_port":8888,
@@ -13,6 +13,6 @@
     "subsite_development": "/",
     "subsite_debug": "/",
     "subsite_production": "/",
-    "spa_folder": "/Reafs_R_Web/"
+    "spa_folder": "/Reafs_T/"
 
 }

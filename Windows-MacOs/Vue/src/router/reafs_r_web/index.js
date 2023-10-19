@@ -19,7 +19,7 @@ const router = new Router({
 
     // Reafs-R-Web機能
     {
-      path: re('/'),
+      path: re('/Reafs_R_Web/'),
       name: 'Index_R',
       component: () => import('@/views/IndexR.vue'), // Mobile用のINDEXを利用する
       redirect: re('/Reafs_R_Web/mobile/Top'),
@@ -100,11 +100,7 @@ router.beforeEach(async (to, from, next) => {
     //   return next({ name: 'RD00800', query: to.query })
     // }
   }
-  if (to.matched[0].path === re('/Reafs_R_Web')) {
-    next({ name: 'RD00800', query: { redirect: Math.random() } })
-  } else {
-    next({ path: re('/Reafs_R_Web/login'), query: { redirect: to.path, guid: to.query.guid } })
-  }
+  next({ path: re('/Reafs_R_Web/login'), query: { redirect: to.path, guid: to.query.guid } })
 })
 
 router.afterEach((to, from) => {

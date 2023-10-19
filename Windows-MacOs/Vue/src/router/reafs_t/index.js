@@ -18,16 +18,11 @@ const router = new Router({
   routes: [
     // Reafs-T機能
     {
-      path: re('/'),
+      path: re('/Reafs_T/'),
       name: 'Index_T',
       component: () => import('@/views/IndexT.vue'), // T用のINDEXを利用する
       redirect: re('/Reafs_T/MainMenu'),
       children: [
-        {
-          path: re('/home'),
-          name: 'Thome_2',
-          component: () => import('@/views/Reafs-T/common/TD00001/MainMenu.vue')
-        },
         {
           path: re('/Reafs_T/home'),
           name: 'Thome',
@@ -222,9 +217,7 @@ router.beforeEach(async (to, from, next) => {
       return next()
     }
   }
-  if (to.matched[0].path === re('/Reafs_T')) {
-    next({ name: 'TD00000', query: { redirect: Math.random() } })
-  } else if (to.matched[0].path === 'home') {
+  if (to.matched[0].path === 'home') {
     next({ path: re('/Reafs_T/home'), query: { redirect: Math.random() } })
   } else {
     next({ path: re('/Reafs_T/login'), query: { redirect: to.path, guid: to.query.guid } })

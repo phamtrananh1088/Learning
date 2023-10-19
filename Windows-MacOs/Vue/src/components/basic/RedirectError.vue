@@ -26,9 +26,15 @@ export default {
   },
   methods: {
     backHome: function () {
-      this.$router.push({
-        path: '/'
-      });
+      if (this.$router.options.routes[0].name == 'Index_R') {
+        this.$router.push({ name: 'Rhome' });
+      } else if (this.$router.options.routes[0].name == 'Index_T') {
+        this.$router.push({ name: 'Thome' });
+      } else if (this.$router.options.routes[0].name == 'Index_W') {
+        this.$router.push({ name: 'WD00010' });
+      } else {
+        this.$router.push({ path: '/' });
+      }
     }
   }
 };

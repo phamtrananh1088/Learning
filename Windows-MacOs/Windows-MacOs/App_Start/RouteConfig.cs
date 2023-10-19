@@ -15,20 +15,20 @@ namespace WinMacOs
 
             routes.MapRoute(
                 name: "Reafs_T",
-                url: "Reafs_T/{path}",
-                defaults: new { controller = "Reafs_T", action = "Index" }
+                url: "Reafs_T/{path}/{id}",
+                defaults: new { controller = "Reafs_T", action = "Index", path = UrlParameter.Optional, id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "Reafs_W",
                 url: "Reafs_W/{path}",
-                defaults: new { controller = "Reafs_W", action = "Index" }
+                defaults: new { controller = "Reafs_W", action = "Index", path = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "Reafs_R_Web",
                 url: "Reafs_R_Web/{path}",
-                defaults: new { controller = "Reafs_R_Web", action = "Index" }
+                defaults: new { controller = "Reafs_R_Web", action = "Index", path = UrlParameter.Optional }
             );
 
             routes.MapRoute(

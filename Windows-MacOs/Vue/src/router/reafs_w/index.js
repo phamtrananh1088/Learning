@@ -18,7 +18,7 @@ const router = new Router({
   routes: [
     // Reafs-W機能
     {
-      path: re('/'),
+      path: re('/Reafs_W/'),
       name: 'Index_W',
       component: () => import('@/views/IndexW.vue'), // W用のINDEXを利用する
       redirect: re('/Reafs_W/home'),
@@ -197,11 +197,7 @@ router.beforeEach(async (to, from, next) => {
       return next()
     }
   }
-  if (to.matched[0].path === re('/Reafs_W')) {
-    next({ name: 'WD00000', query: { redirect: Math.random() } })
-  } else {
-    next({ path: re('/Reafs_W/login'), query: { redirect: to.path, guid: to.query.guid } })
-  }
+  next({ path: re('/Reafs_W/login'), query: { redirect: to.path, guid: to.query.guid } })
 })
 
 router.afterEach((to, from) => {
