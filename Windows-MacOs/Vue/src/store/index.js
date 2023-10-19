@@ -25,7 +25,8 @@ const appSetting = {
   MAIN_THEME: defKey('main_theme'),
   KEEPALIVEFLAG: defKey('KeepAliveFlag'),
   ROUTERBACKFLAG: defKey('RouterBackFlag'),
-  ROUTERPARAMS: defKey('routerParams')
+  ROUTERPARAMS: defKey('routerParams'),
+  IRAITENPUTOUROKUPAGEDATA: defKey('IraiTenpuTourokuPageData')
 }
 function getMenuInfo (state) {
   if (state.menuInfo) return state.menuInfo
@@ -83,6 +84,14 @@ function getRouterParams (state) {
   }
   return state.routerParams
 }
+function getIraiTenpuTourokuPageData (state) {
+  if (state.IraiTenpuTourokuPageData) return state.IraiTenpuTourokuPageData
+  let data = localStorage.getItem(appSetting.IRAITENPUTOUROKUPAGEDATA)
+  if (data) {
+    state.IraiTenpuTourokuPageData = JSON.parse(data)
+  }
+  return state.IraiTenpuTourokuPageData
+}
 const menus = { MENU: defKey('menu'), PAPGETITLE: defKey('pagetitle') }
 // this.$store.system(systemは名称)
 const system = {
@@ -97,7 +106,8 @@ const system = {
     main_theme: 'orange',
     KeepAliveFlag: 0,
     RouterBackFlag: 0,
-    routerParams: null
+    routerParams: null,
+    IraiTenpuTourokuPageData: null
   },
   mutations: {
     setUserInfo (state, data) {
@@ -153,6 +163,10 @@ const system = {
     setRouterParams (state, data) {
       state.routerParams = data
       localStorage.setItem(appSetting.ROUTERPARAMS, JSON.stringify(data))
+    },
+    setIraiTenpuTourokuPageData (state, data) {
+      state.IraiTenpuTourokuPageData = data
+      localStorage.setItem(appSetting.IRAITENPUTOUROKUPAGEDATA, JSON.stringify(data))
     }
   },
   getters: {
@@ -217,6 +231,9 @@ const system = {
     },
     getRouterParams: (state) => () => {
       return getRouterParams(state)
+    },
+    getIraiTenpuTourokuPageData: (state) => () => {
+      return getIraiTenpuTourokuPageData(state)
     }
   },
   actions: {

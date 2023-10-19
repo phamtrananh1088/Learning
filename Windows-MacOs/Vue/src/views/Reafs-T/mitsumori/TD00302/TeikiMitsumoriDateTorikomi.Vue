@@ -109,7 +109,7 @@
               <div>＜＜取込みデータリスト＞＞</div>
               <reafstable ref="refTorikomiDetarisuto" class="tableTorikomiDetarisuto" :tableData="tableDataTorikomiDetarisuto"
                 :columns="columnsTorikomiDetarisuto" :cellStyleOption="cellStyleOptionTorikomiDetarisuto"
-                :maxHeight="383" rowKeyFieldName="項目" :disableSelectedRowKeys="['作業カテゴリ大','作業カテゴリ中','作業カテゴリ小']"/>
+                :maxHeight="383" rowKeyFieldName="項目" />
             </el-col>
           </el-row>
         </el-main>
@@ -143,10 +143,12 @@ export default {
         hansu: '',
         rirekiNO: ''
       },
+
       userInfo: {
         ユーザーＩＤ: '',
         会社コード: ''
       },
+
       pageData: {
         KeiyakuNo: '',
         KeiyakuNoEdaban: '',
@@ -166,6 +168,7 @@ export default {
         FileDataBase64: '',
         TempFilePath: ''
       },
+
       columnsWariateKomoku: [
         {
           field: '',
@@ -196,22 +199,8 @@ export default {
         {
           key: '4',
           title: '項目名',
-          renderBodyCell: ({ row, column, rowIndex }) => {
-            let input
-            input = <reafsinputtext
-                maxlength={Number(row.桁数)}
-                value={row.項目名}
-                width="100%"
-                on-input={(val) => {
-                  row['項目名'] = val
-                }}
-              ></reafsinputtext>
-            return (
-              <div class="cell-body-custome">
-                {input}
-              </div>
-            )
-          }
+          field: '項目名',
+          align: 'left'
         }
       ],
       columnsTorikomiDetarisuto: [
@@ -256,9 +245,11 @@ export default {
           }
 
           if (column.key == '4') {
-            const rowAdd = this.tableDataTorikomiDetarisuto && this.tableDataTorikomiDetarisuto.find(x => row.項目.includes(x.項目))
-            if (rowAdd && rowAdd.項目名.replaceAll(',', '') == row.項目名.replaceAll(',', '')) {
-              css += ' hightlight'
+            const rowAdd = this.tableDataTorikomiDetarisuto && this.tableDataTorikomiDetarisuto.find(x => x.項目.includes(row.項目名))
+            if (rowAdd && rowAdd.項目.replaceAll(',', '') == row.項目名.replaceAll(',', '') ) {
+              if(rowAdd.項目.replaceAll(',', '') != ''){
+                css += ' hightlight'
+              }
             }
           }
           if (column.key === '2' || column.key === '3') {
@@ -303,8 +294,11 @@ export default {
   },
   methods: {
     onWariate () {
+      console.log("割当実行");
+
       const lstSelectWariateKomoku = this.$refs.refWariateKomoku.selectedRowKeys
       const lstSelectTorikomiDetarisuto = this.$refs.refTorikomiDetarisuto.selectedRowKeys
+
       if (!lstSelectWariateKomoku || lstSelectWariateKomoku.length <= 0 ||
         !lstSelectTorikomiDetarisuto || lstSelectTorikomiDetarisuto.length <= 0) {
         this.MsgInfo({
@@ -313,7 +307,9 @@ export default {
         });
         return
       }
+
       const existRow = this.tableDataWariateKomoku.find(x => x.項目名.includes(lstSelectTorikomiDetarisuto[0]))
+      
       if (existRow){
         this.MsgInfo({
           title: "見積取込（定期委託）",
@@ -322,12 +318,15 @@ export default {
         return
       }
 
-      const value = this.tableDataTorikomiDetarisuto[lstSelectTorikomiDetarisuto]
+      const value = lstSelectTorikomiDetarisuto[0]
       const row = this.tableDataWariateKomoku.find(x => x.項目.includes(lstSelectWariateKomoku[0]))
-      row.項目名 = lstSelectTorikomiDetarisuto[0]
+      row.項目名 = value
+      row.isHightLight = true
+
       console.log(this.tableDataWariateKomoku)
-      // row.isHightLight = true
+
     },
+
     onKaijo () {
       const lstSelectWariateKomoku = this.$refs.refWariateKomoku.selectedRowKeys
       if (!lstSelectWariateKomoku || lstSelectWariateKomoku.length <= 0) {
@@ -336,7 +335,9 @@ export default {
 
       const index = this.tableDataWariateKomoku.findIndex(x => x.項目.includes(lstSelectWariateKomoku[0]))
       this.tableDataWariateKomoku[index].項目名 = ''
+      this.tableDataWariateKomoku[index].isHightLight = false
     },
+
     async onDownloadTemp () {
       if (!this.pageData.TempFilePath) {
         return
@@ -351,19 +352,6 @@ export default {
           responseType: 'blob'
         })
         .then(async blob => {
-          if (blob.size === 0) {
-            this.getMsg('E040464').then(res => {
-              this.showError(res.data)
-            })
-            return
-          }
-          // const fileHandle = await window.showSaveFilePicker({
-          //   suggestedName: this.pageData.TempFilePath.split('\\')[this.pageData.TempFilePath.split('\\').length - 1]
-          // })
-          // const fileStream = await fileHandle.createWritable()
-          // await fileStream.write(blob)
-          // await fileStream.close()
-
           await this.base.saveFileDownload(blob, this.pageData.TempFilePath.split('\\')[this.pageData.TempFilePath.split('\\').length - 1])
         })
         .catch(ex => console.log(ex))
@@ -371,6 +359,7 @@ export default {
         })
         .catch(ex => console.log(ex))
     },
+
     async onSansho () {
       console.log("CSVファイル読込！")
       if (!this.pageData.ReadFile || !this.pageData.FileDataBase64) {
@@ -402,30 +391,29 @@ export default {
         this.showError(res.message)
       }
     },
+
     validateSave () {
       const lstValidate = this.tableDataWariateKomoku.filter(x => x.項目.includes('★'))
       for (let row of lstValidate) {
         const rowAdd = this.tableDataWariateKomoku.find(x => row.項目.includes(x.項目))
-        if (!rowAdd || rowAdd.項目名.replaceAll(',', '') != row.項目名.replaceAll(',', '')) {
+        if (!rowAdd) {
           this.getMsg('E040737').then((response) => {
             this.showError(response.data)
           })
           return false
         }
       }
+
       return true
     },
+
     async onToroku () {
       // 登録前チェック
       if (!this.validateSave()) {
         return false
       }
 
-      // 確認MSG
-      // let msg = (await this.getMsg('K000072')).data
-      // if (!await this.confirm(msg)) {
-      //   return false
-      // }
+      console.log("取込処理実行");
 
       let bunruiKey = this.tableDataWariateKomoku[0].項目名
       let sagyonaiyoKey = this.tableDataWariateKomoku[4].項目名
@@ -440,15 +428,35 @@ export default {
         let bunrui = ''
         if (bunruiKey !== '')
         {
-          bunrui = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
+          bunrui = this.torikomiDataList[torikomiRow][bunruiKey]
+          // 分類 TかGでなければ空文字とする
+          if (bunrui !== 'T' && bunrui !== 'G') {
+            bunrui = '';
+          }
         }
 
         let sagyounaiyou = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
-        let suryo = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
-        let tanni = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
-        let tanka = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
-        let kazeiKBN = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
-        let zeiritsu = this.torikomiDataList[torikomiRow][sagyonaiyoKey]
+        let suryo = this.torikomiDataList[torikomiRow][suryoKey]
+        // 数量 数値でなければ空文字とする
+        if (isNaN(suryo)) {
+          suryo = '';
+        }
+        let tanni = this.torikomiDataList[torikomiRow][tanniKey]
+        let tanka = this.torikomiDataList[torikomiRow][tankaKey]
+        // 単価 数値でなければ空文字とする
+        if (isNaN(tanka)) {
+          tanka = '';
+        }
+        let kazeiKBN = this.torikomiDataList[torikomiRow][kazeiKBNKey]
+        // 課税区分 1か2でなければ-1とする
+        if (kazeiKBN !== '1' && kazeiKBN !== '2') {
+          kazeiKBN = '-1';
+        }
+        let zeiritsu = this.torikomiDataList[torikomiRow][zeiritsuKey]
+        // 税率 数値でなければ空文字とする
+        if (isNaN(zeiritsu)) {
+          zeiritsu = '';
+        }
 
         this.returnDataList.push
         ({
@@ -469,6 +477,7 @@ export default {
           }
         }, '*')
     },
+
     getBackData (項目) {
       const row = this.tableDataTorikomiDetarisuto.find(x => x.項目.includes(項目))
       return row ? row.項目名 : ''
@@ -506,6 +515,7 @@ export default {
       }
       input.click()
     },
+
     getDefaultWariateKomoku () {
       return [
         {
@@ -515,32 +525,32 @@ export default {
         },
         {
           項目: '作業カテゴリ大',
-          桁数: 4,
+          桁数: 2,
           項目名: ''
         },
         {
           項目: '作業カテゴリ中',
-          桁数: 4,
+          桁数: 2,
           項目名: ''
         },
         {
           項目: '作業カテゴリ小',
-          桁数: 4,
+          桁数: 2,
           項目名: ''
         },
         {
           項目: '作業内容★',
-          桁数: 20,
+          桁数: 50,
           項目名: ''
         },
         {
           項目: '数量★',
-          桁数: 4,
+          桁数: '6,2',
           項目名: ''
         },
         {
           項目: '単位★',
-          桁数: 8,
+          桁数: 4,
           項目名: ''
         },
         {
@@ -550,7 +560,7 @@ export default {
         },
         {
           項目: '金額（税抜）',
-          桁数: 10,
+          桁数: 12,
           項目名: ''
         },
         {
@@ -560,16 +570,17 @@ export default {
         },
         {
           項目: '税率★',
-          桁数: 3,
+          桁数: 2,
           項目名: ''
         },
         {
           項目: '金額（税込）',
-          桁数: 10,
+          桁数: 12,
           項目名: ''
         }
       ]
     },
+
     async getPageData () {
       console.log(this.queryParams)
 
@@ -615,14 +626,16 @@ export default {
             this.tableDataWariateKomoku[10].項目名 = 割当項目データ.金額_税込
           }
 
-          this.pageData.TempFilePath = response.data.TempFilePath
+          this.pageData.TempFilePath = response.data.tempFilePath
         })
     },
+
     async onBack () {
       window.parent.postMessage({
         'call': 'closePopup'
       }, '*')
     },
+
     showError (message, option = null, title = this.$store.getters.getPageTitle()) {
       this.MsgErr({
         title,
@@ -634,6 +647,7 @@ export default {
         }
       })
     },
+
     showSuccess (message, title = this.$store.getters.getPageTitle()) {
       this.MsgInfo({
         title,
@@ -642,6 +656,7 @@ export default {
         }
       })
     },
+
     confirm (message, title = this.$store.getters.getPageTitle()) {
       return new Promise((resolve, reject) => {
         this.MsgConf({
@@ -657,6 +672,7 @@ export default {
         })
       })
     },
+
     getMsg (key) {
       return this.commonFunctionUI.getMsg(key)
     }
@@ -735,5 +751,9 @@ document.getElementsByName('大区分')
 }
 .MitsumoriDetaTorikomi .is-gray {
   background-color: #d3d3d3 !important;
+}
+
+.ve-loading-parent-relative {
+  position: static !important;
 }
 </style>

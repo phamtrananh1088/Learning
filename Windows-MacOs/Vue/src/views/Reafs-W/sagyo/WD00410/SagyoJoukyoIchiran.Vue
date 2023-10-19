@@ -146,7 +146,7 @@
 
             <!--1行 4列目-->
             <el-col :span="2">
-              <el-button @click="fnc_void_clickBtnReset()" style="width: 100px"
+              <el-button @click="fnc_void_clickBtnReset(0)" style="width: 100px"
                 >検索条件<br />リセット</el-button
               >
             </el-col>
@@ -205,6 +205,9 @@
                   :append="'append'"
                   :path="'reafsmodalSearchBukken'"
                   @backData="reafsmodalBackBukkenmei"
+                  :width="'135px'"
+                  :class="{ pinkcolor_bukken: isErrPinkBukken }"
+                  ref="ref物件"
                 >
                 </opensearch>
               </el-form-item>
@@ -221,7 +224,7 @@
                   v-model="KensakuJoken.txtBukkenkubun"
                   maxlength="20"
                   disabled
-                  :width="'120px'"
+                  :width="'150px'"
                 >
                 </reafsinputtext>
               </el-form-item>
@@ -267,23 +270,22 @@
             <!--2行 1列目-->
             <el-col :span="8">
               <div style="display: flex">
-                <el-form-item label="営業店" prop="txtEigyoten">
-                  <eigyoten
-                    :required="true"
-                    :eigyotenCd="KensakuJoken.txtEigyotenCode"
-                    @update:eigyotenCd="
-                      (v) => {
-                        this.KensakuJoken.txtEigyotenCode = v;
-                      }
-                    "
+                <el-form-item label="営業店" prop="eigyoten">
+                  <opensearch
+                    width="100px"
+                    :disabled="false"
+                    :path="'reafsmodalSearchMise'"
+                    maxlength="7"
+                    :inputClass="'moblie-input-append'"
+                    :class="{ pinkcolor_eigyou: isErrPinkEigyoten }"
+                    :required="false"
+                    v-model="KensakuJoken.txtEigyotenCode"
                     :appendlabelText="KensakuJoken.txtEigyoten"
                     @backData="reafsmodalBackEigyoten"
                     ref="ref営業店"
                     :appendlabelWidth="'215px'"
                     :modeTextBox="2"
-                    inputClass="button-multi-code"
-                    :class="{ pinkcolor_el_input: isErrPinkEigyoten }"
-                  />
+                  ></opensearch>
                 </el-form-item>
               </div>
             </el-col>
@@ -434,7 +436,7 @@
       <el-row :gutter="20">
         <el-col :span="24">
           <div class="grid-content bg-purple-light">
-            <reafstable
+            <!-- <reafstable
               :single="false"
               :rowKey="rowKey"
               :tableData="tblData"
@@ -447,7 +449,19 @@
               :key="Math.random()"
               v-bind:tabindex="TAB_IDX_TABLE"
             >
-            </reafstable>
+            </reafstable> -->
+            <reafstable
+                ref="table"
+                :tableData="tblData"
+                :columns="tblColumns"
+                :maxHeight="500"
+                :resizeAble="true"
+                :cellStyleOption="cellStyleOption"
+                rowKeyFieldName="key"
+                :sortOption="sortOption"
+                :virtualScrollOption="virtualScrollOption"
+              >
+              </reafstable>
           </div>
         </el-col>
       </el-row>
@@ -457,7 +471,7 @@
     <div class="footer">
       <el-row :gutter="20">
         <el-col :span="2" style="float: right">
-          <el-button @click="onBack" :loading="loadingBack">戻る</el-button>
+          <el-button @click="onBack">戻る</el-button>
         </el-col>
       </el-row>
     </div>
@@ -481,7 +495,8 @@
 
 <script>
 import codingVue from "../../../redirect/coding.vue";
-import reafstable from "@/components/table/Table.vue";
+//import reafstable from "@/components/table/Table.vue";
+import reafstable from "@/components/table/Grid.vue";
 import reafsinputtext from "@/components/basic/ReafsControl/ReafsInputText.vue";
 import reafsinputnaturalnumber from "@/components/basic/ReafsControl/ReafsInputNaturalNumber.vue";
 import opensearch from "@/components/basic/openSearch.vue";
@@ -492,7 +507,7 @@ import eigyoten from "@/components/basic/EigyoTen.vue";
 
 export default {
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
+    next(vm => {
       vm.initialize(); // 初期化処理
       next();
     });
@@ -508,7 +523,7 @@ export default {
     },
     "KensakuJoken.ddlChukbn"(n, o) {
       this.getDropDown小区分();
-    },
+    }
     // "KensakuJoken.txtTehaiGyoshaCode"(n, o) {
     //   this.getTextBox業者名();
     // },
@@ -528,12 +543,12 @@ export default {
     reafsinputnaturalnumber,
     opensearch,
     nengetsu,
-    eigyoten,
+    eigyoten
   },
   data() {
     var validate年月度 = (rule, value, callback) => {
       if (value === "") {
-        this.fnc_rtrn_getMsg("E040277").then((response) => {
+        this.fnc_rtrn_getMsg("E040277").then(response => {
           callback(new Error(response.data));
         });
       }
@@ -541,7 +556,7 @@ export default {
     var validate営業店コード = (rule, value, callback) => {
       //@@@@      if (this.KensakuJoken.txtEigyotenCode === '' || this.KensakuJoken.txtEigyotenCodeEdaban === '') {
       if (this.KensakuJoken.txtEigyotenCode === "") {
-        this.fnc_rtrn_getMsg("E040009").then((response) => {
+        this.fnc_rtrn_getMsg("E040009").then(response => {
           callback(new Error(response.data));
         });
       }
@@ -553,7 +568,7 @@ export default {
     return {
       rules: {
         dtpNengetsudo: [{ validator: validate年月度, trigger: "blur" }],
-        txtEigyoten: [{ validator: validate営業店コード, trigger: "blur" }],
+        txtEigyoten: [{ validator: validate営業店コード, trigger: "blur" }]
       },
 
       ///////////////////////////////////////////////
@@ -629,7 +644,7 @@ export default {
           startDate: "",
           startTime: "",
           endDate: "",
-          endTime: "",
+          endTime: ""
         },
         sagyoyotei_kaisi_date: "",
         sagyoyotei_kaisi_time: "",
@@ -646,7 +661,7 @@ export default {
         // 差戻ボタン
         btn_sashimodoshiDisable: false,
         // 確認ボタン
-        btn_kakuninDisable: false,
+        btn_kakuninDisable: false
       },
       showWS00412: false,
       closingNowWS00412: false,
@@ -698,7 +713,7 @@ export default {
           startDate: "",
           startTime: "",
           endDate: "",
-          endTime: "",
+          endTime: ""
         },
         sagyoyotei_kaisi_date: "",
         sagyoyotei_kaisi_time: "",
@@ -718,7 +733,7 @@ export default {
         btn_kakuninDisable: false,
 
         tblData2: [],
-        名称取得方法17: {},
+        名称取得方法17: {}
       },
 
       ///////////////////////////////////////////////
@@ -794,7 +809,7 @@ export default {
         txtBiko: "",
 
         //画面遷移判別
-        kidou_no: 0,
+        kidou_no: 0
       },
       大区分List: [],
       中区分List: [],
@@ -803,293 +818,452 @@ export default {
       // 明細部
       ///////////////////////////////////////////////
       hitKensu: "0  件",
+      cellStyleOption: {
+        headerCellClass: ({ row, column, rowIndex }) => {},
+        bodyCellClass: ({ row, column, rowIndex }) => {
+          let css = "";
+
+          const textLeft = [
+            "tblbukken",
+            "tblEigyoten",
+            "tblTehaiGyosha",
+            "tblDaikubun",
+            "tblChukubun",
+            "tblShokubun",
+            "tblSagyoMeisho",
+            "tblStatus",
+            "tblBiko",
+            "tblKanryoHokokusho"
+          ];
+          if (textLeft.includes(column.key)) {
+            css += " text-left";
+          }
+
+          return css;
+        }
+      },
       tblData: [],
       tblColumns: [
         {
-          field: "tblbukken",
+          key: "tblbukken",
           title: "物件",
-          type: "string",
+          field: "tblbukken",
           width: 120,
-          align: "left",
-          sort: true,
-        },
-        {
-          field: "tblEigyoten",
-          title: "営業店",
-          type: "string",
-          width: 120,
-          align: "left",
-          sort: true,
-          link: true,
-        },
-        {
-          field: "tblTehaiGyosha",
-          title: "手配業者",
-          type: "string",
-          width: 240,
-          align: "left",
-          sort: true,
-        },
-        {
-          field: "tblDaikubun",
-          title: "大区分",
-          width: 130,
-          align: "left",
-          width: 130,
-          align: "left",
-          sort: true,
-        },
-        {
-          field: "tblChukubun",
-          title: "中区分",
-          width: 130,
-          align: "left",
-          width: 130,
-          align: "left",
-          sort: true,
-        },
-        {
-          field: "tblShokubun",
-          title: "小区分",
-          width: 130,
-          align: "left",
-          width: 130,
-          align: "left",
-          sort: true,
+          sortBy: "",
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            return (
+              <div
+                style="display: grid; padding-left: 5px"
+                class="cell-body-custome"
+              >
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblbukken"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblbukken"]) this.lnktblbukkenOnClick(row, column, rowIndex);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblbukken"]}
+                </a>
+              </div>
+            );
+          },
         },
 
         {
-          field: "tblSagyoMeisho",
-          title: "作業名称",
-          type: "string",
+          key: "tblEigyoten",
+          title: "営業店",
+          field: "tblEigyoten",
+          width: 120,
+          sortBy: "",
+        },
+
+        {
+          key: "tblTehaiGyosha",
+          title: "手配業者",
+          field: "tblTehaiGyosha",
           width: 240,
-          align: "left",
-          sort: true,
-          link: true,
+          sortBy: "",
         },
+
         {
-          field: "tblStatus",
-          title: "ステータス",
-          align: "left",
-          type: "string",
+          key: "tblDaikubun",
+          title: "大区分",
+          field: "tblDaikubun",
           width: 130,
-          align: "left",
-          sort: true,
+          sortBy: "",
         },
+        
         {
-          field: "tblKeiyakuNengetsu",
-          title: "契約年月",
-          align: "left",
+          key: "tblChukubun",
+          title: "中区分",
+          field: "tblChukubun",
           width: 130,
-          align: "center",
-          sort: true,
+          sortBy: "",
         },
+
         {
-          field: "tblSagyoYoteibiStartDate",
-          title: "作業予定日(自)",
-          align: "left",
-          width: 141,
-          align: "center",
-          sort: true,
-        },
-        {
-          field: "tblSagyoYoteibiEndtDate",
-          title: "作業予定日(至)",
-          align: "left",
-          width: 141,
-          align: "center",
-          sort: true,
-        },
-        {
-          field: "tblSagyoYoteibiTime",
-          title: "作業予定時刻",
-          align: "left",
+          key: "tblShokubun",
+          title: "小区分",
+          field: "tblShokubun",
           width: 130,
-          align: "center",
-          sort: true,
+          sortBy: "",
         },
+
         {
-          field: "tblBiko",
-          title: "備考",
-          type: "string",
-          width: 130,
-          align: "left",
-          sort: true,
-        },
-        {
-          field: "tblSagyoKanryobi",
-          title: "作業完了日",
-          type: "string",
-          width: 140,
-          align: "center",
-          sort: true,
-        },
-        {
-          field: "tblKanryoKakuninbi",
-          title: "完了確認日",
-          type: "string",
-          width: 140,
-          align: "center",
-          sort: true,
-        },
-        {
-          title: "完了報告書",
-          align: "left",
-          link: true,
-          width: 500,
-          render: (h, { row, column, index }) => {
+          key: "tblSagyoMeisho",
+          title: "作業名称",
+          field: "tblSagyoMeisho",
+          width: 240,
+          ellipsis: {
+            showTitle: true
+          },
+          renderBodyCell: ({ row, column, rowIndex }) => {
             return (
-              <div style="display: flex" class="cell-body-custome clsHansu">
-                <div>
-                  <el-link
-                    on-click={() => {
-                      this.onDownload(
-                        row.tblKanryoHokokushoPass1,
-                        row.tblKanryoHokokusho1
-                      );
-                    }}
-                    value={row.tblKanryoHokokusho1}
-                    class="link_color"
-                    type="primary"
-                  >
-                    {row.tblKanryoHokokusho1}
-                  </el-link>
-                  <br />
-                  <el-link
-                    on-click={() => {
-                      this.onDownload(
-                        row.tblKanryoHokokushoPass2,
-                        row.tblKanryoHokokusho2
-                      );
-                    }}
-                    value={row.tblKanryoHokokusho2}
-                    class="link_color"
-                    type="primary"
-                  >
-                    {row.tblKanryoHokokusho2}
-                  </el-link>
-                  <br />
-                  <el-link
-                    on-click={() => {
-                      this.onDownload(
-                        row.tblKanryoHokokushoPass3,
-                        row.tblKanryoHokokusho3
-                      );
-                    }}
-                    value={row.tblKanryoHokokusho3}
-                    class="link_color"
-                    type="primary"
-                  >
-                    {row.tblKanryoHokokusho3}
-                  </el-link>
-                  <br />
-                  <el-link
-                    on-click={() => {
-                      this.onDownload(
-                        row.tblKanryoHokokushoPass4,
-                        row.tblKanryoHokokusho4
-                      );
-                    }}
-                    value={row.tblKanryoHokokusho4}
-                    class="link_color"
-                    type="primary"
-                  >
-                    {row.tblKanryoHokokusho4}
-                  </el-link>
-                  <br />
-                  <el-link
-                    on-click={() => {
-                      this.onDownload(
-                        row.tblKanryoHokokushoPass5,
-                        row.tblKanryoHokokusho5
-                      );
-                    }}
-                    value={row.tblKanryoHokokusho5}
-                    class="link_color"
-                    type="primary"
-                  >
-                    {row.tblKanryoHokokusho5}
-                  </el-link>
-                </div>
+              <div
+                style="display: grid; padding-left: 5px"
+                class="cell-body-custome"
+              >
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblSagyoMeisho"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblSagyoMeisho"]) this.lnktblSagyoMeishoOnClick(row, column, rowIndex);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblSagyoMeisho"]}
+                </a>
+              </div>
+            );
+          },
+        },
+
+        {
+          key: "tblStatus",
+          title: "ステータス",
+          field: "tblStatus",
+          width: 130,
+          sortBy: "",
+        },
+
+        {
+          key: "JissiYoteiNengetsu",
+          title: "作業月",
+          field: "JissiYoteiNengetsu",
+          width: 130,
+          sortBy: ""
+        },
+
+        {
+          key: "tblSagyoYoteibiStartDate",
+          title: "作業予定日(自)",
+          field: "tblSagyoYoteibiStartDate",
+          width: 141,
+          sortBy: ""
+        },
+
+        {
+          key: "tblSagyoYoteibiEndtDate",
+          title: "作業予定日(至)",
+          field: "tblSagyoYoteibiEndtDate",
+          width: 141,
+          sortBy: ""
+        },
+
+        {
+          key: "tblSagyoYoteibiTime",
+          title: "作業予定時刻",
+          field: "tblSagyoYoteibiTime",
+          width: 130,
+          sortBy: ""
+        },
+
+        {
+          key: "tblBiko",
+          title: "備考",
+          field: "tblBiko",
+          width: 130,
+          sortBy: ""
+        },
+
+        {
+          key: "tblSagyoKanryobi",
+          title: "作業完了日",
+          field: "tblSagyoKanryobi",
+          width: 140,
+          sortBy: ""
+        },
+
+        {
+          key: "tblKanryoKakuninbi",
+          title: "完了確認日",
+          field: "tblKanryoKakuninbi",
+          width: 140,
+          sortBy: ""
+        },
+
+        //   {
+        //     title: "完了報告書",
+        //     align: "left",
+        //     link: true,
+        //     width: 500,
+        //     render: (h, { row, column, index }) => {
+        //       return (
+        //         <div style="display: flex" class="cell-body-custome clsHansu">
+        //           <div>
+        //             <el-link
+        //               on-click={() => {
+        //                 this.onDownload(
+        //                   row.tblKanryoHokokushoPass1,
+        //                   row.tblKanryoHokokusho1
+        //                 );
+        //               }}
+        //               value={row.tblKanryoHokokusho1}
+        //               class="link_color"
+        //               type="primary"
+        //             >
+        //               {row.tblKanryoHokokusho1}
+        //             </el-link>
+        //             <br />
+        //             <el-link
+        //               on-click={() => {
+        //                 this.onDownload(
+        //                   row.tblKanryoHokokushoPass2,
+        //                   row.tblKanryoHokokusho2
+        //                 );
+        //               }}
+        //               value={row.tblKanryoHokokusho2}
+        //               class="link_color"
+        //               type="primary"
+        //             >
+        //               {row.tblKanryoHokokusho2}
+        //             </el-link>
+        //             <br />
+        //             <el-link
+        //               on-click={() => {
+        //                 this.onDownload(
+        //                   row.tblKanryoHokokushoPass3,
+        //                   row.tblKanryoHokokusho3
+        //                 );
+        //               }}
+        //               value={row.tblKanryoHokokusho3}
+        //               class="link_color"
+        //               type="primary"
+        //             >
+        //               {row.tblKanryoHokokusho3}
+        //             </el-link>
+        //             <br />
+        //             <el-link
+        //               on-click={() => {
+        //                 this.onDownload(
+        //                   row.tblKanryoHokokushoPass4,
+        //                   row.tblKanryoHokokusho4
+        //                 );
+        //               }}
+        //               value={row.tblKanryoHokokusho4}
+        //               class="link_color"
+        //               type="primary"
+        //             >
+        //               {row.tblKanryoHokokusho4}
+        //             </el-link>
+        //             <br />
+        //             <el-link
+        //               on-click={() => {
+        //                 this.onDownload(
+        //                   row.tblKanryoHokokushoPass5,
+        //                   row.tblKanryoHokokusho5
+        //                 );
+        //               }}
+        //               value={row.tblKanryoHokokusho5}
+        //               class="link_color"
+        //               type="primary"
+        //             >
+        //               {row.tblKanryoHokokusho5}
+        //             </el-link>
+        //           </div>
+        //         </div>
+        //       );
+        //     }
+        //   }
+        {
+          key: "tblKanryoHokokusho",
+          title: "完了報告書",
+          width: 500,
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            return (
+              <div
+                style="display: grid; padding-left: 5px"
+                class="cell-body-custome clsHansu"
+              >
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblKanryoHokokusho1"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblKanryoHokokusho1"]) this.onDownload(row["tblKanryoHokokushoPass1"], row["tblKanryoHokokusho1"]);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblKanryoHokokusho1"]}
+                </a>
+                <br />
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblKanryoHokokusho2"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblKanryoHokokusho2"]) this.onDownload(row["tblKanryoHokokushoPass2"], row["tblKanryoHokokusho2"]);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblKanryoHokokusho2"]}
+                </a>
+                <br />
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblKanryoHokokusho3"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblKanryoHokokusho3"]) this.onDownload(row["tblKanryoHokokushoPass3"], row["tblKanryoHokokusho3"]);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblKanryoHokokusho3"]}
+                </a>
+                <br />
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblKanryoHokokusho4"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblKanryoHokokusho4"]) this.onDownload(row["tblKanryoHokokushoPass4"], row["tblKanryoHokokusho4"]);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblKanryoHokokusho4"]}
+                </a>
+                <br />
+                <a
+                  style="margin-top: 4px"
+                  title={row["tblKanryoHokokusho5"]}
+                  class="ellipsis"
+                  on-click={() => {
+                    if (row["tblKanryoHokokusho5"]) this.onDownload(row["tblKanryoHokokushoPass5"], row["tblKanryoHokokusho5"]);
+                  }}
+                  href="javascript:;"
+                >
+                  {row["tblKanryoHokokusho5"]}
+                </a>
               </div>
             );
           },
         },
       ],
 
+      sortOption: {
+        sortAlways: true,
+        sortChange: params => {
+          if (!this.tblData || this.tblData.length <= 0) {
+            return;
+          }
+          let sortProp = "";
+          let sortDirect = "";
+          for (let prop in params) {
+            if (params[prop]) {
+              sortProp = prop;
+              sortDirect = params[prop];
+            }
+          }
+
+          this.tblData.sort((a, b) => {
+            let aClone = JSON.parse(JSON.stringify(a[sortProp]));
+            let bClone = JSON.parse(JSON.stringify(b[sortProp]));
+
+            if (sortDirect === "asc") {
+              if (!a) {
+                return 1;
+              }
+              if (!b) {
+                return 1;
+              }
+              return aClone > bClone ? 1 : -1;
+            } else if (sortDirect === "desc") {
+              if (!a) {
+                return 1;
+              }
+              if (!b) {
+                return 1;
+              }
+              return bClone > aClone ? 1 : -1;
+            } else {
+              return 0;
+            }
+          });
+        }
+      },
+
+      virtualScrollOption: {
+        enable: true,
+        minRowHeight: 103
+      },
+
       ///////////////////////////////////////////////
       // エラーフラグ DATEPICKERをピンクにする為に使用
       ///////////////////////////////////////////////
       isErrPinkNengetsudo: false,
       isErrPinkEigyoten: false,
-      isErrPinkBukkenmei: false,
+      isErrPinkBukken: false,
 
       subParamsObj: {
         taisyou: "", // 承認種類　 取引先検索：対象 //ハノイ側修正2022/08/26　STEP2_W　課題管理表№59：設計書「修正履歴」シートの「2022/08/24仕様変更分」「取引先検索起動時にパラメータ仕様を変更」
         jigyousyoCd: "110", // 事業所コード
-        torType: "", // null or 0:取引先 1:得意先
-      },
+        torType: "" // null or 0:取引先 1:得意先
+      }
     };
   },
 
   mounted() {
-    if (this.dtpNengetsudo_from == "") {
-      dtpNengetsudo_from;
-      let now_before;
-      let now_after;
-      now_before = new Date();
-      //翌月用
-      let now_year = now_before.getFullYear();
-      now_year = now_year.toString();
-      var now_mounth = now_before.getMonth() + 1;
-      now_mounth = ("00" + now_mounth).slice(-2);
-      now_after = new Date(now_year, now_mounth);
-
-      // this.KensakuJoken.dtpNengetsudo = [now_before, now_after];
-      this.dtpNengetsudo_from = now_before;
-      this.dtpNengetsudo_to = now_after;
-    }
-    this.$nextTick(function () {
-      this.$refs.txtSgtk.focus();
+    this.$nextTick(function() {
+      this.$refs.ref年月度.focus();
     });
+    let kidouNO = this.KensakuJoken.kidou_no;
+    this.fnc_void_clickBtnReset(kidouNO);
   },
 
   methods: {
     initialize() {
-      this.KensakuJoken.kidou_no = this.$route.query.StartuoMode;
-
-      this.http
-        .get("/api/Reafs_W/Sagyo/GetStartInfo", "アクセスしています....")
-        .then((response) => {
-          this.名称取得方法17 = response.data.名称取得方法17;
-          this.大区分List = response.data.名称取得方法08;
-        });
+      this.KensakuJoken.kidou_no = this.$route.params.StartuoMode;
 
       // 検索処理起動
       if (this.KensakuJoken.kidou_no == 1) {
-        let kousindata = new Object();
-        let now_before;
-        let now_later;
-        now_before = new Date();
-        //翌月用
-        let now_year = now_before.getFullYear() + 1;
-        now_year = now_year.toString();
-        var now_mounth = now_before.getMonth();
-        now_mounth = ("00" + now_mounth).slice(-2);
-        now_later = new Date(now_year, now_mounth);
+        // カウンターからの遷移による起動
+        let kidouNO = this.KensakuJoken.kidou_no;
+        //初期値セット
+        this.fnc_void_clickBtnReset(kidouNO);
 
-        this.KensakuJoken.dtpNengetsudo_from = now_before;
-        this.KensakuJoken.dtpNengetsudo_to = now_later;
+        this.fnc_void_Kensaku();
+      } else if (this.KensakuJoken.kidou_no == 2) {
+        // メールからの起動
+        let 契約No = this.$route.params.契約No;
+        let 履歴No = this.$route.params.履歴No;
+        let 明細No = this.$route.params.明細No;
+        let 契約年月 = this.$route.params.契約年月;
+        let 契約年月明細No = this.$route.params.契約年月明細NO;
 
-        this.KensakuJoken.chkSagyoYotei = true;
-        this.KensakuJoken.rdoKojiKubun = "定期委託";
-        this.KensakuJoken.rdoYoteiKanryoKakunin = "予定";
-
-        this.fnc_void_clickBtnKensaku();
-
-        //検索終わったら引数は０にする。
-        this.KensakuJoken.kidou_no = 0;
+        // メール起動固有の検索
+        this.fnc_void_search_MailData(
+          契約No,
+          履歴No,
+          明細No,
+          契約年月,
+          契約年月明細No
+        );
       } else {
+        // 通常起動
         this.KensakuJoken.kidou_no = 0;
       }
     },
@@ -1098,10 +1272,10 @@ export default {
       console.log("中区分List取得処理実行");
 
       this.http
-        .get("/api/Reafs_W/Sagyo/GetDataN004", {
-          大区分: this.KensakuJoken.ddlDaikbn,
+        .get("/api/Reafs_W/Sagyo/GetDropdown中区分", {
+          大区分: this.KensakuJoken.ddlDaikbn
         })
-        .then((res) => {
+        .then(res => {
           this.中区分List = res.data;
           this.KensakuJoken.ddlChukbn = "-";
         });
@@ -1115,11 +1289,11 @@ export default {
         this.KensakuJoken.ddlChukbn !== "-"
       ) {
         this.http
-          .get("/api/Reafs_W/Sagyo/GetDataN005", {
+          .get("/api/Reafs_W/Sagyo/GetDropdown小区分", {
             大区分: this.KensakuJoken.ddlDaikbn,
-            中区分: this.KensakuJoken.ddlChukbn,
+            中区分: this.KensakuJoken.ddlChukbn
           })
-          .then((res) => {
+          .then(res => {
             this.小区分List = res.data;
             this.KensakuJoken.ddlSyokbn = "-";
           });
@@ -1133,25 +1307,28 @@ export default {
       console.log("業者名取得処理実行");
 
       if (
-        this.KensakuJoken.txtTehaiGyoshaCode !== "" && this.KensakuJoken.txtTehaiGyoshaCode !== undefined &&
-        this.KensakuJoken.txtTehaiGyoshaCodeEdaban !== "" && this.KensakuJoken.txtTehaiGyoshaCodeEdaban
+        this.KensakuJoken.txtTehaiGyoshaCode !== "" &&
+        this.KensakuJoken.txtTehaiGyoshaCode !== undefined &&
+        this.KensakuJoken.txtTehaiGyoshaCodeEdaban !== "" &&
+        this.KensakuJoken.txtTehaiGyoshaCodeEdaban
       ) {
         console.log("業者検索実行");
+
         this.http
-          .get("/api/Reafs_W/Sagyo/GetDataN006", {
-            code: this.KensakuJoken.txtTehaiGyoshaCode,
-            edaban: this.KensakuJoken.txtTehaiGyoshaCodeEdaban,
+          .post("/api/Reafs_W/Sagyo/GetDataM006", {
+            業者コード: this.KensakuJoken.txtTehaiGyoshaCode,
+            業者コード枝番: this.KensakuJoken.txtTehaiGyoshaCodeEdaban
           })
-          .then((res) => {
+          .then(res => {
             if (res.data.length !== 0) {
-              this.KensakuJoken.txtTehaiGyoshaName = res.data[0].業者名;
+              this.KensakuJoken.txtTehaiGyoshaName = res.data.業者名;
             } else {
               // 該当データ無し
-              this.KensakuJoken.txtTehaiGyoshaName = ""
+              this.KensakuJoken.txtTehaiGyoshaName = "";
             }
           });
       } else {
-        this.KensakuJoken.txtTehaiGyoshaName = ""
+        this.KensakuJoken.txtTehaiGyoshaName = "";
       }
     },
 
@@ -1159,6 +1336,12 @@ export default {
     // 検索ボタンクリック時処理
     ///////////////////////////////////////////////
     fnc_void_clickBtnKensaku() {
+      //検索ボタン押下時に引数を０にする。
+      this.KensakuJoken.kidou_no = 0;
+      this.fnc_void_Kensaku();
+    },
+
+    fnc_void_Kensaku() {
       console.log("検索ボタン押下！");
       // 検索前処理
       let letKensakuJokenConvertDataAfter = new Object();
@@ -1173,11 +1356,23 @@ export default {
       }
     },
 
+    fnc_void_search_MailData(契約No, 履歴No, 明細No, 契約年月, 契約年月明細No) {
+      let searchTarget = {
+        契約No: 契約No,
+        履歴No: 履歴No,
+        明細No: 明細No,
+        契約年月: 契約年月,
+        契約年月明細No: 契約年月明細No
+      };
+
+      this.fnc_void_getKensakuKekka();
+    },
+
     fnc_WS00411Close(e) {
       if (this.closingNowWS00411 === false) {
         console.log("WS00411を閉じたぞ！");
         this.closingNowWS00411 = true;
-        this.fnc_void_clickBtnKensaku();
+        this.fnc_void_Kensaku();
       } else {
         this.closingNowWS00411 = false;
       }
@@ -1187,7 +1382,7 @@ export default {
       if (this.closingNowWS00412 === false) {
         console.log("WS00412を閉じたぞ！");
         this.closingNowWS00412 = true;
-        this.fnc_void_clickBtnKensaku();
+        this.fnc_void_Kensaku();
       } else {
         this.closingNowWS00412 = false;
       }
@@ -1211,8 +1406,9 @@ export default {
 
       // 前準備。検索条件をバックに渡す用にコンバート
       let letKensakuJokenConvertDataAfter = new Object();
-      letKensakuJokenConvertDataAfter =
-        this.fnc_rtrn_KensakuJokenConvert(valKensakuJoken);
+      letKensakuJokenConvertDataAfter = this.fnc_rtrn_KensakuJokenConvert(
+        valKensakuJoken
+      );
 
       return [true, letKensakuJokenConvertDataAfter];
     },
@@ -1233,18 +1429,36 @@ export default {
           "検索しています...."
         )
         // 検索実行後処理
-        .then(function (response) {
-          // 検索件数 = 0件の場合
-          if (response.data.length === 0) {
+        .then(function(response) {
+          //サーバが落ちた時エラーメッセージ表示
+          if (!response.status) {
+            _this.MsgErr({
+              title: "作業状況一覧",
+              message: response.message
+            });
+          } else if (response.data.length === 0) {
+            // 検索件数 = 0件の場合
             // 対象データが存在しません。
             _this.fnc_void_showErrorMsg("E010224");
           } else {
+            // 20000件超えメッセージ
+            if (response.message !== null) {
+              console.log('response.message1' + response.message)
+              _this.MsgErr({
+                title: "作業状況一覧",
+                message: response.message
+              });
+            }
+
             _this.tblData = response.data;
+            _this.tblData.map((item, index) => {
+              item.No = index + 1
+            })
             _this.hitKensu = response.data.length + "  件";
 
             for (let i = 0; i < response.data.length; i++) {
               // 作業時間
-              _this.tblData[i].tblSagyoYoteibiTime =
+              _this.tblData[i].tblSagyoYoteibiTime = 
                 _this.fnc_rtrn_getSagyoYoteibiTime(response.data[i]);
             }
           }
@@ -1254,36 +1468,133 @@ export default {
     ///////////////////////////////////////////////
     // 検索条件リセットボタン押下時処理
     ///////////////////////////////////////////////
-    fnc_void_clickBtnReset() {
-      this.KensakuJoken.dtpNengetsudo_from = "";
-      this.KensakuJoken.dtpNengetsudo_to = "";
-      this.KensakuJoken.rdoYearAndMonth = "作業月";
-      this.KensakuJoken.rdoKojiKubun = "全て";
+    fnc_void_clickBtnReset(e) {
+      if (e == 1) {
+        let now_before;
+        now_before = new Date();
+        now_before.setMonth(now_before.getMonth());
+        let now_before_year = now_before.getFullYear();
+        now_before_year = now_before_year.toString();
+        var now_before_mounth = now_before.getMonth() + 1;
+        now_before_mounth = ("00" + now_before_mounth).slice(-2);
+        this.KensakuJoken.dtpNengetsudo_from =
+          now_before_year + "/" + now_before_mounth;
 
-      this.KensakuJoken.dtpStartDate = "";
-      this.KensakuJoken.dtpEndDate = "";
-      this.KensakuJoken.rdoTargetDate = "作業予定日";
+        //翌月用
+        let now_after = new Date();
+        now_after.setFullYear(now_after.getFullYear() + 1);
+        now_after.setMonth(now_after.getMonth() + 1);
 
-      this.KensakuJoken.chkSagyoYoteiMinyuryoku = false;
-      this.KensakuJoken.chkSagyoYoteiMikakunin = false;
-      this.KensakuJoken.chkSagyoMikanryo = false;
-      this.KensakuJoken.chkSagyoKanryoMikakunin = false;
-      this.KensakuJoken.chkSagyoKanryoKakuninzumi = false;
-      this.KensakuJoken.chkSagyoChusi = false;
+        let now_after_year = now_after.getFullYear();
+        now_after_year = now_after_year.toString();
+        var now_after_mounth = now_after.getMonth();
+        now_after_mounth = ("00" + now_after_mounth).slice(-2);
+        this.KensakuJoken.dtpNengetsudo_to =
+          now_after_year + "/" + now_after_mounth;
 
-      this.KensakuJoken.txtEigyotenCode = "";
-      this.KensakuJoken.txtEigyotenCodeEdaban = "";
-      this.KensakuJoken.txtEigyoten = "";
-      this.KensakuJoken.txtTehaiGyoshaCode = "";
-      this.KensakuJoken.txtTehaiGyoshaCodeEdaban = "";
-      this.KensakuJoken.txtTehaiGyoshaName = "";
+        this.KensakuJoken.rdoKojiKubun = "定期委託";
+        this.KensakuJoken.rdoYoteiKanryoKakunin = "予定";
 
-      this.KensakuJoken.ddlDaikbn = "-";
-      this.KensakuJoken.ddlChukbn = "-";
-      this.KensakuJoken.ddlSyokbn = "-";
+        this.KensakuJoken.dtpStartDate = "";
+        this.KensakuJoken.dtpEndDate = "";
+        this.KensakuJoken.rdoTargetDate = "作業予定日";
 
-      this.KensakuJoken.txtSagyoName = "";
-      this.KensakuJoken.txtBiko = "";
+        this.KensakuJoken.chkSagyoYoteiMinyuryoku = false;
+        this.KensakuJoken.chkSagyoYoteiMikakunin = true;
+        this.KensakuJoken.chkSagyoMikanryo = false;
+        this.KensakuJoken.chkSagyoKanryoMikakunin = false;
+        this.KensakuJoken.chkSagyoKanryoKakuninzumi = false;
+        this.KensakuJoken.chkSagyoChusi = false;
+
+        this.KensakuJoken.txtBukkenmeiCode = "";
+        this.KensakuJoken.txtBukkenmei = "";
+        this.KensakuJoken.txtBukkenkubun = "";
+        this.KensakuJoken.txtBukkenJushoCd = "";
+        this.KensakuJoken.txtBukkenJushoNm = "";
+
+        this.KensakuJoken.txtEigyotenCode = "";
+        this.KensakuJoken.txtEigyotenCodeEdaban = "";
+        this.KensakuJoken.txtEigyoten = "";
+        this.KensakuJoken.txtTehaiGyoshaCode = "";
+        this.KensakuJoken.txtTehaiGyoshaCodeEdaban = "";
+        this.KensakuJoken.txtTehaiGyoshaName = "";
+
+        this.KensakuJoken.ddlDaikbn = "-";
+        this.KensakuJoken.ddlChukbn = "-";
+        this.KensakuJoken.ddlSyokbn = "-";
+
+        this.KensakuJoken.txtSagyoName = "";
+        this.KensakuJoken.txtBiko = "";
+        this.isErrPinkNengetsudo = false;
+        this.isErrPinkEigyoten = false;
+        this.isErrPinkBukken = false;
+      } else {
+        //今月用
+        let now_before;
+        now_before = new Date();
+        now_before.setMonth(now_before.getMonth());
+
+        let now_before_year = now_before.getFullYear();
+        now_before_year = now_before_year.toString();
+        var now_before_mounth = now_before.getMonth() + 1;
+        now_before_mounth = ("00" + now_before_mounth).slice(-2);
+        this.KensakuJoken.dtpNengetsudo_from =
+          now_before_year + "/" + now_before_mounth;
+
+        //翌月用
+        let now_after = new Date();
+        now_after.setMonth(now_after.getMonth() + 2);
+
+        let now_after_year = now_after.getFullYear();
+        now_after_year = now_after_year.toString();
+        var now_after_mounth = now_after.getMonth();
+        now_after_mounth = ("00" + now_after_mounth).slice(-2);
+        this.KensakuJoken.dtpNengetsudo_to =
+          now_after_year + "/" + now_after_mounth;
+
+        this.KensakuJoken.rdoYearAndMonth = "作業月";
+        this.KensakuJoken.rdoKojiKubun = "全て";
+
+        this.KensakuJoken.dtpStartDate = "";
+        this.KensakuJoken.dtpEndDate = "";
+        this.KensakuJoken.rdoTargetDate = "作業予定日";
+
+        this.KensakuJoken.chkSagyoYoteiMinyuryoku = true;
+        this.KensakuJoken.chkSagyoYoteiMikakunin = true;
+        this.KensakuJoken.chkSagyoMikanryo = true;
+        this.KensakuJoken.chkSagyoKanryoMikakunin = true;
+        this.KensakuJoken.chkSagyoKanryoKakuninzumi = true;
+        this.KensakuJoken.chkSagyoChusi = true;
+
+        this.KensakuJoken.ddlDaikbn = "-";
+        this.http
+          .get("/api/Reafs_W/Sagyo/GetStartInfo", "アクセスしています....")
+          .then(response => {
+            this.名称取得方法17 = response.data.名称取得方法17;
+            this.大区分List = response.data.名称取得方法08;
+          });
+        this.KensakuJoken.ddlChukbn = "-";
+        this.KensakuJoken.ddlSyokbn = "-";
+
+        this.KensakuJoken.txtBukkenmeiCode = "";
+        this.KensakuJoken.txtBukkenmei = "";
+        this.KensakuJoken.txtBukkenkubun = "";
+        this.KensakuJoken.txtBukkenJushoCd = "";
+        this.KensakuJoken.txtBukkenJushoNm = "";
+
+        this.KensakuJoken.txtEigyotenCode = "";
+        this.KensakuJoken.txtEigyotenCodeEdaban = "";
+        this.KensakuJoken.txtEigyoten = "";
+        this.KensakuJoken.txtTehaiGyoshaCode = "";
+        this.KensakuJoken.txtTehaiGyoshaCodeEdaban = "";
+        this.KensakuJoken.txtTehaiGyoshaName = "";
+
+        this.KensakuJoken.txtSagyoName = "";
+        this.KensakuJoken.txtBiko = "";
+        this.isErrPinkNengetsudo = false;
+        this.isErrPinkEigyoten = false;
+        this.isErrPinkBukken = false;
+      }
     },
 
     ///////////////////////////////////////////////
@@ -1315,9 +1626,10 @@ export default {
     ///////////////////////////////////////////////
     fnc_rtrn_getSagyoYoteibiTime(valResponseData) {
       let sagyoYoteibiTime =
-        valResponseData.YoteijikanKaishi +
+        valResponseData.yoteijikanKaishi +
         "～" +
-        valResponseData.YoteijikanSyuryo;
+        valResponseData.yoteijikanSyuryo;
+
       return sagyoYoteibiTime;
     },
 
@@ -1327,6 +1639,7 @@ export default {
     ///////////////////////////////////////////////
     fnc_rtrn_KensakuJokenConvert(KensakuJokenConvertDataBefore) {
       console.log("検索時コンバート開始");
+
       // 変換後データ
       let letKensakuJokenConvertDataAfter = new Object();
 
@@ -1336,17 +1649,16 @@ export default {
       let letchkSagyoKanryoConvertAfter = new Object();
 
       // 年月度 契約年月
-      letchkKeiyakuNengetsuConvertAfter = this.fnc_obj_CheckBoxConvert(
-        KensakuJokenConvertDataBefore.chkKeiyakuNengetsu
-      );
+      letchkKeiyakuNengetsuConvertAfter =
+        this.fnc_obj_CheckBoxConvert(KensakuJokenConvertDataBefore.chkKeiyakuNengetsu);
+
       // 年月度 作業予定
-      letchkSagyoYoteiConvertAfter = this.fnc_obj_CheckBoxConvert(
-        KensakuJokenConvertDataBefore.chkSagyoYotei
-      );
+      letchkSagyoYoteiConvertAfter =
+        this.fnc_obj_CheckBoxConvert(KensakuJokenConvertDataBefore.chkSagyoYotei);
+
       // 年月度 作業完了
-      letchkSagyoKanryoConvertAfter = this.fnc_obj_CheckBoxConvert(
-        KensakuJokenConvertDataBefore.chkSagyoKanryo
-      );
+      letchkSagyoKanryoConvertAfter =
+        this.fnc_obj_CheckBoxConvert(KensakuJokenConvertDataBefore.chkSagyoKanryo);
 
       // 対象月 開始
       letKensakuJokenConvertDataAfter.dtpNengetsudo_from =
@@ -1355,7 +1667,7 @@ export default {
       letKensakuJokenConvertDataAfter.dtpNengetsudo_to =
         KensakuJokenConvertDataBefore.dtpNengetsudo_to;
       // 対象月 指定先
-      letKensakuJokenConvertDataAfter.rdoYearAndMonth = 
+      letKensakuJokenConvertDataAfter.rdoYearAndMonth =
         KensakuJokenConvertDataBefore.rdoYearAndMonth;
       // 工事区分
       letKensakuJokenConvertDataAfter.rdoKojiKubun =
@@ -1364,39 +1676,36 @@ export default {
       letKensakuJokenConvertDataAfter.dtpStartDate =
         KensakuJokenConvertDataBefore.dtpStartDate;
       // 対象日 終了
-      letKensakuJokenConvertDataAfter.dtpStartDate =
-        KensakuJokenConvertDataBefore.dtpStartDate;
+      letKensakuJokenConvertDataAfter.dtpEndDate =
+        KensakuJokenConvertDataBefore.dtpEndDate;
       // 対象日 指定先
-      letKensakuJokenConvertDataAfter.rdoTargetDate = 
+      letKensakuJokenConvertDataAfter.rdoTargetDate =
         KensakuJokenConvertDataBefore.rdoTargetDate;
-      
+
       // ステータス
-      letKensakuJokenConvertDataAfter.chkSagyoYoteiMinyuryoku =
-        this.KensakuJoken.chkSagyoYoteiMinyuryoku;
-      letKensakuJokenConvertDataAfter.chkSagyoYoteiMikakunin =
-      this.KensakuJoken.chkSagyoYoteiMikakunin;
-      letKensakuJokenConvertDataAfter.chkSagyoMikanryo =
-        this.KensakuJoken.chkSagyoMikanryo;
-      letKensakuJokenConvertDataAfter.chkSagyoKanryoMikakunin =
-        this.KensakuJoken.chkSagyoKanryoMikakunin;
-      letKensakuJokenConvertDataAfter.chkSagyoKanryoKakuninzumi =
-        this.KensakuJoken.chkSagyoKanryoKakuninzumi;
-      letKensakuJokenConvertDataAfter.chkSagyoChusi =
-        this.KensakuJoken.chkSagyoChusi
+      letKensakuJokenConvertDataAfter.chkSagyoYoteiMinyuryoku = this.KensakuJoken.chkSagyoYoteiMinyuryoku;
+      letKensakuJokenConvertDataAfter.chkSagyoYoteiMikakunin = this.KensakuJoken.chkSagyoYoteiMikakunin;
+      letKensakuJokenConvertDataAfter.chkSagyoMikanryo = this.KensakuJoken.chkSagyoMikanryo;
+      letKensakuJokenConvertDataAfter.chkSagyoKanryoMikakunin = this.KensakuJoken.chkSagyoKanryoMikakunin;
+      letKensakuJokenConvertDataAfter.chkSagyoKanryoKakuninzumi = this.KensakuJoken.chkSagyoKanryoKakuninzumi;
+      letKensakuJokenConvertDataAfter.chkSagyoChusi = this.KensakuJoken.chkSagyoChusi;
 
       // 物件コード
       letKensakuJokenConvertDataAfter.txtBukkenmeiCode =
         KensakuJokenConvertDataBefore.txtBukkenmeiCode;
 
       // 営業店コード
-      letKensakuJokenConvertDataAfter.txtEigyotenCode =
+      letKensakuJokenConvertDataAfter.txtEigyotenCode = 
         KensakuJokenConvertDataBefore.txtEigyotenCode.substr(0, 4);
+
       // 営業店コード枝番
       letKensakuJokenConvertDataAfter.txtEigyotenCodeEdaban =
         KensakuJokenConvertDataBefore.txtEigyotenCode.substr(4, 2);
+
       // 手配業者コード
       letKensakuJokenConvertDataAfter.txtTehaiGyoshaCode =
         KensakuJokenConvertDataBefore.txtTehaiGyoshaCode;
+      
       // 手配業者コード枝番
       letKensakuJokenConvertDataAfter.txtTehaiGyoshaCodeEdaban =
         KensakuJokenConvertDataBefore.txtTehaiGyoshaCodeEdaban;
@@ -1466,38 +1775,62 @@ export default {
       _this.hitKensu = "0  件";
       _this.isErrPinkNengetsudo = false;
       _this.isErrPinkEigyoten = false;
+      _this.isErrPinkBukken = false;
     },
 
     ///////////////////////////////////////////////
     // リンククリック時の画面遷移またはモーダル表示処理
     ///////////////////////////////////////////////
-    fnc_clickLink(row, column, rowIndex) {
-      switch (column.field) {
-        // 物件名
-        case "tblEigyoten":
-          this.$router.push({
-            name: "WD00420",
-            query: {
-              kojiKubun: "定期委託", //@@@@ 取り敢えず固定値
-              txtEigyotenCode:
-                this.tblData[rowIndex].tblEigyotenCode +
-                this.tblData[rowIndex].tblEigyotenCodeEdaban,
-              txtEigyoten: this.tblData[rowIndex].tblEigyoten,
-              JissiYoteiNengetsu: this.tblData[rowIndex].JissiYoteiNengetsu,
-            },
-          });
-          break;
+    // fnc_clickLink(row, column, rowIndex) {
+    //   switch (column.field) {
+    //     // 物件名
+    //     case "tblEigyoten":
+    //       this.$router.push({
+    //         name: "WD00420",
+    //         query: {
+    //           kojiKubun: "定期委託", //@@@@ 取り敢えず固定値
+    //           txtEigyotenCode:
+    //             this.tblData[rowIndex].tblEigyotenCode +
+    //             this.tblData[rowIndex].tblEigyotenCodeEdaban,
+    //           txtEigyoten: this.tblData[rowIndex].tblEigyoten,
+    //           JissiYoteiNengetsu: this.tblData[rowIndex].JissiYoteiNengetsu
+    //         }
+    //       });
+    //       break;
 
-        // 作業名称
-        case "tblSagyoMeisho":
-          console.log("WD00411表示処理");
-          this.fnc_void_dispSubDialog(row, column, rowIndex);
-          break;
+    //     // 作業名称
+    //     case "tblSagyoMeisho":
+    //       console.log("WD00411表示処理");
+    //       this.fnc_void_dispSubDialog(row, column, rowIndex);
+    //       break;
 
-        default:
-          break;
-      }
+    //     default:
+    //       break;
+    //   }
+    // },
+
+    lnktblbukkenOnClick(row, column, rowIndex) {
+      console.log("物件リンク押下");
+
+      this.$router.push({
+        name: "WD00420",
+        query: {
+          kojiKubun: "定期委託", //@@@@ 取り敢えず固定値
+          txtEigyotenCode:
+            row.tblEigyotenCode +
+            row.tblEigyotenCodeEdaban,
+          txtEigyoten: row.tblEigyoten,
+          JissiYoteiNengetsu: row.jissiYoteiNengetsu
+        }
+      });
+    }, 
+
+    lnktblSagyoMeishoOnClick(row, column, rowIndex) {
+      console.log("WD00411表示処理");
+
+      this.fnc_void_dispSubDialog(row, column, rowIndex);
     },
+
     async onDownload(DLPass, FileName) {
       console.log("ファイルダウンロードするよ");
 
@@ -1508,19 +1841,19 @@ export default {
       // this.loading["refDl"] = true;
       const FileDownloadInfo = {
         FilePath: DLPass,
-        FileName: FileName,
+        FileName: FileName
       };
 
       await this.http
         .post("/api/Reafs_W/Common/DownloadFile", FileDownloadInfo, "", {
-          responseType: "blob",
+          responseType: "blob"
         })
-        .then(async (blob) => {
+        .then(async blob => {
           await this.base.saveFileDownload(blob, FileName);
         })
-        .catch((ex) => console.log(ex))
+        .catch(ex => console.log(ex))
         .finally(() => {})
-        .catch((ex) => console.log(ex));
+        .catch(ex => console.log(ex));
     },
 
     ///////////////////////////////////////////////
@@ -1536,7 +1869,7 @@ export default {
       console.log(row.type);
 
       // 定期委託時
-      if (1) {
+      if (valParamToWSSubDialog.type == "teiki") {
         if (
           "510" <= valParamToWSSubDialog.sintyoku_cd &&
           valParamToWSSubDialog.sintyoku_cd <= "530"
@@ -1551,14 +1884,15 @@ export default {
           //添付ファイル取得
           await _this.http
             .post("/api/Reafs_W/Sagyo/WS00410_GET_attached", {
-              契約no: _this.tblData[rowIndex].KeiyakuNo,
-              履歴no: _this.tblData[rowIndex].RirekiNo,
-              明細no: _this.tblData[rowIndex].MeisaiNo,
-              契約年月明細NO: _this.tblData[rowIndex].KeiyakuNengetsuMeisai,
-              契約年月: _this.tblData[rowIndex].KeiyakuNengetsu,
+              契約no: row.keiyakuNo,
+              履歴no: row.rirekiNo,
+              明細no: row.meisaiNo,
+              契約年月明細NO: row.keiyakuNengetsuMeisai,
+              契約年月: row.keiyakuNengetsu,
+              実施予定年月: row.jissiYoteiNengetsu
             })
             // 検索実行後処理
-            .then(function (response) {
+            .then(function(response) {
               _this.tblData2 = response.data;
             });
           // 作業完了報告画面表示
@@ -1571,9 +1905,12 @@ export default {
               valParamToWSSubDialog.sintyoku_cd
           );
         }
-      } else {
+      } else if (valParamToWSSubDialog.type == "spot") {
         // F052.検収回数0より大きいレコード有 かつ 修繕区分大がスポット清掃(03)
-        if (1) {
+        if (
+          valParamToWSSubDialog.tblStatus == "作業予定未入力" ||
+          valParamToWSSubDialog.tblStatus == "作業予定未確認"
+        ) {
           // 作業予定明細画面表示
           _this.KeyDataToWS00411 = valParamToWSSubDialog;
           _this.showWS00411 = true;
@@ -1581,6 +1918,7 @@ export default {
           // 処理なし
           console.log("画面表示なし");
         }
+      } else {
       }
     },
 
@@ -1591,37 +1929,36 @@ export default {
       let _this = this;
       let valParamToWSSubDialog = new Object();
 
-      valParamToWSSubDialog = this.tblData[rowIndex];
+      valParamToWSSubDialog = row;
 
       // 工事区分
       valParamToWSSubDialog.rdoKojiKubun = this.KensakuJoken.rdoKojiKubun;
       // 会社コード
-      valParamToWSSubDialog.KaishaCd = this.tblData[rowIndex].KaishaCd;
+      valParamToWSSubDialog.KaishaCd = row.kaishaCd;
       // 工事依頼No
-      valParamToWSSubDialog.KojiiraiNo = this.tblData[rowIndex].KojiiraiNo;
+      valParamToWSSubDialog.KojiiraiNo = row.kojiiraiNo;
       // 契約NO
-      valParamToWSSubDialog.KeiyakuNo = this.tblData[rowIndex].KeiyakuNo;
+      valParamToWSSubDialog.KeiyakuNo = row.keiyakuNo;
       // 履歴No
-      valParamToWSSubDialog.RirekiNo = this.tblData[rowIndex].RirekiNo;
+      valParamToWSSubDialog.RirekiNo = row.rirekiNo;
       // 明細NO
-      valParamToWSSubDialog.MeisaiNo = this.tblData[rowIndex].MeisaiNo;
+      valParamToWSSubDialog.MeisaiNo = row.meisaiNo;
       // 契約年月
-      valParamToWSSubDialog.KeiyakuNengetsu =
-        this.tblData[rowIndex].KeiyakuNengetsu;
+      valParamToWSSubDialog.KeiyakuNengetsu = row.keiyakuNengetsu;
       // 契約年月明細NO
-      valParamToWSSubDialog.KeiyakuNengetsuMeisai =
-        this.tblData[rowIndex].KeiyakuNengetsuMeisai;
+      valParamToWSSubDialog.KeiyakuNengetsuMeisai = row.keiyakuNengetsuMeisai;
 
       //発注サブNO
-      valParamToWSSubDialog.発注サブno = this.tblData[rowIndex].発注サブno;
+      valParamToWSSubDialog.発注サブno = row.発注サブno;
       //検収回数
-      valParamToWSSubDialog.検収回数 = this.tblData[rowIndex].検収回数;
+      valParamToWSSubDialog.検収回数 = row.検収回数;
 
       // 差戻回数
-      valParamToWSSubDialog.SashimodoshiKaisuu =
-        this.tblData[rowIndex].SashimodoshiKaisuu;
+      valParamToWSSubDialog.SashimodoshiKaisuu = row.sashimodoshiKaisuu;
       // 物件名
-      valParamToWSSubDialog.bukken_name = row.tblEigyoten;
+      valParamToWSSubDialog.bukken_name = row.tblbukken;
+      // 営業店
+      valParamToWSSubDialog.tblEigyoten = row.tblEigyoten;
       // 手配業者
       valParamToWSSubDialog.tehai_name = row.tblTehaiGyosha;
       // 大区分
@@ -1637,21 +1974,39 @@ export default {
       valParamToWSSubDialog.sagyou_name = row.tblSagyoMeisho;
       // 作業月/回目
       valParamToWSSubDialog.sagyou_tuki_kaisuu =
-        _this.tblData[rowIndex].JissiYoteiNengetsu.substr(0, 4) +
+        row.jissiYoteiNengetsu.substr(0, 4) +
         "年" +
-        _this.tblData[rowIndex].JissiYoteiNengetsu.substr(5, 2) +
+        row.jissiYoteiNengetsu.substr(5, 2) +
         "月 " +
-        _this.tblData[rowIndex].Kaime +
+        row.kaime +
         "回目報告";
       valParamToWSSubDialog.sagyo_date = new Object();
 
       // 備考
       valParamToWSSubDialog.sagyou_yotei_bikou = row.tblBiko;
       // 進捗コード（受注）
-      valParamToWSSubDialog.sintyoku_cd = _this.tblData[rowIndex].ShintyokuCode;
+      valParamToWSSubDialog.sintyoku_cd = row.shintyokuCode;
       // 差戻事由
-      valParamToWSSubDialog.sasimodori_ziyuu =
+      valParamToWSSubDialog.sasimodori_ziyuu = 
         _this.fnc_void_getSashimodoshiJiyuInfo(row, column, rowIndex);
+
+      // 定期と修繕で処理が分かれます。
+      if (valParamToWSSubDialog.type == "teiki") {
+        // 作業月/回目
+        valParamToWSSubDialog.sagyou_tuki_kaisuu =
+          row.jissiYoteiNengetsu.substr(0, 4) +
+          "年" +
+          row.jissiYoteiNengetsu.substr(5, 2) +
+          "月 " +
+          row.kaime +
+          "回目報告";
+      } else {
+        valParamToWSSubDialog.sagyou_tuki_kaisuu =
+          row.jissiYoteiNengetsu.substr(0, 4) +
+          "年" +
+          row.jissiYoteiNengetsu.substr(5, 2) +
+          "月 ";
+      }
 
       // 差戻事由有効
       valParamToWSSubDialog.edit_sashimodoshiJiyuDisable = false;
@@ -1664,75 +2019,84 @@ export default {
         // 作業予定日 開始
         valParamToWSSubDialog.sagyo_date.startDate =
           row.tblSagyoYoteibiStartDate;
+
         // 作業予定時間 開始
-        valParamToWSSubDialog.sagyo_date.startTime =
-          row.tblSagyoYoteibiTime.substr(0, 5);
+        valParamToWSSubDialog.sagyo_date.startTime = row.tblSagyoYoteibiTime.substr(0, 5);
         // 作業予定日 終了
         valParamToWSSubDialog.sagyo_date.endDate = row.tblSagyoYoteibiEndtDate;
         // 作業予定時間 終了
-        valParamToWSSubDialog.sagyo_date.endTime =
-          row.tblSagyoYoteibiTime.substr(6, 5);
+        valParamToWSSubDialog.sagyo_date.endTime = row.tblSagyoYoteibiTime.substr(6, 5);
         // 作業実施日 終了引数用
-        valParamToWSSubDialog.sagyoyotei_syuuryou_date =
-          row.tblSagyoYoteibiEndtDate;
+        valParamToWSSubDialog.sagyoyotei_syuuryou_date = row.tblSagyoYoteibiEndtDate;
 
-        valParamToWSSubDialog.sagyoyotei_kaisi_date =
-          row.tblSagyoYoteibiStartDate;
-        valParamToWSSubDialog.sagyoyotei_kaisi_time =
-          row.tblSagyoYoteibiTime.substr(0, 5);
-        valParamToWSSubDialog.sagyoyotei_syuuryou_date =
-          row.tblSagyoYoteibiEndtDate;
-        valParamToWSSubDialog.sagyoyotei_syuuryou_time =
-          row.tblSagyoYoteibiTime.substr(6, 5);
-        valParamToWSSubDialog.sagyokanryo_kaisi_date =
-          _this.tblData[rowIndex].tblSagyoKanryobiStartDate;
-        valParamToWSSubDialog.sagyokanryo_syuuryou_date =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
-        //530（作業未完了）の場合は、見るだけのため、ボタン使用不可
-        if (valParamToWSSubDialog.sintyoku_cd === "530") {
-          // 差戻事由有効
-          valParamToWSSubDialog.edit_sashimodoshiJiyuDisable = true;
-          // 差戻ボタン有効
-          valParamToWSSubDialog.btn_sashimodoshiDisable = true;
-          // 確認ボタン有効
-          valParamToWSSubDialog.btn_kakuninDisable = true;
+        valParamToWSSubDialog.sagyoyotei_kaisi_date =row.tblSagyoYoteibiStartDate;
+
+        valParamToWSSubDialog.sagyoyotei_kaisi_time = row.tblSagyoYoteibiTime.substr(0, 5);
+        valParamToWSSubDialog.sagyoyotei_syuuryou_date = row.tblSagyoYoteibiEndtDate;
+        valParamToWSSubDialog.sagyoyotei_syuuryou_time = row.tblSagyoYoteibiTime.substr(6, 5);
+        valParamToWSSubDialog.sagyokanryo_kaisi_date = row.tblSagyoKanryobiStartDate;
+        valParamToWSSubDialog.sagyokanryo_syuuryou_date = row.tblSagyoKanryobi;
+
+        // 定期と修繕で処理が分かれます。
+        if (valParamToWSSubDialog.type == "teiki") {
+          //530（作業未完了）の場合は、見るだけのため、ボタン使用不可
+          if (
+            valParamToWSSubDialog.sintyoku_cd >= "520" &&
+            valParamToWSSubDialog.sintyoku_cd < "530"
+          ) {
+            //無効の場合のため処理なし
+          } else {
+            // 差戻事由有効
+            valParamToWSSubDialog.edit_sashimodoshiJiyuDisable = true;
+            // 差戻ボタン有効
+            valParamToWSSubDialog.btn_sashimodoshiDisable = true;
+            // 確認ボタン有効
+            valParamToWSSubDialog.btn_kakuninDisable = true;
+          }
+        } else {
+          if (row.btnDisable == 0) {
+            // 差戻事由有効
+            valParamToWSSubDialog.edit_sashimodoshiJiyuDisable = true;
+            // 差戻ボタン有効
+            valParamToWSSubDialog.btn_sashimodoshiDisable = true;
+            // 確認ボタン有効
+            valParamToWSSubDialog.btn_kakuninDisable = true;
+          }
         }
       } else if (valParamToWSSubDialog.sintyoku_cd < "550") {
         // 作業実施日 開始
         valParamToWSSubDialog.sagyo_date.startDate =
-          _this.tblData[rowIndex].tblSagyoKanryobiStartDate;
+          row.tblSagyoKanryobiStartDate;
         // 作業実施日 終了
         valParamToWSSubDialog.sagyo_date.endDate =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
         // 作業実施日 終了引数用
         valParamToWSSubDialog.sagyoyotei_syuuryou_date =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
         // 備考
         valParamToWSSubDialog.sagyou_yotei_bikou =
-          _this.tblData[rowIndex].tblSagyoKanryoBiko;
+          row.tblSagyoKanryoBiko;
 
         valParamToWSSubDialog.sagyoyotei_kaisi_date =
           row.tblSagyoYoteibiStartDate;
-        valParamToWSSubDialog.sagyoyotei_kaisi_time =
-          row.tblSagyoYoteibiTime.substr(0, 5);
+        valParamToWSSubDialog.sagyoyotei_kaisi_time = row.tblSagyoYoteibiTime.substr(0, 5);
         valParamToWSSubDialog.sagyoyotei_syuuryou_date =
           row.tblSagyoYoteibiEndtDate;
-        valParamToWSSubDialog.sagyoyotei_syuuryou_time =
-          row.tblSagyoYoteibiTime.substr(6, 5);
+        valParamToWSSubDialog.sagyoyotei_syuuryou_time = row.tblSagyoYoteibiTime.substr(6, 5);
         valParamToWSSubDialog.sagyokanryo_kaisi_date =
-          _this.tblData[rowIndex].tblSagyoKanryobiStartDate;
+          row.tblSagyoKanryobiStartDate;
         valParamToWSSubDialog.sagyokanryo_syuuryou_date =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
       } else {
         // 作業実施日 開始
         valParamToWSSubDialog.sagyo_date.startDate =
-          _this.tblData[rowIndex].tblSagyoKanryobiStartDate;
+          row.tblSagyoKanryobiStartDate;
         // 作業実施日 終了
         valParamToWSSubDialog.sagyo_date.endDate =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
         // 作業実施日 終了引数用
         valParamToWSSubDialog.sagyoyotei_syuuryou_date =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
         // 差戻事由無効
         valParamToWSSubDialog.edit_sashimodoshiJiyuDisable = true;
         // 差戻ボタン無効
@@ -1741,20 +2105,24 @@ export default {
         valParamToWSSubDialog.btn_kakuninDisable = true;
         // 備考
         valParamToWSSubDialog.sagyou_yotei_bikou =
-          _this.tblData[rowIndex].tblSagyoKanryoBiko;
+          row.tblSagyoKanryoBiko;
 
         valParamToWSSubDialog.sagyoyotei_kaisi_date =
           row.tblSagyoYoteibiStartDate;
-        valParamToWSSubDialog.sagyoyotei_kaisi_time =
-          row.tblSagyoYoteibiTime.substr(0, 5);
+        valParamToWSSubDialog.sagyoyotei_kaisi_time = row.tblSagyoYoteibiTime.substr(0, 5);
         valParamToWSSubDialog.sagyoyotei_syuuryou_date =
           row.tblSagyoYoteibiEndtDate;
-        valParamToWSSubDialog.sagyoyotei_syuuryou_time =
-          row.tblSagyoYoteibiTime.substr(6, 5);
+        valParamToWSSubDialog.sagyoyotei_syuuryou_time = row.tblSagyoYoteibiTime.substr(6, 5);
         valParamToWSSubDialog.sagyokanryo_kaisi_date =
-          _this.tblData[rowIndex].tblSagyoKanryobiStartDate;
+          row.tblSagyoKanryobiStartDate;
         valParamToWSSubDialog.sagyokanryo_syuuryou_date =
-          _this.tblData[rowIndex].tblSagyoKanryobi;
+          row.tblSagyoKanryobi;
+      }
+
+      // 予定未入力の時予定開始時間に「～」が出るので空白に制御
+      // 原因分かり次第処理をなくしていいと思います。
+      if (valParamToWSSubDialog.sagyo_date.startTime == "～") {
+        valParamToWSSubDialog.sagyo_date.startTime = "";
       }
 
       return valParamToWSSubDialog;
@@ -1768,22 +2136,21 @@ export default {
       let letVals = new Object();
 
       if (
-        this.tblData[rowIndex].ShintyokuCode === "516" ||
-        this.tblData[rowIndex].ShintyokuCode === "518"
+        row.shintyokuCode === "516" ||
+        row.shintyokuCode === "518"
       ) {
         // 工事区分
         letVals.rdoKojiKubun = this.KensakuJoken.rdoKojiKubun;
         // 契約NO
-        letVals.KeiyakuNo = this.tblData[rowIndex].KeiyakuNo;
+        letVals.KeiyakuNo = row.keiyakuNo;
         // 履歴No
-        letVals.RirekiNo = this.tblData[rowIndex].RirekiNo;
+        letVals.RirekiNo = row.rirekiNo;
         // 明細NO
-        letVals.MeisaiNo = this.tblData[rowIndex].MeisaiNo;
+        letVals.MeisaiNo = row.meisaiNo;
         // 契約年月
-        letVals.KeiyakuNengetsu = this.tblData[rowIndex].KeiyakuNengetsu;
+        letVals.KeiyakuNengetsu = row.keiyakuNengetsu;
         // 契約年月明細NO
-        letVals.KeiyakuNengetsuMeisai =
-          this.tblData[rowIndex].KeiyakuNengetsuMeisai;
+        letVals.KeiyakuNengetsuMeisai = row.keiyakuNengetsuMeisai;
 
         _this.http
           .post(
@@ -1791,7 +2158,7 @@ export default {
             letVals
           )
           // 検索実行後処理
-          .then(function (response) {
+          .then(function(response) {
             if (response.data.length === 0) {
               _this.KeyDataToWS00411.sasimodori_ziyuu = "";
             } else {
@@ -1803,29 +2170,29 @@ export default {
 
         return this.KeyDataToWS00411.sasimodori_ziyuu;
       } else if (
-        this.tblData[rowIndex].ShintyokuCode === "536" ||
-        this.tblData[rowIndex].ShintyokuCode === "538"
+        row.shintyokuCode === "536" ||
+        row.shintyokuCode === "538"
       ) {
         // 工事区分
         letVals.rdoKojiKubun = this.KensakuJoken.rdoKojiKubun;
         // 契約NO
-        letVals.KeiyakuNo = this.tblData[rowIndex].KeiyakuNo;
+        letVals.KeiyakuNo = row.keiyakuNo;
         // 履歴No
-        letVals.RirekiNo = this.tblData[rowIndex].RirekiNo;
+        letVals.RirekiNo = row.rirekiNo;
         // 明細NO
-        letVals.MeisaiNo = this.tblData[rowIndex].MeisaiNo;
+        letVals.MeisaiNo = row.meisaiNo;
         // 契約年月
-        letVals.KeiyakuNengetsu = this.tblData[rowIndex].KeiyakuNengetsu;
+        letVals.KeiyakuNengetsu = row.keiyakuNengetsu;
         // 契約年月明細NO
-        letVals.KeiyakuNengetsuMeisai =
-          this.tblData[rowIndex].KeiyakuNengetsuMeisai;
+        letVals.KeiyakuNengetsuMeisai = row.keiyakuNengetsuMeisai;
+
         _this.http
           .post(
             "/api/Reafs_W/SagyoJyokyoKanryo/WS00412_GET_KensakuKekka",
             letVals
           )
           // 検索実行後処理
-          .then(function (response) {
+          .then(function(response) {
             if (response.data.length === 0) {
               _this.KeyDataToWS00412.sasimodori_ziyuu = "";
             } else {
@@ -1862,8 +2229,7 @@ export default {
           this.KensakuJoken.dtpStartDate === "" ||
           this.KensakuJoken.dtpEndDate === null ||
           this.KensakuJoken.dtpEndDate === ""
-        )
-        {
+        ) {
           this.fnc_void_showErrorMsg("E010333"); // 請求書月分を入力して下さい。
           this.isErrPinkNengetsudo = true; //背景色ピンク
           return false;
@@ -1871,13 +2237,16 @@ export default {
       }
 
       // 対象月の範囲が逆の場合
-      if (this.KensakuJoken.dtpNengetsudo_from > this.KensakuJoken.dtpNengetsudo_to) {
+      if (
+        this.KensakuJoken.dtpNengetsudo_from >
+        this.KensakuJoken.dtpNengetsudo_to
+      ) {
         this.fnc_void_showErrorMsg("E040279"); // 日付を正しく入力して下さい。（開始≦終了）
         this.isErrPinkNengetsudo = true; //背景色ピンク
         return false;
       }
 
-      if (this.KensakuJoken.dtpStartDate > this.KensakuJoken.dtpEndDate){
+      if (this.KensakuJoken.dtpStartDate > this.KensakuJoken.dtpEndDate) {
         this.fnc_void_showErrorMsg("E040279"); // 日付を正しく入力して下さい。（開始≦終了）
         this.isErrPinkNengetsudo = true; //背景色ピンク
         return false;
@@ -1898,14 +2267,27 @@ export default {
       }
 
       // 営業店が空の場合
-      // console.log("営業店エラーチェック");
-      // console.log(this.KensakuJoken.kidou_no);
-      // if (KensakuJoken.txtEigyoten === "" && this.KensakuJoken.kidou_no == 0) {
-      //   this.fnc_void_showErrorMsg("E040005"); // 営業店を入力して下さい。
-      //   this.isErrPinkEigyoten = true; //背景色ピンク
-      //   this.$refs.ref営業店.focus();
-      //   return false;
-      // }
+      if (
+        KensakuJoken.txtEigyotenCode != "" &&
+        KensakuJoken.txtEigyoten === "" &&
+        this.KensakuJoken.kidou_no == 0
+      ) {
+        this.fnc_void_showErrorMsg("E040009"); // 営業店を入力して下さい。
+        this.isErrPinkEigyoten = true; //背景色ピンク
+        this.$refs.ref営業店.focus();
+        return false;
+      }
+      // 物件が空の場合
+      if (
+        KensakuJoken.txtBukkenmeiCode != "" &&
+        KensakuJoken.txtBukkenmei === "" &&
+        this.KensakuJoken.txtBukkenkubun == ""
+      ) {
+        this.fnc_void_showErrorMsg("E040481"); // 営業店を入力して下さい。
+        this.isErrPinkBukken = true; //背景色ピンク
+        this.$refs.ref物件.focus();
+        return false;
+      }
 
       return true;
     },
@@ -1921,10 +2303,10 @@ export default {
     // エラーメッセージ出力
     ///////////////////////////////////////////////
     fnc_void_showErrorMsg(MsgCode) {
-      this.fnc_rtrn_getMsg(MsgCode).then((response) => {
+      this.fnc_rtrn_getMsg(MsgCode).then(response => {
         this.MsgErr({
           title: "作業状況一覧",
-          message: response.data,
+          message: response.data
         });
       });
     },
@@ -1934,48 +2316,50 @@ export default {
     ///////////////////////////////////////////////
     async reafsmodalBackEigyoten(e) {
       var next = true;
-      this.KensakuJoken.txtEigyotenCode = e.eigyotenCd;
-      this.KensakuJoken.txtEigyoten = e.eigyotenNm;
+      this.KensakuJoken.txtEigyotenCode = e.txtCd;
+      this.KensakuJoken.txtEigyoten = e.lblNm;
       if (this.KensakuJoken.txtEigyotenCode) {
         if (!(await this.Check営業店Exist())) {
           next = false;
+          this.isErrPinkEigyoten = true;
         }
       } else {
         this.KensakuJoken.txtEigyoten = "";
         next = false;
+        this.isErrPinkEigyoten = true;
       }
 
       if (next) {
         if (
           !this.名称取得方法17.find(
-            (x) => x.営業所コード && x.営業所コード.substring(0, 4) === "9900"
+            x => x.営業所コード && x.営業所コード.substring(0, 4) === "9900"
           )
         ) {
           if (
             this.名称取得方法17 &&
             this.名称取得方法17.filter(
-              (x) => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
+              x => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
             ).length > 0
           ) {
             var allPOSITIVE7Length = this.名称取得方法17.filter(
-              (x) => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
+              x => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
             );
             var allRange = allPOSITIVE7Length.map(
-              (x) => x.支社コード + x.支社コード枝番
+              x => x.支社コード + x.支社コード枝番
             );
             this.http
               .post("/api/Reafs_W/Sagyo/get営業店CheckData", {
                 lst支社コード: allRange,
-                店コード: e.eigyotenCd.substring(0, 4),
-                店コード枝番: e.eigyotenCd.substring(4, 7),
+                店コード: e.txtCd.substring(0, 4),
+                店コード枝番: e.txtCd.substring(4, 7)
               })
-              .then((response) => {
+              .then(response => {
                 if (
                   !response.data.range名称取得方法18 ||
                   !response.data.range名称取得方法18.find(
-                    (x) =>
-                      x.店コード === e.eigyotenCd.substring(0, 4) &&
-                      x.店コード枝番 === e.eigyotenCd.substring(4, 7)
+                    x =>
+                      x.店コード === e.txtCd.substring(0, 4) &&
+                      x.店コード枝番 === e.txtCd.substring(4, 7)
                   )
                 ) {
                   if (!response.data.店コード) {
@@ -1989,10 +2373,10 @@ export default {
             this.http
               .post("/api/Reafs_W/Sagyo/get営業店CheckData", {
                 lst支社コード: [],
-                店コード: e.eigyotenCd.substring(0, 4),
-                店コード枝番: e.eigyotenCd.substring(4, 7),
+                店コード: e.txtCd.substring(0, 4),
+                店コード枝番: e.txtCd.substring(4, 7)
               })
-              .then((response) => {
+              .then(response => {
                 if (!response.data.店コード) {
                   this.KensakuJoken.txtEigyotenCode = "";
                   this.KensakuJoken.txtEigyoten = "";
@@ -2002,24 +2386,25 @@ export default {
               });
           }
         }
+      } else {
       }
     },
 
     Check営業店Exist() {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.http
           .get("/api/Reafs_W/Sagyo/Check営業店Exist", {
-            店コード: this.KensakuJoken.txtEigyotenCode,
+            店コード: this.KensakuJoken.txtEigyotenCode
           })
-          .then((response) => {
+          .then(response => {
             if (!response.data || response.data != 1) {
-              this.fnc_rtrn_getMsg("E040009")
-                .then((response) => {
-                  this.showError(response.data, () => {
-                    this.$refs.ref営業店.focus();
-                  });
-                })
-                .finally(() => {});
+              // this.fnc_rtrn_getMsg("E040009")
+              //   .then(response => {
+              //     this.showError(response.data, () => {
+              //       this.$refs.ref営業店.focus();
+              //     });
+              //   })
+              //   .finally(() => {});
               return resolve(false);
             } else {
               return resolve(true);
@@ -2029,27 +2414,17 @@ export default {
     },
 
     get営業店CheckData(allRange, 店コード, 店コード枝番) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.http
           .post("/api/Reafs_W/Sagyo/get営業店CheckData", {
             lst支社コード: allRange,
             店コード: 店コード,
-            店コード枝番: 店コード枝番,
+            店コード枝番: 店コード枝番
           })
-          .then((response) => {
+          .then(response => {
             return resolve(response);
           });
       });
-    },
-
-    showError(message, callback, title = this.$store.getters.getPageTitle()) {
-      this.MsgErr(
-        {
-          title,
-          message,
-        },
-        callback
-      );
     },
 
     ///////////////////////////////////////////////
@@ -2065,10 +2440,12 @@ export default {
       // 郵便番号
       this.KensakuJoken.txtBukkenJushoCd = obj.row.郵便番号;
       // 住所
-      if (this.KensakuJoken.txtBukkenmeiCode != "") {
+      if (this.KensakuJoken.txtBukkenmei != "") {
         this.KensakuJoken.txtBukkenJushoNm =
           obj.row.住所 + " " + obj.row.番地 + "番地 " + obj.row.号 + "号";
       } else {
+        this.isErrPinkBukken = true; //背景色ピンク
+        this.KensakuJoken.txtBukkenmeiCode = "";
         this.KensakuJoken.txtBukkenJushoNm = "";
       }
     },
@@ -2093,8 +2470,8 @@ export default {
     ///////////////////////////////////////////////
     async onBack() {
       this.$router.push({ name: "WD00010" }); // home画面のname指定が異なるため
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -2166,26 +2543,32 @@ export default {
   border-radius: 1px;
   padding-right: 5px;
 }
-
+/* 作業月エラーピンク */
+.pinkcolor_el_range_input .el-input__inner {
+  background-color: lightpink !important;
+}
+/* 営業店エラーピンク */
+.pinkcolor_eigyou >>> .el-input__inner {
+  background-color: lightpink !important;
+}
+/* 物件エラーピンク */
+.pinkcolor_bukken >>> .el-input__inner {
+  background-color: lightpink !important;
+}
 .is-search {
   width: 56px;
 }
 </style>
 
 <style>
-/* 作業月エラーピンク */
-.pinkcolor_el_range_input .el-input__inner {
-  background-color: lightpink !important;
+.SagyojoukyoIchiran .text-left {
+  text-align: left !important;
 }
-
-/* 営業店エラーピンク */
-.pinkcolor_el_input .el-input__inner {
-  background-color: lightpink !important;
-}
-
-.SagyojoukyoIchiran .ve-table .ve-table-container table.ve-table-content {
+/* 2023/07/06 この設定とvirtualScrollOptionとの相性が悪い。 スクロールしてたら最終的になんも見えなくなる
+   virtualScrollOptionはメモリエラーの対策なのでこっちを殺す。 動き、子画面表示など確認したが影響なし。 なんのために入れてた？*/
+/* .SagyojoukyoIchiran .ve-table .ve-table-container table.ve-table-content {
   top: -1px !important;
-}
+} */
 
 .SagyojoukyoIchiran .button-multi-code .reafs-input {
   display: none !important;

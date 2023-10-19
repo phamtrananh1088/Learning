@@ -6,7 +6,7 @@
         <el-row>
           <el-col v-for="(item, index) in data" :key="index" :span="24">
            <el-checkbox-group v-model="selectTemp">
-            <el-checkbox :label="item.value" @change="onCheckboxChange($event, item)">{{ item.name }}</el-checkbox>
+            <el-checkbox :label="item.name" @change="onCheckboxChange($event, item)">{{ item.name }}</el-checkbox>
             </el-checkbox-group>
           </el-col>
         </el-row>
@@ -56,11 +56,11 @@ export default {
     },
     onCheckboxChange (e, item) {
       if (e) {
-        if (!this.selectTemp.find(x => x === item.value)) {
-          this.selectTemp.push(item.value)
+        if (!this.selectTemp.find(x => x === item.name)) {
+          this.selectTemp.push(item.name)
         }
       } else {
-        const index = this.selectTemp.indexOf(item.value)
+        const index = this.selectTemp.indexOf(item.name)
         if (index > -1) {
           this.selectTemp.splice(index, 1) // 2nd parameter means remove one item only
         }

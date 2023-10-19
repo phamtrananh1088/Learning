@@ -14,6 +14,7 @@
                   required
                   v-model="pageData.承認種類"
                   ref="ref承認種類"
+                  @change="onChange承認種類()"
                 >
                   <el-option
                     v-for="item in 承認種類List"
@@ -56,7 +57,7 @@
                 </el-col>
                 <el-col :span="1">
                   <el-button type="primary" size="mini" ref="ref検索"
-                 @click="onSearch">検索</el-button>
+                 @click="onSearch(false)">検索</el-button>
                  </el-col>
                  </el-row>
                 </el-col>
@@ -64,7 +65,7 @@
           <!-- 2 -->
           <el-row>
             <el-col :span="8">
-              <el-form-item v-if="visible.営業店" label="営業店" prop="営業店コード">
+              <el-form-item v-if="visible.営業店" label="営業所" prop="営業店コード">
                   <eigyoten
                     :eigyotenCd="pageData.店コード"
                     @update:eigyotenCd="(v)=> { this.pageData.店コード = v }"
@@ -261,6 +262,19 @@
           </el-row>
           <el-row  style="margin-bottom: 14px">
             <el-col :span="8">
+             <el-form-item label="部門確認" prop="部門確認" v-if="visible.部門確認">
+                 <el-checkbox
+                  label="確認済"
+                  v-model="pageData.確認済"
+                  style="margin-left: 5px"
+                ></el-checkbox>
+                 <el-checkbox
+                  label="未確認"
+                  v-model="pageData.未確認"
+                ></el-checkbox>
+              </el-form-item>
+             </el-col>
+            <el-col :span="9">
              <el-form-item label="按分" prop="按分" v-if="visible.按分">
                  <el-checkbox
                   label="有り"
@@ -273,12 +287,11 @@
                 ></el-checkbox>
               </el-form-item>
              </el-col>
-             <el-col :span="9">
-             <el-form-item label="業者状態" prop="業者状態" v-if="visible.業者状態">
+             <el-col :span="7">
+             <el-form-item id ="業者状態" label="業者状態" prop="業者状態" v-if="visible.業者状態">
                  <el-checkbox
                   label="請求合意待ち"
                   v-model="pageData.請求合意待ち"
-                  style="margin-left: 5px"
                 ></el-checkbox>
                  <el-checkbox
                   label="請求合意済"
@@ -292,8 +305,8 @@
              </el-col>
           </el-row>
           <el-row>
-            <reafstable ref="table" :tableData="tableData" :columns="columnsFilter" :maxHeight="581" @selectedRowChange="selectedRowChange" :resizeAble="true"
-              :cellStyleOption="cellStyleOption" rowKeyFieldName="key" :class="tableClassFilter" :disableSelectedRowKeys="disableSelectedRowKeys" :sortOption="sortOption" :HiddenColumnKeys="hiddenColumnMishoninShonin">
+            <reafstable ref="table" :tableData="tableData" :columns="columnsFilter" :maxHeight="581" :resizeAble="true"
+              :cellStyleOption="cellStyleOption" rowKeyFieldName="key" :class="tableClassFilter" :sortOption="sortOption" :HiddenColumnKeys="hiddenColumnMishoninShonin">
             </reafstable>
             <screenPopup
                   src="/Reafs_W/TyohyoIchiran"
@@ -343,9 +356,10 @@
         <el-footer class="home-el-footer" height="auto">
           <el-row>
             <el-col :span="24" style="display: flex; justify-content: end; gap: 30px;">
+              <el-button v-show="isShowButtonBumonKakunin" :disabled="disable部門確認" @click="onBumonKakunin" style="float: right">部門確認</el-button>
               <el-button v-show="isShowButton" :disabled="disable差戻" @click="onSashimodoshi" style="float: right">差戻</el-button>
-              <el-button v-show="isShowButton" @click="onHinin" style="float: right">否認</el-button>
-              <el-button v-show="isShowButton" @click="onShonin" style="float: right">承認</el-button>
+              <el-button v-show="isShowButton" :disabled="disable否認" @click="onHinin" style="float: right">否認</el-button>
+              <el-button v-show="isShowButton" :disabled="disable承認" @click="onShonin" style="float: right">承認</el-button>
               <el-button @click="onBack">戻る
               </el-button>
             </el-col>
@@ -388,6 +402,7 @@ export default {
     return {
       isMounted: false,
       scrollTop: 0,
+      isScreenTop: false, // ハノイ側修正2023/07/31　STEP2_W　課題管理表№373：設計書「修正履歴」シートの「2023/07/28仕様変更分」「別画面から遷移時専用の処理を追記」
       params: {
         承認種類: ''
       },
@@ -401,13 +416,23 @@ export default {
       確認金額計: '0',
       searchedParam: this.defaultPagedata(),
       tableData: [],
+      selectedHatchuShoninRowKeys: [],
+      selectedBumonKakuninRowKeys: [],
+      selectedShiharaiShoninRowKeys: [],
       承認種類List: [],
       工事区分List: [],
       物件区分List: [],
       税区List: [],
       showDialogTyohyoIchiran: false,
       paramsTyohyoIchiran: {
-        工事依頼No: ''
+        工事依頼No: '',
+        // ハノイ側修正2023/05/23　STEP2_W　課題管理表№340：設計書「修正履歴」シートの「2023/05/22仕様変更分」「工事区分の頭1桁='4'（定期案件）の場合の、「WD00130 帳票一覧」画面起動引数を修正。」 START
+        契約No: '',
+        契約履歴No: '',
+        見積明細No: '',
+        契約年月: '',
+        予定年月: ''
+        // ハノイ側修正2023/05/23　STEP2_W　課題管理表№340：設計書「修正履歴」シートの「2023/05/22仕様変更分」「工事区分の頭1桁='4'（定期案件）の場合の、「WD00130 帳票一覧」画面起動引数を修正。」 END
       },
       ApprovalType: Object.freeze({
         '依頼承認': 10,
@@ -462,15 +487,108 @@ export default {
           }
         },
         {
-          field: '選択欄',
+          field: '',
           key: '選択欄',
-          title: '',
-          type: 'checkbox',
+          title: '選択欄',
+          // type: 'checkbox',
           align: 'center',
           vAlign: 'center',
           width: 40,
-          fixed: ''
+          fixed: '',
+          renderHeaderCell: ({ column }) => {
+            return (
+              <el-checkbox
+                label=""
+                indeterminate= {(this.tableData.length - this.countDisableSelectedHatchuShonin) > this.selectedHatchuShoninRowKeys.length && this.selectedHatchuShoninRowKeys.length > 0 }
+                value={ this.tableData.length > 0 && (this.tableData.length - this.countDisableSelectedHatchuShonin) == this.selectedHatchuShoninRowKeys.length && this.selectedHatchuShoninRowKeys.length > 0 }
+                on-change = {(checked) => { this.handleCheckAllHatchuShonin(checked) }}
+              ></el-checkbox>
+            )
+          },
+          renderBodyCell: ({ row, rowIndex }) => {
+            return (
+              <el-checkbox
+                label=""
+                disabled={!this.checkBoxHatchuShoninState(row)}
+                value={this.selectedHatchuShoninRowKeys.includes(row.key)}
+                on-change = {(checked) => { this.handleCheckHatchuShonin(checked, row) }}
+                class={this.checkBoxHatchuShoninState(row) ? '' : 'checkBoxDisabled'}
+              ></el-checkbox>
+            )
+          }
         },
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 Start
+        {
+          field: '',
+          key: '部門確認CB',
+          title: '部門確認',
+          // type: 'checkbox',
+          align: 'center',
+          vAlign: 'center',
+          width: 40,
+          fixed: '',
+          renderHeaderCell: ({ column }) => {
+            return (
+              <div>
+                部門確認
+              <br/>
+              <el-checkbox
+                label=""
+                indeterminate= {(this.tableData.length - this.countDisableSelectedBumonKakunin) > this.selectedBumonKakuninRowKeys.length && this.selectedBumonKakuninRowKeys.length > 0 }
+                value={ this.tableData.length > 0 && (this.tableData.length - this.countDisableSelectedBumonKakunin) == this.selectedBumonKakuninRowKeys.length && this.selectedBumonKakuninRowKeys.length > 0 }
+                on-change = {(checked) => { this.handleCheckAllBumonKakunin(checked) }}
+              ></el-checkbox>
+              </div>
+            )
+          },
+          renderBodyCell: ({ row, rowIndex }) => {
+            return (
+              <el-checkbox
+                label=""
+                disabled={!this.checkBoxBumonKakuninState(row)}
+                value={this.selectedBumonKakuninRowKeys.includes(row.key)}
+                on-change = {(checked) => { this.handleCheckBumonKakunin(checked, row) }}
+                class={this.checkBoxBumonKakuninState(row) ? '' : 'checkBoxDisabled'}
+              ></el-checkbox>
+            )
+          }
+        },
+        {
+          field: '',
+          key: '支払承認',
+          title: '支払承認',
+          // type: 'checkbox',
+          align: 'center',
+          vAlign: 'center',
+          width: 40,
+          fixed: '',
+          renderHeaderCell: ({ column }) => {
+            return (
+              <div>
+                支払承認
+              <br/>
+              <el-checkbox
+                label=""
+                indeterminate= {(this.tableData.length - this.countDisableSelectedShiharaiShonin) > this.selectedShiharaiShoninRowKeys.length && this.selectedShiharaiShoninRowKeys.length > 0 }
+                value={ this.tableData.length > 0 && (this.tableData.length - this.countDisableSelectedShiharaiShonin) == this.selectedShiharaiShoninRowKeys.length && this.selectedShiharaiShoninRowKeys.length > 0 }
+                on-change = {(checked) => { this.handleCheckAllShiharaiShonin(checked) }}
+              ></el-checkbox>
+              </div>
+            )
+          },
+          renderBodyCell: ({ row, rowIndex }) => {
+            return (
+              <el-checkbox
+                label=""
+                disabled={!this.checkBoxShiharaiShoninState(row)}
+                value={this.selectedShiharaiShoninRowKeys.includes(row.key)}
+                on-change = {(checked) => { this.handleCheckShiharaiShonin(checked, row) }}
+                class={this.checkBoxShiharaiShoninState(row) ? '' : 'checkBoxDisabled'}
+              ></el-checkbox>
+            )
+          }
+        },
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 End
         {
           key: '帳票',
           title: '帳票',
@@ -517,7 +635,7 @@ export default {
         },
         {
           key: '営業店',
-          title: '営業店',
+          title: '営業所',
           field: '営業店',
           width: 140,
           ellipsis: {
@@ -642,6 +760,18 @@ export default {
           },
           sortBy: ''
         },
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 Start
+        {
+          key: '部門確認',
+          title: '部門確認',
+          field: '部門確認',
+          width: 120,
+          ellipsis: {
+            showTitle: true
+          },
+          sortBy: ''
+        },
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 End
         {
           key: '業者状態',
           title: '業者状態',
@@ -761,9 +891,9 @@ export default {
           title: '按分',
           field: '按分',
           width: 66,
-          ellipsis: {
-            showTitle: true
-          },
+          // ellipsis: {
+          //   showTitle: true
+          // },
           renderBodyCell: ({ row }) => {
             return (
               <div class={row['按分'] === '有' ? 'red' : 'black'}>
@@ -864,8 +994,9 @@ export default {
         修繕_定期: false,
         // ハノイ側修正2022/11/23　STEP2_W　課題管理表№223：設計書「修正履歴」シートの「2022/11/21仕様変更分」「検索項目に「按分」「業者状態」追加, 検索項目指定時の条件追加、修正」Start
         按分: false,
-        業者状態: false
+        業者状態: false,
         // ハノイ側修正2022/11/23　STEP2_W　課題管理表№223：設計書「修正履歴」シートの「2022/11/21仕様変更分」「検索項目に「按分」「業者状態」追加, 検索項目指定時の条件追加、修正」End
+        部門確認: false // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」
       },
       sortOption: {
         sortAlways: true,
@@ -925,7 +1056,12 @@ export default {
       ],
       sessionPageData: null,
       onResearch: false, // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」
-      disable差戻: false
+      // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+      disable差戻: true,
+      disable部門確認: true,
+      disable承認: true,
+      disable否認: true
+      // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
     }
   },
   watch: {
@@ -957,23 +1093,50 @@ export default {
         torType: this.pageData && this.pageData.承認種類 == this.ApprovalType.支払承認 ? '2' : ''
       }
     },
-    disableSelectedRowKeys () {
+    // disableSelectedRowKeys () {
+    //   if (!this.tableData || this.tableData.length <= 0) {
+    //     return []
+    //   }
+    //   let lstKeyDisabled = []
+    //   if (this.searchedParam.承認種類 == this.ApprovalType.支払承認) {
+    //     lstKeyDisabled = this.tableData.filter(x => x.ステータス != '支払承認待ち' ||
+    //     x.部門確認 != '確認済' ||
+    //     (x.業者状態 != '請求合意済' && x.業者状態 != '請求合意不要') ||
+    //     !!x.不備有無).map(x => x.key)
+    //     // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」START
+    //   } else {
+    //     const ステータス = this.searchedParam.承認種類 == this.ApprovalType.発注承認
+    //       ? '発注承認待ち' : this.searchedParam.承認種類 == this.ApprovalType.支払承認 ? '' : ''
+    //     if (!ステータス) {
+    //       return []
+    //     }
+    //     lstKeyDisabled = this.tableData.filter(x => x.ステータス != ステータス).map(x => x.key)
+    //   }
+    //   return lstKeyDisabled
+    // },
+    countDisableSelectedHatchuShonin () {
+      let cnt = 0
       if (!this.tableData || this.tableData.length <= 0) {
-        return []
+        return cnt
       }
-      const ステータス = this.searchedParam.承認種類 == this.ApprovalType.発注承認
-        ? '発注承認待ち' : this.searchedParam.承認種類 == this.ApprovalType.支払承認 ? '支払承認待ち' : ''
-      if (!ステータス) {
-        return []
+      cnt = this.tableData.filter(x => !this.checkBoxHatchuShoninState(x)).length
+      return cnt
+    },
+    countDisableSelectedBumonKakunin () {
+      let cnt = 0
+      if (!this.tableData || this.tableData.length <= 0) {
+        return cnt
       }
-      let lstKeyDisabled = []
-      if (this.searchedParam.承認種類 == this.ApprovalType.支払承認) {
-        lstKeyDisabled = this.tableData.filter(x => x.ステータス != ステータス || x.業者状態 == '請求合意待ち').map(x => x.key)
-        // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」START 
-      } else {
-        lstKeyDisabled = this.tableData.filter(x => x.ステータス != ステータス).map(x => x.key)
+      cnt = this.tableData.filter(x => !this.checkBoxBumonKakuninState(x)).length
+      return cnt
+    },
+    countDisableSelectedShiharaiShonin () {
+      let cnt = 0
+      if (!this.tableData || this.tableData.length <= 0) {
+        return cnt
       }
-      return lstKeyDisabled
+      cnt = this.tableData.filter(x => !this.checkBoxShiharaiShoninState(x)).length
+      return cnt
     },
     tableClassFilter () {
       let tableRes = 'tblDetail'
@@ -1079,10 +1242,15 @@ export default {
         columnRes.push(this.findColumn('日付'))
         columnRes.push(this.findColumn('承認者'))
       } else if (this.searchedParam.承認種類 == this.ApprovalType.支払承認) {
-        var col選択欄 = this.findColumn('選択欄')
-        col選択欄.fixed = 'left'
-        columnRes.push(col選択欄)
-        var col帳票 = this.findColumn('帳票')
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 Start
+        var col部門確認 = this.findColumn('部門確認CB')
+        col部門確認.fixed = 'left'
+        columnRes.push(col部門確認)
+        var col支払承認 = this.findColumn('支払承認')
+        col支払承認.fixed = 'left'
+        columnRes.push(col支払承認)
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 Start
+        col帳票 = this.findColumn('帳票')
         col帳票.fixed = 'left'
         columnRes.push(col帳票)
         columnRes.push(this.findColumn('工事依頼№'))
@@ -1101,6 +1269,7 @@ export default {
         columnRes.push(this.findColumn('按分'))
         columnRes.push(this.findColumn('不備有無'))
         columnRes.push(this.findColumn('ステータス'))
+        columnRes.push(this.findColumn('部門確認'))
         columnRes.push(this.findColumn('業者状態'))
         // columnRes.push(this.findColumn('経理状態'))
         columnRes.push(this.findColumn('日付'))
@@ -1110,7 +1279,10 @@ export default {
       return columnRes
     },
     isShowButton () {
-      return this.searchedParam.承認種類 == this.ApprovalType.発注承認 || this.searchedParam.承認種類 == this.ApprovalType.支払承認
+      return (this.searchedParam.承認種類 == this.ApprovalType.発注承認 || this.searchedParam.承認種類 == this.ApprovalType.支払承認) && this.searchedParam.対象 === '承認待ち'
+    },
+    isShowButtonBumonKakunin () {
+      return this.searchedParam.承認種類 == this.ApprovalType.支払承認 && this.searchedParam.対象 === '承認待ち'
     },
     対象List () {
       if (!this.pageData.承認種類 ||
@@ -1198,7 +1370,7 @@ export default {
         this.$store.commit('setRouterBackFlag', 0)
         // ハノイ側修正2022/12/08　STEP2_W　課題管理表№240：設計書「修正履歴」シートの「2022/12/07仕様変更分」「他画面から戻ってきた際の再検索処理が常に実行されてしまう。」Start
         if (this.pageData.承認種類) {
-          await this.onSearch()
+          await this.onSearch(this.isScreenTop)
         }
         // ハノイ側修正2022/12/08　STEP2_W　課題管理表№240：設計書「修正履歴」シートの「2022/12/07仕様変更分」「他画面から戻ってきた際の再検索処理が常に実行されてしまう。」End
         return
@@ -1220,78 +1392,245 @@ export default {
         }
 
         this.pageData.修繕_定期 = this.$route.query.修繕定期
-        this.onSearch()
+        this.onSearch(true)
       }
     // ハノイ側修正2022/08/05　STEP2_W　課題管理表№24：設計書「修正履歴」シートの「2022/08/03仕様変更分」◆TOPページ（WD00010）の件数カウントからの画面遷移時の初期表示条件について　追加 End
     },
-    selectedRowChange ({ row, isSelected, selectedRowKeys }) {
+    // selectedRowChange ({ row, isSelected, selectedRowKeys }) {
+    //   if (!this.tableData || this.tableData.length <= 0) {
+    //     this.確認金額計 = '0'
+    //   } else {
+    //     const dataTblAll = JSON.parse(JSON.stringify(this.tableData)) || []
+    //     // let dataTbl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+    //     // ハノイ側修正2022/09/28　STEP2_W　課題管理表№127：設計書「修正履歴」シートの「2022/09/28仕様変更分」ペア発注サブ№、ペア検収回数追加 Start
+    //     if (row && this.pageData.承認種類 == this.ApprovalType.支払承認) {
+    //       const selectedRow = row
+    //       const 工事依頼NO = selectedRow.工事依頼NO
+    //       const ペア発注サブNO = selectedRow.ペア発注サブNO || 0
+    //       if (ペア発注サブNO != 0) {
+    //         const lstSelectedRows = dataTblAll.filter(x => x.工事依頼NO == 工事依頼NO && x.ペア発注サブNO == ペア発注サブNO && x.ペア検収回数 == row.ペア検収回数)
+    //         for (let index = 0; index < lstSelectedRows.length; index++) {
+    //           const element = lstSelectedRows[index]
+    //           const rowKeyIndex = selectedRowKeys.indexOf(element.key)
+    //           if (rowKeyIndex > -1) {
+    //             if (!isSelected) {
+    //               // remove selected
+    //               selectedRowKeys.splice(rowKeyIndex, 1)
+    //             }
+    //           } else {
+    //             if (isSelected) {
+    //               // add selected
+    //               selectedRowKeys.push(element.key)
+    //             }
+
+    //             if (element.業者状態 == '請求合意待ち') {
+    //               selectedRowKeys.splice(rowKeyIndex, 1)
+    //             }
+    //           }
+    //         }
+    //         this.$refs.table.setCheckboxSelected(selectedRowKeys)
+    //       }
+    //     }
+    //     // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「№18、№30 不備の判定に解消日を追加」Start
+    //     // dataTbl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+    //     // // ハノイ側修正2022/09/28　STEP2_W　課題管理表№127：設計書「修正履歴」シートの「2022/09/28仕様変更分」ペア発注サブ№、ペア検収回数追加 End
+    //     // const sum = dataTbl.map((x) => x.金額)
+    //     //   .reduce((a, b) => this.sum(a, b), 0)
+    //     // this.確認金額計 = this.base.formatCommaNumeric(sum + '')
+    //     // // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」START
+    //     this.sum確認金額計()
+    //     // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「№18、№30 不備の判定に解消日を追加」End
+    //     // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+    //     // if (selectedRowKeys && selectedRowKeys.length == 1) {
+    //     //   const rowsl = dataTblAll.find(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+    //     //   if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+    //     //     if (rowsl && rowsl.ｸﾞﾙｰﾌﾟ稟議可決番号) {
+    //     //       this.disable差戻 = true
+    //     //     } else {
+    //     //       this.disable差戻 = false
+    //     //     }
+    //     //   }
+    //     //   if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+    //     //     this.disable差戻 = false
+    //     //   }
+    //     //   this.disable承認 = false
+    //     //   this.disable否認 = false
+    //     // }
+    //     if (this.$refs.table.getCheckboxSelected().length > 0) {
+    //       if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+    //         const rowsl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key)).some(x => x.ｸﾞﾙｰﾌﾟ稟議可決番号 == '')
+    //         if (rowsl) {
+    //           this.disable差戻 = false
+    //         } else {
+    //           this.disable差戻 = true
+    //         }
+    //       }
+    //       if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+    //         this.disable差戻 = false
+    //       }
+    //       this.disable承認 = false
+    //       this.disable否認 = false
+    //     } else {
+    //       this.disable差戻 = true
+    //       this.disable承認 = true
+    //       this.disable否認 = true
+    //     }
+    //     // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」END
+    //     // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
+    //   }
+    // },
+    sum確認金額計 (checked) {
+      if (!this.tableData || this.tableData.length <= 0) {
+        this.確認金額計 = '0'
+      } else {
+        let dataTbl = this.tableData.filter(x => this.selectedShiharaiShoninRowKeys.includes(x.key))
+        const sum = dataTbl.map((x) => x.金額)
+          .reduce((a, b) => this.sum(a, b), 0)
+        this.確認金額計 = this.base.formatCommaNumeric(sum + '')
+      }
+    },
+    handleCheckAllHatchuShonin (checked) {
+      if (!checked) {
+        this.selectedHatchuShoninRowKeys = []
+        this.disable差戻 = true
+        this.disable承認 = true
+        this.disable否認 = true
+      } else {
+        const selectedRowKeys1 = []
+        this.tableData.map((row) => {
+          if (this.checkBoxHatchuShoninState(row)) {
+            selectedRowKeys1.push(row.key)
+          }
+        })
+        this.selectedHatchuShoninRowKeys = selectedRowKeys1
+        if (this.selectedHatchuShoninRowKeys.length > 0) {
+          const rowsl = this.tableData.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key)).some(x => x.ｸﾞﾙｰﾌﾟ稟議可決番号 == '')
+          if (rowsl) {
+            this.disable差戻 = false
+          } else {
+            this.disable差戻 = true
+          }
+          this.disable承認 = false
+          this.disable否認 = false
+        }
+      }
+    },
+    handleCheckHatchuShonin (checked, row) {
       if (!this.tableData || this.tableData.length <= 0) {
         this.確認金額計 = '0'
       } else {
         const dataTblAll = JSON.parse(JSON.stringify(this.tableData)) || []
-        let dataTbl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
-        // ハノイ側修正2022/09/28　STEP2_W　課題管理表№127：設計書「修正履歴」シートの「2022/09/28仕様変更分」ペア発注サブ№、ペア検収回数追加 Start
-        if (row && this.pageData.承認種類 == this.ApprovalType.支払承認) {
-          const selectedRow = row
-          const 工事依頼NO = selectedRow.工事依頼NO
-          const ペア発注サブNO = selectedRow.ペア発注サブNO || 0
-          if (ペア発注サブNO != 0) {
-            const lstSelectedRows = dataTblAll.filter(x => x.工事依頼NO == 工事依頼NO && x.ペア発注サブNO == ペア発注サブNO)
-            for (let index = 0; index < lstSelectedRows.length; index++) {
-              const element = lstSelectedRows[index]
-              const rowKeyIndex = selectedRowKeys.indexOf(element.key)
-              if (rowKeyIndex > -1) {
-                if (!isSelected) {
-                  // remove selected
-                  selectedRowKeys.splice(rowKeyIndex, 1)
-                }
-              } else {
-                if (isSelected) {
-                  // add selected
-                  selectedRowKeys.push(element.key)
-                }
+        const rowKeyIndex = this.selectedHatchuShoninRowKeys.indexOf(row.key)
+        const lstKey = this.tableData.map(x => x.key)
+        if (!checked) {
+          // remove selected
+          this.selectedHatchuShoninRowKeys.splice(rowKeyIndex, 1)
+        } else if (checked && this.checkBoxHatchuShoninState(row)) {
+          // add selected
+          this.selectedHatchuShoninRowKeys.push(row.key)
+        }
+        this.selectedHatchuShoninRowKeys = this.selectedHatchuShoninRowKeys.filter((v, i, a) => a.indexOf(v) === i)
 
-                if (element.業者状態 == '請求合意待ち') {
-                  selectedRowKeys.splice(rowKeyIndex, 1)
-                }
-              }
-            }
-            this.$refs.table.setCheckboxSelected(selectedRowKeys)
-          }
-        }
-        dataTbl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
-        // ハノイ側修正2022/09/28　STEP2_W　課題管理表№127：設計書「修正履歴」シートの「2022/09/28仕様変更分」ペア発注サブ№、ペア検収回数追加 End
-        const sum = dataTbl.map((x) => x.金額)
-          .reduce((a, b) => this.sum(a, b), 0)
-        this.確認金額計 = this.base.formatCommaNumeric(sum + '')
-        // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」START  
-        if (selectedRowKeys && selectedRowKeys.length == 1 && this.pageData.承認種類 == this.ApprovalType.発注承認) {
-          const rowsl = dataTblAll.find(x => this.$refs.table.getCheckboxSelected().includes(x.key))
-          if (rowsl && rowsl.ｸﾞﾙｰﾌﾟ稟議可決番号) {
-            this.disable差戻 = true
-          } else {
+        if (this.selectedHatchuShoninRowKeys.length > 0) {
+          // ハノイ側修正2023/08/08　STEP2_W　課題管理表№383：設計書「修正履歴」シートの「2023/08/08仕様変更分」「承認種類＝「41：発注確認」の場合の差戻ボタン押下可能条件を修正。」START
+          const rowsl = dataTblAll.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key)).some(x => x.ｸﾞﾙｰﾌﾟ稟議可決番号 == ''
+            && (((x.修繕区分小 == '02' || x.修繕区分小 == '03') && x.負担区分 == '2' && x.発注差戻可能チェック == 0) || ((x.修繕区分小 != '02' && x.修繕区分小 != '03') || x.負担区分 != '2')))
+          if (rowsl) {
             this.disable差戻 = false
+          } else {
+            this.disable差戻 = true
           }
+          // ハノイ側修正2023/08/08　STEP2_W　課題管理表№383：設計書「修正履歴」シートの「2023/08/08仕様変更分」「承認種類＝「41：発注確認」の場合の差戻ボタン押下可能条件を修正。」END
+          this.disable承認 = false
+          this.disable否認 = false
         } else {
-          this.disable差戻 = false
+          this.disable差戻 = true
+          this.disable承認 = true
+          this.disable否認 = true
         }
-        // ハノイ側修正2022/10/27　STEP2_W　課題管理表№194：設計書「修正履歴」シートの「2022/10/26仕様変更分」「差戻ボタン押下時の条件追加, 対象「承認待ち」かつ「41:発注承認」の時の条件追加...」END
       }
     },
+    checkBoxHatchuShoninState (row) {
+      return row.ステータス == '発注承認待ち'
+    },
+    handleCheckAllBumonKakunin (checked) {
+      if (!checked) {
+        this.selectedBumonKakuninRowKeys = []
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+        this.disable部門確認 = true
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
+      } else {
+        const selectedRowKeys1 = []
+        this.tableData.map((row) => {
+          if (this.checkBoxBumonKakuninState(row)) {
+            selectedRowKeys1.push(row.key)
+          }
+        })
+        this.selectedBumonKakuninRowKeys = selectedRowKeys1
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+        if (this.selectedBumonKakuninRowKeys.length > 0) {
+          this.disable部門確認 = false
+        }
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
+      }
+    },
+    handleCheckBumonKakunin (checked, row) {
+      const rowKeyIndex = this.selectedBumonKakuninRowKeys.indexOf(row.key)
+      const lstKey = row.ペア発注サブNO != 0 ? this.tableData.filter(x => x.工事依頼NO == row.工事依頼NO &&
+      x.ペア発注サブNO == row.ペア発注サブNO &&
+      x.ペア検収回数 == row.ペア検収回数 &&
+      this.checkBoxBumonKakuninState(x) &&
+      x.key != row.key).map(x => x.key) : []
+      if (!checked) {
+        // remove selected
+        this.selectedBumonKakuninRowKeys.splice(rowKeyIndex, 1)
+        this.selectedBumonKakuninRowKeys = this.selectedBumonKakuninRowKeys.filter(x => !lstKey.includes(x))
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+        if (this.selectedBumonKakuninRowKeys.length === 0) {
+          this.disable部門確認 = true
+        }
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
+      } else if (checked && this.checkBoxBumonKakuninState(row)) {
+        // add selected
+        this.selectedBumonKakuninRowKeys.push(row.key)
+        this.selectedBumonKakuninRowKeys = this.selectedBumonKakuninRowKeys.concat(lstKey)
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」Start
+        this.disable部門確認 = false
+        // ハノイ側修正2023/02/23　STEP2_W　課題管理表№296：設計書「修正履歴」シートの「2023/02/22仕様変更分」「各種ボタンは明細欄の該当チェックボックスにチェックがある時のみボタン押下可能とする。」End
+      }
+      this.selectedBumonKakuninRowKeys = this.selectedBumonKakuninRowKeys.filter((v, i, a) => a.indexOf(v) === i)
+    },
+    checkBoxBumonKakuninState (row) {
+      // ハノイ側修正2022/03/28　STEP2_W　課題管理表№318：設計書「修正履歴」シートの「2022/03/28仕様変更分」承認種類＝「61：支払承認」の場合の部門確認チェック不可条件に定期分の条件追加 Start
+      const stateF100 = row.F100工事区分 && row.F100工事区分.substring(0, 1) == '4'
+        ? row.按分_NO35 == '1' && row.表示金額 != row.税込按分金額
+        : row.W費用負担部門按分フラグ == '0'
+      const state = row.部門確認 == '未確認' && !stateF100
+      // ハノイ側修正2022/03/28　STEP2_W　課題管理表№318：設計書「修正履歴」シートの「2022/03/28仕様変更分」承認種類＝「61：支払承認」の場合の部門確認チェック不可条件に定期分の条件追加 Start
+
+      return state
+    },
     // ハノイ側修正2022/09/28　STEP2_W　課題管理表№127：設計書「修正履歴」シートの「2022/09/28仕様変更分」ペア発注サブ№、ペア検収回数追加
+    // ハノイ側修正2023/08/08　STEP2_W　課題管理表№381：設計書「修正履歴」シートの「2023/08/08仕様変更分」「承認種類：発注承認（41）のデータを1行しか選択していない場合でも、否認や差戻が出来ない。」Start
     checkPair () {
       if (!this.tableData || this.tableData.length <= 0) {
         return false
       } else {
         const dataTblAll = JSON.parse(JSON.stringify(this.tableData)) || []
-        let dataTbl = dataTblAll.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
-        dataTbl = dataTbl.map((x) => {
-          x.ペア発注サブNO = x.ペア発注サブNO || 0
-          return x
-        })
-        if (this.pageData.承認種類 == this.ApprovalType.発注承認 && dataTbl.length > 1) {
-          return false
+
+        if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+          let dataTbl = dataTblAll.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key)) || []
+          if (dataTbl.length > 1) {
+            return false
+          } else {
+            return true
+          }
         } else if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+          let dataTbl = dataTblAll.filter(x => this.selectedShiharaiShoninRowKeys.includes(x.key))
+          dataTbl = dataTbl.map((x) => {
+            x.ペア発注サブNO = x.ペア発注サブNO || 0
+            return x
+          })
           var groupBy = (xs, key, key1) => {
             const grp = xs.reduce(function (rv, x) {
               (rv[x[key] + '_' + x[key1]] = rv[x[key] + '_' + x[key1]] || []).push(x)
@@ -1318,6 +1657,72 @@ export default {
         }
       }
     },
+    // ハノイ側修正2023/08/08　STEP2_W　課題管理表№381：設計書「修正履歴」シートの「2023/08/08仕様変更分」「承認種類：発注承認（41）のデータを1行しか選択していない場合でも、否認や差戻が出来ない。」End
+    handleCheckAllShiharaiShonin (checked) {
+      if (!checked) {
+        this.selectedShiharaiShoninRowKeys = []
+        this.disable差戻 = true
+        this.disable承認 = true
+        this.disable否認 = true
+      } else {
+        const selectedRowKeys1 = []
+        this.tableData.map((row) => {
+          if (this.checkBoxShiharaiShoninState(row)) {
+            selectedRowKeys1.push(row.key)
+          }
+        })
+        this.selectedShiharaiShoninRowKeys = selectedRowKeys1
+        if (this.selectedShiharaiShoninRowKeys.length > 0) {
+          this.disable差戻 = false
+          this.disable承認 = false
+          this.disable否認 = false
+        }
+      }
+      this.sum確認金額計(checked)
+    },
+    handleCheckShiharaiShonin (checked, row) {
+      if (!this.tableData || this.tableData.length <= 0) {
+        this.確認金額計 = '0'
+      } else {
+        const dataTblAll = JSON.parse(JSON.stringify(this.tableData)) || []
+        const rowKeyIndex = this.selectedShiharaiShoninRowKeys.indexOf(row.key)
+        const lstKey = row.ペア発注サブNO != 0 ? dataTblAll.filter(x => x.工事依頼NO == row.工事依頼NO &&
+        x.ペア発注サブNO == row.ペア発注サブNO &&
+        x.ペア検収回数 == row.ペア検収回数 &&
+        this.checkBoxShiharaiShoninState(x) &&
+        x.key != row.key).map(x => x.key) : []
+        if (!checked) {
+          // remove selected
+          this.selectedShiharaiShoninRowKeys.splice(rowKeyIndex, 1)
+          this.selectedShiharaiShoninRowKeys = this.selectedShiharaiShoninRowKeys.filter(x => !lstKey.includes(x))
+        } else if (checked && this.checkBoxShiharaiShoninState(row)) {
+          // add selected
+          this.selectedShiharaiShoninRowKeys.push(row.key)
+          this.selectedShiharaiShoninRowKeys = this.selectedShiharaiShoninRowKeys.concat(lstKey)
+        }
+        this.selectedShiharaiShoninRowKeys = this.selectedShiharaiShoninRowKeys.filter((v, i, a) => a.indexOf(v) === i)
+
+        this.sum確認金額計(checked)
+
+        if (this.selectedShiharaiShoninRowKeys.length > 0) {
+          this.disable差戻 = false
+          this.disable承認 = false
+          this.disable否認 = false
+        } else {
+          this.disable差戻 = true
+          this.disable承認 = true
+          this.disable否認 = true
+        }
+      }
+    },
+    checkBoxShiharaiShoninState (row) {
+      const ステータス = row.ステータス != '支払承認待ち' ||
+        row.部門確認 != '確認済' ||
+        (row.業者状態 != '請求合意済' && row.業者状態 != '請求合意不要') ||
+        !!row.不備有無
+
+      return !ステータス
+    },
     sum (a, b) {
       a = this.getNumber(a)
       b = this.getNumber(b)
@@ -1337,7 +1742,13 @@ export default {
       }
 
       if (!this.pageData.対象 && !this.pageData.対象_履歴) {
-        this.pageData.対象 = this.対象List[0].value
+        // ハノイ側修正2023/05/25　STEP2_W　課題管理表№342：設計書「修正履歴」シートの「2023/05/24仕様変更分」「メニューの別のリンク押下後、稟議申請の差戻件数リンク押下時、稟議申請待ちの条件で検索されてしまう。」Start
+        if (this.pageData.承認種類 == this.$route.query.承認種類 && this.$route.query.対象履歴 && this.対象List.find(x => x.value == this.$route.query.対象履歴)) {
+          this.pageData.対象 = this.$route.query.対象履歴
+        } else {
+          this.pageData.対象 = this.対象List[0].value
+        }
+        // ハノイ側修正2023/05/25　STEP2_W　課題管理表№342：設計書「修正履歴」シートの「2023/05/24仕様変更分」「メニューの別のリンク押下後、稟議申請の差戻件数リンク押下時、稟議申請待ちの条件で検索されてしまう。」End
       }
     },
     findColumn (key) {
@@ -1432,6 +1843,7 @@ export default {
         this.visible.按分 = true
         this.visible.業者状態 = true
         // ハノイ側修正2022/11/23　STEP2_W　課題管理表№223：設計書「修正履歴」シートの「2022/11/21仕様変更分」「検索項目に「按分」「業者状態」追加, 検索項目指定時の条件追加、修正」End
+        this.visible.部門確認 = true // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」
       }
       this.clearPageData()
       // ハノイ側修正2022/08/05　STEP2_W　課題管理表№24：設計書「修正履歴」シートの「2022/08/03仕様変更分」◆TOPページ（WD00010）の件数カウントからの画面遷移時の初期表示条件について　追加 Start
@@ -1452,7 +1864,12 @@ export default {
     async validateSave () {
       // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」Start
       let dataTbl = JSON.parse(JSON.stringify(this.tableData)) || []
-      dataTbl = dataTbl.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+      if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+        dataTbl = dataTbl.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key))
+      }
+      if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+        dataTbl = dataTbl.filter(x => this.selectedShiharaiShoninRowKeys.includes(x.key))
+      }
       if (dataTbl.length === 0) {
         return false
       }
@@ -1492,7 +1909,12 @@ export default {
     async onSashimodoshi () {
       // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」Start
       let dataTbl = JSON.parse(JSON.stringify(this.tableData)) || []
-      dataTbl = dataTbl.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+      if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+        dataTbl = dataTbl.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key))
+      }
+      if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+        dataTbl = dataTbl.filter(x => this.selectedShiharaiShoninRowKeys.includes(x.key))
+      }
       if (dataTbl.length === 0) {
         return false
       }
@@ -1528,7 +1950,7 @@ export default {
         })
         this.onResearch = true // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」
         await this.sendMail('差戻', res.data.lstF001, res.data.申請者)// ハノイ側修正2022/10/25　STEP2_W　課題管理表№189：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」
-        this.onSearch()
+        this.onSearch(false)
       } else {
         this.showError(res.message)
       }
@@ -1567,7 +1989,7 @@ export default {
           this.showSuccess(response.data)
         })
         this.onResearch = true // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」
-        this.onSearch()
+        this.onSearch(false)
       } else {
         this.showError(res.message)
       }
@@ -1602,22 +2024,56 @@ export default {
         })
         this.onResearch = true // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」
         // ハノイ側修正2022/10/25　STEP2_W　課題管理表№189：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」START
-        await this.sendMail('承認', res.data.lstF001, res.data.申請者, res.data.lstF004Res)
+        await this.sendMail('承認', res.data.lstF001, res.data.申請者, res.data.lstF004Res, res.data.lstFT040) // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」
         // ハノイ側修正2022/10/25　STEP2_W　課題管理表№189：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」END
-        this.onSearch()
+        this.onSearch(false)
         return true
       } else {
         this.showError(res.message)
         return false
       }
     },
-    async sendMail (btnName, lstF001, 申請者, lstF004Res) {
+    async onBumonKakunin () {
+      if (this.searchedParam.承認種類 != this.ApprovalType.支払承認) {
+        return
+      }
+
+      let msg = (await this.getMsg('K040083')).data
+      if (!await this.confirm(msg)) {
+        return false
+      }
+
+      const data = {
+        FW042_申請承認ファイル: this.getDataFW042(true),
+        会社コード: this.userInfo.会社コード,
+        承認種類: this.searchedParam.承認種類
+      }
+      let res
+      await this.http
+        .post('/api/Reafs_W/Shonin/WD00510/BumonKakunin', data, 'アクセスしています....')
+        .then((response) => {
+          res = response
+        }).catch((ex) => {
+        }).finally(() => {
+        })
+
+      if (res.status) {
+        this.getMsg('M040021').then((response) => {
+          this.showSuccess(response.data)
+        })
+        this.onResearch = true
+        this.onSearch(false)
+      } else {
+        this.showError(res.message)
+      }
+    },
+    async sendMail (btnName, lstF001, 申請者, lstF004Res, lstFT040) { // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」
       if (!lstF001) {
         return
       }
       lstF001 = lstF001.reduce((prev, el) => {
         if (prev.some(o => o.工事依頼No == el.工事依頼No && o.工事依頼No枝番 == el.工事依頼No枝番)) { return prev }
-        return [...prev, {工事依頼No: el.工事依頼No, 工事依頼No枝番: el.工事依頼No枝番, 修繕区分小: el.修繕区分小, 最終承認フラグ: el.最終承認フラグ}]
+        return [...prev, {工事依頼No: el.工事依頼No, 工事依頼No枝番: el.工事依頼No枝番, 修繕区分小: el.修繕区分小, 最終承認フラグ: el.最終承認フラグ, 工事件名: el.工事件名}]
       }, [])
       const lstF004Key = []
       for (let i = 0; i < lstF001.length; i++) {
@@ -1627,6 +2083,19 @@ export default {
           const mailPatternNo = f001.修繕区分小 == '01' || f001.修繕区分小 == '04' ? '23'
             : f001.修繕区分小 == '05' ? '90' : ''
           // eslint-disable-next-line camelcase
+          const Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+          // eslint-disable-next-line camelcase
+          let linkUrl = Reafs_W_BaseURL + 'WD00520/SyuzenIraiSansyoShonin'
+          let commonParam = {
+            パラメータ1: f001.工事依頼No,
+            パラメータ2: f001.発注サブNo,
+            パラメータ3: f001.検収回数,
+            パラメータ4: 'hatchu',
+            PG: 'WD00510'
+          }
+          const resParam = await this.commonFunctionUI.setQueryParameter(commonParam)
+          linkUrl = linkUrl + '?guid=' + resParam.data.guid
+          linkUrl = encodeURI(linkUrl)
           if (!mailPatternNo) {
             continue
           }
@@ -1657,7 +2126,8 @@ export default {
             宛先係コード: [],
             // 業者コード
             // 業者コード枝番
-            担当者コード: 申請者
+            担当者コード: 申請者,
+            url: [linkUrl]
           }
           const res = await this.commonFunctionUI.CM00110SendMail(param)
         } else if (btnName == '承認') {
@@ -1672,6 +2142,8 @@ export default {
             : f001.修繕区分小 == '02' ? '54'
               : f001.修繕区分小 == '03' ? '75' : ''
           // eslint-disable-next-line camelcase
+          const Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」Start
           if (!mailPatternNo) {
             continue
           }
@@ -1689,6 +2161,25 @@ export default {
             lstF004Key.push({工事依頼No: f001.工事依頼No,
               取引先コード: lsF004[j].取引先コード,
               取引先コード枝番: lsF004[j].取引先コード枝番})
+
+            let lstFT040Filter = lstFT040 ? lstFT040.filter(
+              x => x.工事依頼No == f001.工事依頼No && x.工事依頼No枝番 == f001.工事依頼No枝番 &&
+              x.業者コード == lsF004[j].取引先コード && x.業者コード枝番 == lsF004[j].取引先コード枝番) : []
+            if (!lstFT040Filter) {
+              lstFT040Filter = []
+            }
+            // eslint-disable-next-line camelcase
+            let linkUrl = Reafs_T_BaseURL + 'KojiIchiran'
+            let startupMode = 5
+            let commonParam = {
+              パラメータ1: startupMode,
+              パラメータ2: lstFT040Filter[0] && lstFT040Filter[0].工事件名 != '' ? lstFT040Filter[0].工事件名 : f001.工事件名,
+              PG: 'WD00510'
+            }
+            const resParam = await this.commonFunctionUI.setQueryParameter(commonParam)
+            linkUrl = linkUrl + '?guid=' + resParam.data.guid
+            linkUrl = encodeURI(linkUrl)
+            // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」End
             param = {
               msg_type: 0,
               mail_to: '',
@@ -1710,7 +2201,8 @@ export default {
               宛先係コード: [],
               業者コード: lsF004[j].取引先コード,
               業者コード枝番: lsF004[j].取引先コード枝番,
-              担当者コード: []
+              担当者コード: [],
+              url: [linkUrl]
             }
             const res = await this.commonFunctionUI.CM00110SendMail(param)
           }
@@ -1719,12 +2211,36 @@ export default {
     },
     async handleLinkClick (row, flg = '') {
       if (row.帳票 && flg === '') {
-        if (this.pageData.承認種類 == this.ApprovalType.発注承認 ||
-            this.pageData.承認種類 == this.ApprovalType.支払承認) {
+        if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
           this.paramsTyohyoIchiran.工事依頼No = row.工事依頼NO
+          this.paramsTyohyoIchiran.契約No = ''
+          this.paramsTyohyoIchiran.契約履歴No = ''
+          this.paramsTyohyoIchiran.見積明細No = ''
+          this.paramsTyohyoIchiran.契約年月 = ''
+          this.paramsTyohyoIchiran.予定年月 = ''
+
+          this.showDialogTyohyoIchiran = true
+        } else if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+        // ハノイ側修正2023/05/23　STEP2_W　課題管理表№340：設計書「修正履歴」シートの「2023/05/22仕様変更分」「工事区分の頭1桁='4'（定期案件）の場合の、「WD00130 帳票一覧」画面起動引数を修正。」 START
+          if (row.F100工事区分.substring(0, 1) != '4') {
+            this.paramsTyohyoIchiran.工事依頼No = row.工事依頼NO
+            this.paramsTyohyoIchiran.契約No = ''
+            this.paramsTyohyoIchiran.契約履歴No = ''
+            this.paramsTyohyoIchiran.見積明細No = ''
+            this.paramsTyohyoIchiran.契約年月 = ''
+            this.paramsTyohyoIchiran.予定年月 = ''
+          } else if (row.F100工事区分.substring(0, 1) === '4') {
+            this.paramsTyohyoIchiran.工事依頼No = ''
+            this.paramsTyohyoIchiran.契約No = row.契約NO
+            this.paramsTyohyoIchiran.契約履歴No = row.履歴No
+            this.paramsTyohyoIchiran.見積明細No = row.明細NO
+            this.paramsTyohyoIchiran.契約年月 = row.契約年月
+            this.paramsTyohyoIchiran.予定年月 = row.契約年月
+          }
           this.showDialogTyohyoIchiran = true
           // this.$router.push({ name: 'WD00130', params: { 工事依頼No: row.工事依頼NO } })
         }
+        // ハノイ側修正2023/05/23　STEP2_W　課題管理表№340：設計書「修正履歴」シートの「2023/05/22仕様変更分」「工事区分の頭1桁='4'（定期案件）の場合の、「WD00130 帳票一覧」画面起動引数を修正。」 END
       } else {
         this.$store.commit('setKeepAliveFlag', 0)
         this.scrollTop = document.querySelector('.ve-table-container').scrollTop
@@ -1737,23 +2253,23 @@ export default {
             if (this.searchedParam.対象) {
               if (this.searchedParam.対象 === '承認待ち') {
                 // window.location.href = `/Reafs_W/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00111', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00111', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
               } else if (this.searchedParam.対象 === '申請中') {
                 // window.location.href = `/Reafs_W/IraiNyuryoku?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00110', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
               }
             }
             if (this.searchedParam.対象_履歴) {
               if (this.searchedParam.対象_履歴 === '承認済') {
                 // window.location.href = `/Reafs_W/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00111', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00111', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
               } else if (this.searchedParam.対象_履歴 === '否認' || this.searchedParam.対象_履歴 === '差戻' || this.searchedParam.対象_履歴 === '取下') {
                 if (await this.getCheckログイン情報(row.FW042承認事務所コード, row.FW042承認営業所コード, row.FW042承認部コード, row.FW042承認課コード, row.FW042承認係コード)) {
                   // window.location.href = `/Reafs_W/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                  this.$router.push({ name: 'WD00111', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                  this.$router.push({ name: 'WD00111', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
                 } else if (await this.getCheckログイン情報(row.FW042申請者事務所コード, row.FW042申請者営業所コード, row.FW042申請者部コード, row.FW042申請者課コード, row.FW042申請者係コード)) {
                   // window.location.href = `/Reafs_W/IraiNyuryoku?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                  this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                  this.$router.push({ name: 'WD00110', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
                 }
               }
             }
@@ -1761,23 +2277,23 @@ export default {
             if (this.searchedParam.対象) {
               if (this.searchedParam.対象 === '承認待ち') {
                 // window.location.href = `/Reafs_W/TeikiIraiSansyoShonin?依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00311', query: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00311', params: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
               } else if (this.searchedParam.対象 === '申請中') {
                 // window.location.href = `/Reafs_W/IraiNyuryoku?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00110', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
               }
             }
             if (this.searchedParam.対象_履歴) {
               if (this.searchedParam.対象_履歴 === '承認済') {
                 // window.location.href = `/Reafs_W/TeikiIraiSansyoShonin?依頼No=${row.工事依頼NO}&page=WD00510`
-                this.$router.push({ name: 'WD00311', query: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
+                this.$router.push({ name: 'WD00311', params: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
               } else if (this.searchedParam.対象_履歴 === '否認' || this.searchedParam.対象_履歴 === '差戻' || this.searchedParam.対象_履歴 === '取下') {
                 if (await this.getCheckログイン情報(row.FW042承認事務所コード, row.FW042承認営業所コード, row.FW042承認部コード, row.FW042承認課コード, row.FW042承認係コード)) {
                   // window.location.href = `/Reafs_W/TeikiIraiSansyoShonin?依頼No=${row.工事依頼NO}&page=WD00510`
-                  this.$router.push({ name: 'WD00311', query: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
+                  this.$router.push({ name: 'WD00311', params: { 依頼No: row.工事依頼NO, page: 'WD00510' } })
                 } else if (await this.getCheckログイン情報(row.FW042申請者事務所コード, row.FW042申請者営業所コード, row.FW042申請者部コード, row.FW042申請者課コード, row.FW042申請者係コード)) {
                   // window.location.href = `/Reafs_W/IraiNyuryoku?工事依頼No=${row.工事依頼NO}&page=WD00510`
-                  this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
+                  this.$router.push({ name: 'WD00110', params: { 工事依頼No: row.工事依頼NO, page: 'WD00510' } })
                 }
               }
             }
@@ -1789,20 +2305,20 @@ export default {
           if (row.F100工事区分.substring(0, 1) != '4') {
             // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&tabFocus=mitsu`
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-            this.$router.push({ name: 'WD00520', query: { 工事依頼No: row.工事依頼NO, tabFocus: 'mitsu' } })
+            this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, tabFocus: 'mitsu' } })
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
           } else {
             // ハノイ側修正2022/09/08　STEP2_W　課題管理表№86：設計書「修正履歴」シートの「2022/09/06仕様変更分」「WD00530起動時引数追加」Start
             // window.location.href = `/Reafs_W/WD00530/TeikiIraiSansyoShonin?契約NO=${row.契約NO}&履歴NO=${row.履歴No}&明細NO=${row.明細NO}&契約年月=${row.契約年月}&契約年度=${row.契約年度}&page=WD00510&tabFocus=mitsu`
             // ハノイ側修正2022/09/08　STEP2_W　課題管理表№86：設計書「修正履歴」シートの「2022/09/06仕様変更分」「WD00530起動時引数追加」End
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-            this.$router.push({ name: 'WD00530', query: { 契約NO: row.契約NO, 履歴NO: row.履歴No, 明細NO: row.明細NO, 契約年月: row.契約年月, 契約年度: row.契約年度, page: 'WD00510', tabFocus: 'mitsu' } })
+            this.$router.push({ name: 'WD00530', params: { 契約NO: row.契約NO, 履歴NO: row.履歴No, 明細NO: row.明細NO, 契約年月: row.契約年月, 契約年度: row.契約年度, page: 'WD00510', tabFocus: 'mitsu' } })
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
           }
         } else if (this.pageData.承認種類 == this.ApprovalType.稟議申請 ||
                     this.pageData.承認種類 == this.ApprovalType.発注承認) {
           // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-          this.$router.push({ name: 'WD00520', query: { 工事依頼No: row.工事依頼NO, tabFocus: 'hatchu' } })
+          this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, tabFocus: 'hatchu' } })
           // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
           // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&tabFocus=hatchu`
         // this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, tabFocus: 'hatchu' } })
@@ -1813,7 +2329,7 @@ export default {
         // window.location.href = link
           // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&発注サブNo=${row.発注サブNo}&検収回数=${row.検収回数}&tabFocus=sagyo`
           // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-          this.$router.push({ name: 'WD00520', query: { 工事依頼No: row.工事依頼NO, 発注サブNo: row.発注サブNo, 検収回数: row.検収回数, tabFocus: 'sagyo' } })
+          this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, 発注サブNo: row.発注サブNo, 検収回数: row.検収回数, tabFocus: 'sagyo', 承認種類: '工事完了確認' } })
           // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
 
           // this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, 発注サブNo: row.発注サブNo, 検収回数: row.検収回数, tabFocus: 'sagyo' } })
@@ -1823,13 +2339,13 @@ export default {
           if (row.F100工事区分.substring(0, 1) != '4') {
             // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.工事依頼NO}&発注サブNo=${row.発注サブNo}&検収回数=${row.検収回数}&tabFocus=sagyo`
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-            this.$router.push({ name: 'WD00520', query: { 工事依頼No: row.工事依頼NO, 発注サブNo: row.発注サブNo, 検収回数: row.検収回数, tabFocus: 'sagyo' } })
+            this.$router.push({ name: 'WD00520', params: { 工事依頼No: row.工事依頼NO, 発注サブNo: row.発注サブNo, 検収回数: row.検収回数, tabFocus: 'sagyo', 承認種類: '支払承認' } })
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
           } else {
             // ハノイ側修正2022/09/08　STEP2_W　課題管理表№86：設計書「修正履歴」シートの「2022/09/06仕様変更分」「WD00530起動時引数追加」Start
             // window.location.href = `/Reafs_W/WD00530/TeikiIraiSansyoShonin?契約NO=${row.契約NO}&履歴NO=${row.履歴No}&明細NO=${row.明細NO}&契約年月=${row.契約年月}&契約年度=${row.契約年度}&page=WD00510&tabFocus=sagyo`
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
-            this.$router.push({ name: 'WD00530', query: { 契約NO: row.契約NO, 履歴NO: row.履歴No, 明細NO: row.明細NO, 契約年月: row.契約年月, 契約年度: row.契約年度, page: 'WD00510', tabFocus: 'sagyo' } })
+            this.$router.push({ name: 'WD00530', params: { 契約NO: row.契約NO, 履歴NO: row.履歴No, 明細NO: row.明細NO, 契約年月: row.契約年月, 契約年度: row.契約年度, page: 'WD00510', tabFocus: 'sagyo' } })
             // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
             // ハノイ側修正2022/09/08　STEP2_W　課題管理表№86：設計書「修正履歴」シートの「2022/09/06仕様変更分」「WD00530起動時引数追加」End
           }
@@ -1837,10 +2353,17 @@ export default {
         // ハノイ側修正2022/08/01　STEP2_W　課題管理表№16：設計書「修正履歴」シートの「2022/07/21仕様変更分」承認種類＝「32：見積承認（実施判断）」「61：支払承認」のリンククリック時の画面遷移先を修正 End
       }
     },
-    getDataFW042 () {
+    getDataFW042 (isGet部門確認) {
       const resData = []
-      let dataTbl = JSON.parse(JSON.stringify(this.tableData)) || []
-      dataTbl = dataTbl.filter(x => this.$refs.table.getCheckboxSelected().includes(x.key))
+      let dataTbl
+      if (isGet部門確認) {
+        dataTbl = this.tableData.filter(x => this.selectedBumonKakuninRowKeys.includes(x.key))
+      } else if (this.pageData.承認種類 == this.ApprovalType.発注承認) {
+        dataTbl = this.tableData.filter(x => this.selectedHatchuShoninRowKeys.includes(x.key))
+      } else if (this.pageData.承認種類 == this.ApprovalType.支払承認) {
+        dataTbl = this.tableData.filter(x => this.selectedShiharaiShoninRowKeys.includes(x.key))
+      }
+
       for (let i = 0; i < dataTbl.length; i++) {
         const row = dataTbl[i]
         resData.push({
@@ -1853,7 +2376,9 @@ export default {
           発注サブNo: row.発注サブNo,
           検収回数: row.検収回数,
           明細No: row.明細No,
-          契約年月: row.契約年月
+          契約年月: row.契約年月,
+          契約NO: row.契約NO,
+          VERSION: row.FW042VERSION // ハノイ側修正2023/08/01　STEP2_W　課題管理表№333：設計書「修正履歴」シートの「2023/04/24仕様変更分」「更新時チェックを追加。」
         })
       }
       return resData
@@ -1897,7 +2422,11 @@ export default {
         請求合意待ち: '',
         請求合意済: '',
         // ハノイ側修正2022/11/23　STEP2_W　課題管理表№223：設計書「修正履歴」シートの「2022/11/21仕様変更分」「検索項目に「按分」「業者状態」追加, 検索項目指定時の条件追加、修正」End
-        請求合意不要: '' // ハノイ側修正2022/12/27　STEP2_W　課題管理表№258：設計書「修正履歴」シートの「2022/12/26仕様変更分」「検索項目「業者状態」に請求合意不要追加、承認種類＝「61：支払確認」の場合　業者状態表示条件追記」
+        請求合意不要: '', // ハノイ側修正2022/12/27　STEP2_W　課題管理表№258：設計書「修正履歴」シートの「2022/12/26仕様変更分」「検索項目「業者状態」に請求合意不要追加、承認種類＝「61：支払確認」の場合　業者状態表示条件追記」
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 Start
+        確認済: '',
+        未確認: ''
+        // ハノイ側修正2022/12/30　STEP2_W　課題管理表№254：設計書「修正履歴」シートの「2022/12/15仕様変更分」「承認種類＝「61：支払承認」	部門確認追加」 End
       }
     },
     defaultTableData () {
@@ -2225,13 +2754,19 @@ export default {
 
       return true
     },
-    async onSearch () {
+    async onSearch (isScreenTop) {
       if (!await this.searchValidate()) {
         return
       }
-      this.disable差戻 = false
+      this.disable部門確認 = true
+      this.disable差戻 = true
+      this.disable否認 = true
+      this.disable承認 = true
       this.確認金額計 = ''
       this.tableData = []
+      this.selectedHatchuShoninRowKeys = []
+      this.selectedBumonKakuninRowKeys = []
+      this.selectedShiharaiShoninRowKeys = []
       const data = JSON.parse(JSON.stringify(this.pageData))
       // ハノイ側修正2022/12/07　STEP2_W　課題管理表№236：設計書「修正履歴」シートの「2022/12/05仕様変更分」「検索条件の「申請日」、「工事完了日」の指定方を変更する。」Start
       data.申請日_開始日 = data.申請日_開始日
@@ -2240,6 +2775,15 @@ export default {
       data.工事完了日_開始日 = data.工事完了日_開始日
       data.工事完了日_終了日 = data.工事完了日_終了日
       // ハノイ側修正2022/12/07　STEP2_W　課題管理表№236：設計書「修正履歴」シートの「2022/12/05仕様変更分」「検索条件の「申請日」、「工事完了日」の指定方を変更する。」End
+
+      // ハノイ側修正2023/07/31　STEP2_W　課題管理表№373：設計書「修正履歴」シートの「2023/07/28仕様変更分」「別画面から遷移時専用の処理を追記」START
+      this.isScreenTop = isScreenTop
+      if (this.isScreenTop) {
+        data.isScreenTop = this.$route.query.承認種類
+      } else {
+        data.isScreenTop = ''
+      }
+      // ハノイ側修正2023/07/31　STEP2_W　課題管理表№373：設計書「修正履歴」シートの「2023/07/28仕様変更分」「別画面から遷移時専用の処理を追記」END
 
       data.ログイン会社コード = this.userInfo.会社コード
       let result
@@ -2264,11 +2808,11 @@ export default {
         } else {
           this.onResearch = false // ハノイ側修正2022/10/21　STEP2_W　課題管理表№184：設計書「修正履歴」シートの「2022/10/20仕様変更分」「処理後の再読込時におけるメッセージ表示仕様を変更」
           this.searchedParam = JSON.parse(JSON.stringify(this.pageData))
-          this.tableData = result.data
-          this.tableData.map((x, i) => {
+          result.data.map((x, i) => {
             x.key = i + 1
             return x
           })
+          this.tableData = result.data
 
           // this.$nextTick(() => {
           //   if (this.sessionPageData) {
@@ -2354,7 +2898,13 @@ export default {
             }
           })
       })
+    },
+    // ハノイ側修正2023/05/25　STEP2_W　課題管理表№342：設計書「修正履歴」シートの「2023/05/24仕様変更分」「メニューの別のリンク押下後、稟議申請の差戻件数リンク押下時、稟議申請待ちの条件で検索されてしまう。」Start
+    onChange承認種類 () {
+      this.$route.query.承認種類 = this.pageData.承認種類
+      this.$route.query.対象履歴 = this.対象List[0].value
     }
+    // ハノイ側修正2023/05/25　STEP2_W　課題管理表№342：設計書「修正履歴」シートの「2023/05/24仕様変更分」「メニューの別のリンク押下後、稟議申請の差戻件数リンク押下時、稟議申請待ちの条件で検索されてしまう。」End
   }
 }
 </script>
@@ -2493,9 +3043,15 @@ export default {
 .black {
   color: black;
 }
+#業者状態 .el-checkbox {
+  margin-right: 7px !important;
+}
 </style>
 
 <style>
+.MishoninShoninIchiran #業者状態 .el-form-item__content {
+  margin-left: 105px !important;
+}
 .MishoninShoninIchiran .is-disabled,
 .is-disabled * {
   pointer-events: none;
@@ -2637,4 +3193,63 @@ export default {
 .MishoninShoninIchiran .ve-table .ve-table-container table.ve-table-content thead.ve-table-header .ve-table-header-tr .ve-table-header-th.ve-table-fixed-left{
  z-index: 10 !important;
 }
+
+.MishoninShoninIchiran .hatchuShonin table .el-checkbox__inner,
+.MishoninShoninIchiran .shiharaiShonin table .el-checkbox__inner {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.MishoninShoninIchiran .hatchuShonin table .checkBoxDisabled .el-checkbox__inner,
+.MishoninShoninIchiran .shiharaiShonin table .checkBoxDisabled .el-checkbox__inner {
+  border: 1px solid #DCDFE6;
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.MishoninShoninIchiran .hatchuShonin table td .el-checkbox:not(.checkBoxDisabled):not(.is-checked) .el-checkbox__inner,
+.MishoninShoninIchiran .shiharaiShonin table td .el-checkbox:not(.checkBoxDisabled):not(.is-checked) .el-checkbox__inner {
+  border: 1px solid #abbacc;
+}
+
+.MishoninShoninIchiran .hatchuShonin table td .is-checked .el-checkbox__inner::after,
+.MishoninShoninIchiran .hatchuShonin table th .is-checked .el-checkbox__input:not(.is-indeterminate) .el-checkbox__inner::after,
+.MishoninShoninIchiran .shiharaiShonin table td .is-checked .el-checkbox__inner::after,
+.MishoninShoninIchiran .shiharaiShonin table th .is-checked .el-checkbox__input:not(.is-indeterminate) .el-checkbox__inner::after {
+  -webkit-transform: rotate(45deg) scale(1);
+  transform: rotate(45deg) scale(1);
+  position: absolute;
+  display: table;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-left: 0;
+  content: " ";
+  -webkit-transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+  transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+  width: 6px;
+  height: 10px;
+}
+
+.MishoninShoninIchiran .hatchuShonin table th .is-indeterminate .el-checkbox__inner,
+.MishoninShoninIchiran .shiharaiShonin table th .is-indeterminate .el-checkbox__inner {
+  background-color: white;
+  border-color: white;
+}
+
+.MishoninShoninIchiran .hatchuShonin table th .is-checked .el-checkbox__inner,
+.MishoninShoninIchiran .shiharaiShonin table th .is-checked .el-checkbox__inner {
+  background-color: #108ee9;
+  border-color: #108ee9;
+}
+
+.MishoninShoninIchiran .hatchuShonin table th .is-indeterminate .el-checkbox__inner::before,
+.MishoninShoninIchiran .shiharaiShonin table th .is-indeterminate .el-checkbox__inner::before {
+  height: 16px;
+  width: 16px;
+  top: -1px;
+  left: -1px;
+  background-color: #108ee9;
+  border: none;
+}
+
 </style>

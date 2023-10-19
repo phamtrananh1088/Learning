@@ -2,9 +2,7 @@
   <el-dialog
     width="1500px"
     :visible="dialogVisible"
-    :close-on-click-modal="false"
     :show-close="false"
-    @close="onClose_click()"
     @open="onOpen()"
     class="SagyoYoteiNyuryoku"
   >
@@ -346,6 +344,9 @@
             </tr>
             <tr>
               <td colspan="2">
+                <p class="left_flow row tyuuizikou" v-show="改版チェック == true">
+                  ※契約改版中の為、予定入力出来ません
+                </p>
                 <el-button
                   @click="onClose_click()"
                   class="right_flow row"
@@ -449,7 +450,11 @@ export default {
     koumoku1: {
       type: Boolean,
       default: false // 初期値falseだがTD00400がtrueに上書く
-    }
+    },
+    改版チェック: {
+      type: Boolean,
+      default: false // 初期値falseだがTD00400がtrueに上書く
+    },
   },
   data() {
     return {
@@ -635,10 +640,10 @@ export default {
   mounted() {
     console.log("TS00401");
   },
-  updated() {
-    document.querySelector(".v-modal").style.zIndex = "3000";
-    document.querySelector(".SagyoYoteiNyuryoku").style.zIndex = "3001";
-  },
+  // updated() {
+  //   document.querySelector(".v-modal").style.zIndex = "3000";
+  //   document.querySelector(".SagyoYoteiNyuryoku").style.zIndex = "3001";
+  // },
   methods: {
     onOpen() {
       //サブ画面を起動するタイミングで、1つ目のコントロールに設定する
@@ -962,43 +967,58 @@ export default {
 
     // 登録前エラーチェック
     async fnc_obj_TourokumaeErrorChk() {
-      var strs = this.TS00401_tourokuJoken.yoteikaisi_date;
-      var stre = this.TS00401_tourokuJoken.yoteisyuuryou_date;
-      var time_from = this.TS00401_tourokuJoken.sagyoyotei_kaisi_time;
-      var time_to = this.TS00401_tourokuJoken.sagyoyotei_syuuryou_time;
-      var tantoutel_bit = this.fnc_obj_getByteLength(
-        this.TS00401_tourokuJoken.sagyoutantou_tel
-      );
-      if (
+      let strs = this.TS00401_tourokuJoken.yoteikaisi_date;
+      let stre = this.TS00401_tourokuJoken.yoteisyuuryou_date;
+      let time_from = this.TS00401_tourokuJoken.sagyoyotei_kaisi_time;
+      let time_to = this.TS00401_tourokuJoken.sagyoyotei_syuuryou_time;
+      let tantoutel_bit = this.fnc_obj_getByteLength(this.TS00401_tourokuJoken.sagyoutantou_tel);
+      let e = this.TS00401_tourokuJoken.keiyaku_nengetu.substr(5, 2);
+      let 年度確認from;
+      let 年度確認to;
+
+      // 年度跨ぎ確認用FromToを生成
+      if (e < "04") {
+        年度確認from = this.TS00401_tourokuJoken.keiyaku_nengetu.substr(0, 4);
+        年度確認from = Number(年度確認from) - 1;
+        年度確認from = 年度確認from.toString();
+        年度確認from = 年度確認from + "/04";
+        年度確認to = this.TS00401_tourokuJoken.keiyaku_nengetu.substr(0, 4);
+        年度確認to = 年度確認to + "/03";
+      } else {
+        年度確認from = this.TS00401_tourokuJoken.keiyaku_nengetu.substr(0, 4);
+        年度確認from = 年度確認from + "/04";
+        年度確認to = this.TS00401_tourokuJoken.keiyaku_nengetu.substr(0, 4);
+        年度確認to = Number(年度確認to) + 1;
+        年度確認to = 年度確認to.toString();
+        年度確認to = 年度確認to + "/03";
+      }
+
+      console.log("From:" + 年度確認from + " / To:" + 年度確認to);
+
+      if (strs == stre)
+      {
         //予定日開始・終了あり　時間逆転チェック
-        strs == stre
-      ) {
-        if (time_from != "" && time_to != "")
-          if (time_from > time_to) {
+        if (time_from != "" && time_to != ""){
+          if (time_from > time_to)
+          {
             this.fnc_void_showErrorMsg("E040409"); //予定日時に逆転があります。
             this.fnc_void_pinkData(0); //背景色ピンク
             this.$nextTick(() => this.$refs.nengetu_from.focus());
+
             return false;
-          } else {
           }
-        else {
         }
-      } else if (
+      }
+      else if (strs > stre)
+      {
         // 日付逆転チェック
-        strs > stre
-      ) {
         this.fnc_void_showErrorMsg("E040409"); // 予定日時に逆転があります。
         this.fnc_void_pinkData(0); //背景色ピンク
         this.$nextTick(() => this.$refs.nengetu_from.focus());
+
         return false;
       }
-      // if (strs.substr(0, 7) !== stre.substr(0, 7)) {
-      //   //作業予定月が同月ではない
-      //   this.fnc_void_showErrorMsg("E040702"); // 請求書月分を入力して下さい。
-      //   this.fnc_void_pinkData(0); //背景色ピンク
-      //   this.$nextTick(() => this.$refs.nengetu_from.focus());
-      //   return false;
-      // } else
+
       if (
         ((this.TS00401_tourokuJoken.sagyo_date_hikaku == strs.substr(0, 7) &&
           strs.substr(8, 2) > "20") ||
@@ -1011,53 +1031,76 @@ export default {
         this.fnc_void_showErrorMsg("E040703"); // 請求書月分を入力して下さい。
         this.fnc_void_pinkData(0); //背景色ピンク
         this.$nextTick(() => this.$refs.nengetu_from.focus());
+
         return false;
-      } else if (
-        this.TS00401_tourokuJoken.kakutei_flag > strs.substr(0, 7) ||
-        this.TS00401_tourokuJoken.kakutei_flag > stre.substr(0, 7)
-      ) {
-        //作業予定日が経理年月以前の場合
-        this.fnc_void_showErrorMsg("E040418"); // 請求書月分を入力して下さい。
+      } 
+      
+      // 作業予定日が経理年月以前かどうか
+      if (this.TS00401_tourokuJoken.kakutei_flag > strs.substr(0, 7) || this.TS00401_tourokuJoken.kakutei_flag > stre.substr(0, 7))
+      {
+        this.fnc_void_showErrorMsg("E040418"); // 作業予定日を過去月へ振り替える事は出来ません。
         this.fnc_void_pinkData(0); //背景色ピンク
         this.$nextTick(() => this.$refs.nengetu_from.focus());
+
         return false;
-      } else if (
-        this.TS00401_tourokuJoken.sagyou_tantou_name === "" ||
-        this.TS00401_tourokuJoken.sagyou_tantou_name === null
-      ) {
-        //作業担当が空の場合
-        this.fnc_void_showErrorMsg("E040704"); // 請求書月分を入力して下さい。
+      }
+      
+      // 年度跨ぎチェック
+      if (年度確認from > strs.substr(0, 7) || 年度確認to < stre.substr(0, 7))
+      {
+        this.fnc_void_showErrorMsg("E040637"); // 作業予定日を契約年度と異なる年度へ振り替える事は出来ません。
+        this.fnc_void_pinkData(0); //背景色ピンク
+        this.$nextTick(() => this.$refs.nengetu_from.focus());
+
+        return false;
+      }
+      
+      // 作業担当者未入力チェック
+      if (this.TS00401_tourokuJoken.sagyou_tantou_name === "" || this.TS00401_tourokuJoken.sagyou_tantou_name === null)
+      {
+        this.fnc_void_showErrorMsg("E040704"); // 「作業担当者」「担当者連絡先」を入力して下さい。
         this.fnc_void_pinkData(1); //背景色ピンク
         this.$nextTick(() => this.$refs.tantousya_name.focus());
+
         return false;
-      } else if (
-        this.TS00401_tourokuJoken.sagyoutantou_tel === "" ||
-        this.TS00401_tourokuJoken.sagyoutantou_tel === null
-      ) {
-        //作業担当連絡先が空の場合
-        this.fnc_void_showErrorMsg("E040704"); // 請求書月分を入力して下さい。
+      }
+      
+      // 作業担当連絡先未入力チェック
+      if (this.TS00401_tourokuJoken.sagyoutantou_tel === "" ||this.TS00401_tourokuJoken.sagyoutantou_tel === null)
+      {
+        this.fnc_void_showErrorMsg("E040704"); // 「作業担当者」「担当者連絡先」を入力して下さい。
         this.fnc_void_pinkData(1); //背景色ピンク
         this.$nextTick(() => this.$refs.tantousya_tel.focus());
+
         return false;
-      } else if (tantoutel_bit > 20) {
-        //作業担当者連絡先のバイト数を超えた場合
-        this.fnc_void_showErrorMsg("E040764"); // 請求書月分を入力して下さい。
+      }
+
+      // 作業担当者連絡先バイト数チェック
+      if (tantoutel_bit > 20) {
+        this.fnc_void_showErrorMsg("E040764"); // 連絡先の入力内容（バイト数）が制限を超えています。半角にて入力して下さい。
         this.fnc_void_pinkData(1); //背景色ピンク
         this.$nextTick(() => this.$refs.tantousya_tel.focus());
+
         return false;
-      } else if (this.期間外フラグ >= 1) {
-        let msg = (await this.fnc_rtn_getMsg("K040071")).data;
+      }
+      
+      if (this.期間外フラグ >= 1) {
+        let msg = (await this.fnc_rtn_getMsg("K040071")).data; // 作業予定開始～終了期間外に入力された詳細予定は登録されません。よろしいですか？
+
         if (!(await this.confirm(msg, "作業予定入力"))) {
           this.期間外フラグ = 0;
+
           return false;
         } else {
           this.期間外フラグ = 0;
+          
           return true;
         }
-      } else {
-        return true;
       }
+
+      return true;
     },
+
     //グリッド期間外チェック
     //int=0 ⇒期間外フラグ用
     //int=1 ⇒期間外データ削除用
@@ -1137,6 +1180,15 @@ export default {
     async fnc_void_Touroku() {
       let _this = this;
 
+      let nowdate = new Date();
+      nowdate.setMonth(nowdate.getMonth() + 2);
+
+      let nowdate_year = nowdate.getFullYear();
+      nowdate_year = nowdate_year.toString();
+      var nowdate_mounth = nowdate.getMonth();
+      nowdate_mounth = ("00" + nowdate_mounth).slice(-2);
+      nowdate = nowdate_year + "/" + nowdate_mounth;
+
       // ピンク色等データ初期状態にクリア
       //this.fnc_void_clearData(0);
 
@@ -1159,7 +1211,13 @@ export default {
           if (response.status) {
             _this.fnc_void_clearData();
             _this.fnc_void_showInfoMsg("M000008");
-            _this.fnc_void_sendMail();
+            if (_this.TS00401_tourokuJoken.sagyo_date_hikaku == nowdate) {
+              _this.fnc_void_sendMail();
+              console.log("メールをおくった");
+            } else {
+              console.log("メールをおくらない");
+            }
+
             _this.fnc_void_closeWindow();
           } else {
             console.log(response.message);
@@ -1170,8 +1228,24 @@ export default {
           }
         });
     },
-    fnc_void_sendMail() {
+    async fnc_void_sendMail() {
       let resultMail = "";
+      const url = []
+      let Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+      let linkUrl = Reafs_W_BaseURL + 'SagyoJoukyoIchiran'
+      let paramSet = {
+        パラメータ1: 2,
+        パラメータ2: this.TS00401_tourokuJoken.keiyaku_no,
+        パラメータ3: this.TS00401_tourokuJoken.rireki_no,
+        パラメータ4: this.TS00401_tourokuJoken.meisai_no,
+        パラメータ5: this.TS00401_tourokuJoken.keiyaku_nengetu,
+        パラメータ6: this.TS00401_tourokuJoken.nengetu_meisai,
+        PG: 'TS00401'
+      }
+      const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+      linkUrl = linkUrl + '?guid=' + resParam.data.guid
+      linkUrl = encodeURI(linkUrl)
+      url.push(linkUrl)
 
       let param = {
         msg_type: 0,
@@ -1183,11 +1257,13 @@ export default {
         履歴NO: this.TS00401_tourokuJoken.rireki_no,
         明細NO: this.TS00401_tourokuJoken.meisai_no,
         契約年月: this.TS00401_tourokuJoken.keiyaku_nengetu,
+        契約年月明細NO: this.TS00401_tourokuJoken.nengetu_meisai,
         宛先事務所コード: [this.TS00401_tourokuJoken.sendMailJimusyoCode],
         宛先営業所コード: [this.TS00401_tourokuJoken.sendMailEigyosyoCode],
         宛先部コード: [this.TS00401_tourokuJoken.sendMailBuCode],
         宛先課コード: [this.TS00401_tourokuJoken.sendMailKaCode],
-        宛先係コード: [this.TS00401_tourokuJoken.sendMailKakariCode]
+        宛先係コード: [this.TS00401_tourokuJoken.sendMailKakariCode],
+        url: url
       };
 
       resultMail = this.commonFunctionUI.CM00110SendMail(param);
@@ -1625,5 +1701,10 @@ table {
 }
 .pinkcolor_text >>> .el-input__inner {
   background-color: lightpink !important;
+}
+</style>
+<style scoped>
+.el-date-picker {
+  z-index: 9999 !important;
 }
 </style>

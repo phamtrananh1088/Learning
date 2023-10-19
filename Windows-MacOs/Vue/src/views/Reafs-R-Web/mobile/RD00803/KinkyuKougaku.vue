@@ -203,7 +203,7 @@
               <el-select
                 style="width: 320px"
                 v-model="dataForm.支払区分コード"
-                @change="shiKbnSelectChanged()"
+                @change="sShiKbnSelectChanged()"
               >
                 <el-option
                   v-for="item in shiKbnSelectItems"
@@ -532,6 +532,11 @@ export default {
         工事依頼No: "", // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」
         工事依頼No枝番: "",
         F100VERSION: "",
+        F001VERSION: "",
+        F042VERSION: "",
+        FW042VERSION: "",
+        F044VERSION: "",
+        F102VERSION: "",
         見積依頼フラグ: ""
       },
       linkImage1: "",
@@ -695,7 +700,8 @@ export default {
         工事依頼No: '',
         工事依頼NO枝番: '',
         業者コード: '',
-        業者コード枝番: ''
+        業者コード枝番: '',
+        見積書枝番: ''
       }
       // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」End
     };
@@ -831,6 +837,31 @@ export default {
       this.dataForm.取引先コード1 = obj.txtCd;
       this.dataForm.取引先名称1 = obj.lblNm;
       this.dataForm.取引先コード枝番1 = obj.row.枝番;
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」START
+      const param = {
+        取引先コード: (!this.dataForm.取引先コード1)?'':this.dataForm.取引先コード1.split('-')[0],
+        取引先コード枝番: this.dataForm.取引先コード枝番1 || ''
+      }
+      if (param.取引先コード) {
+        this.http
+          .post("api/Reafs_R/Mobile/Shonin/RD00803/GetDataM006", param)
+          .then((response) => {
+            if (!response.status) {
+              return this.MsgInfo({
+                title: this.$store.getters.getPageTitle(),
+                message: response.message,
+              });
+            }
+            if (response.data && response.data[0]) {
+              this.dataForm.REAFST使用1 = response.data[0].REAFST使用
+              this.dataForm.WEB合意1 = response.data[0].WEB合意
+            }
+          });
+      } else {
+        this.dataForm.REAFST使用1 = ''
+        this.dataForm.WEB合意1 = ''
+      }
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」END
     },
     SetsubParamsObjTorihikisaki1(obj) {
       let tempSubParamsObj = JSON.parse(JSON.stringify(this.subParamsObj))
@@ -848,6 +879,31 @@ export default {
       this.dataForm.取引先コード2 = obj.txtCd;
       this.dataForm.取引先名称2 = obj.lblNm;
       this.dataForm.取引先コード枝番2 = obj.row.枝番;
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」START
+      const param = {
+        取引先コード: (!this.dataForm.取引先コード2)?'':this.dataForm.取引先コード2.split('-')[0],
+        取引先コード枝番: this.dataForm.取引先コード枝番2 || ''
+      }
+      if (param.取引先コード) {
+        this.http
+          .post("api/Reafs_R/Mobile/Shonin/RD00803/GetDataM006", param)
+          .then((response) => {
+            if (!response.status) {
+              return this.MsgInfo({
+                title: this.$store.getters.getPageTitle(),
+                message: response.message,
+              });
+            }
+            if (response.data && response.data[0]) {
+              this.dataForm.REAFST使用2 = response.data[0].REAFST使用
+              this.dataForm.WEB合意2 = response.data[0].WEB合意
+            }
+          });
+      } else {
+        this.dataForm.REAFST使用2 = ''
+        this.dataForm.WEB合意2 = ''
+      }
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」END
     },
     SetsubParamsObjTorihikisaki2(obj) {
       let tempSubParamsObj = JSON.parse(JSON.stringify(this.subParamsObj))
@@ -865,6 +921,31 @@ export default {
       this.dataForm.取引先コード3 = obj.txtCd;
       this.dataForm.取引先名称3 = obj.lblNm;
       this.dataForm.取引先コード枝番3 = obj.row.枝番;
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」START
+      const param = {
+        取引先コード: (!this.dataForm.取引先コード3)?'':this.dataForm.取引先コード3.split('-')[0],
+        取引先コード枝番: this.dataForm.取引先コード枝番3 || ''
+      }
+      if (param.取引先コード) {
+        this.http
+          .post("api/Reafs_R/Mobile/Shonin/RD00803/GetDataM006", param)
+          .then((response) => {
+            if (!response.status) {
+              return this.MsgInfo({
+                title: this.$store.getters.getPageTitle(),
+                message: response.message,
+              });
+            }
+            if (response.data && response.data[0]) {
+              this.dataForm.REAFST使用3 = response.data[0].REAFST使用
+              this.dataForm.WEB合意3 = response.data[0].WEB合意
+            }
+          });
+      } else {
+        this.dataForm.REAFST使用3 = ''
+        this.dataForm.WEB合意3 = ''
+      }
+      // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」END
     },
     SetsubParamsObjTorihikisaki3(obj) {
       let tempSubParamsObj = JSON.parse(JSON.stringify(this.subParamsObj))
@@ -917,6 +998,10 @@ export default {
       this.dataForm.修繕区分小コード = ""
       this.getsShouKbnSelect()
     },
+    sShiKbnSelectChanged(){
+      // 支払条件取得
+      this.getshiJoukenSelect()
+    },
     getSenteiTorihikisaki() {
       // 選定取引先が未入力の場合設定する
       // ただしF044が存在する場合は処理しない
@@ -944,7 +1029,8 @@ export default {
         物件コード: this.dataForm.物件コード,
         大区分コード: this.dataForm.大区分コード,
         中区分コード: this.dataForm.中区分コード,
-        小区分コード: this.dataForm.小区分コード
+        小区分コード: this.dataForm.小区分コード,
+        工事依頼No: this.dataForm.工事依頼No
       };
       this.http
         .post("api/Reafs_R/Mobile/Shonin/RD00803/GetSenteiTorihikisakiRD00803", param)
@@ -1186,6 +1272,7 @@ export default {
 
     getshiJoukenSelect() {
       this.shiJoukenInfo.strParam1 = "014"; //支払条件の場合
+      this.shiJoukenInfo.strParam2 = this.dataForm.支払区分コード; //支払区分コード
       this.shiJoukenInfo.intParam1 = 0;
 
       this.http
@@ -1327,7 +1414,9 @@ export default {
             }
             // 見積依頼
             if (this.btnKbn == "2") {
-              if (await this.confirm(sMsgConf2,this.$store.getters.getPageTitle())) {
+              // ハノイ側修正2023/04/26　STEP2_R_Web　課題管理表№3：「2023/04/26仕様変更分」「工事受付側での機能削除の仕様変更について、当画面にも同様の機能があるようですので」
+              if (this.dataForm.取引先コード1 != '' && this.dataForm.REAFST使用1 == '1' && this.dataForm.最終承認フラグ == '1' &&
+                await this.confirm(sMsgConf2,this.$store.getters.getPageTitle())) {
                 this.dataForm.見積依頼フラグ = '1'
                 if(await this.UpdateData(sMsg1, sMsg3)) {
                   await this.call_sendMail('緊急承認', this.ShoninInfo.kojiiraiNo)
@@ -1383,32 +1472,75 @@ export default {
       // アクション№40
       if (btnName == '差戻') {
         res = await this.sendMail(40, 工事依頼No, '', this.宛先事務所コード, this.宛先営業所コード,
-                                  this.宛先部コード, this.宛先課コード, this.宛先係コード, '', '')
+                                  this.宛先部コード, this.宛先課コード, this.宛先係コード, '', '', '')
       }
       // アクション№41
       if (btnName == '緊急承認') {
 
-        res = await this.sendMail(41, 工事依頼No, '', [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番)
+        res = await this.sendMail(41, 工事依頼No, this.paramF044.工事依頼NO枝番, [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番, this.paramF044.見積書枝番)
       }
       // アクション№43
       if (btnName == '高額承認') {
         if (this.dataForm.負担区分コード == '1' || this.dataForm.負担区分コード == '3') {
-          res = await this.sendMail(43, 工事依頼No, '', [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番)
+          res = await this.sendMail(43, 工事依頼No, '', [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番, '')
         }
         else if (this.dataForm.負担区分コード == '2') {
           // アクション№50
-          res = await this.sendMail(50, 工事依頼No, '', [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番)
+          res = await this.sendMail(50, 工事依頼No, '', [], [], [], [], [], this.paramF044.業者コード, this.paramF044.業者コード枝番, '')
           if (this.dataForm.見積金額メール通知 == '1') {
             // アクション№51
             res = await this.sendMail(51, 工事依頼No, '', this.宛先事務所コード, this.宛先営業所コード,
-                                  this.宛先部コード, this.宛先課コード, this.宛先係コード, '', '')
+                                  this.宛先部コード, this.宛先課コード, this.宛先係コード, '', '', '')
           }
         }
       }
       return res
     },
     async sendMail (mailPatternNo, 工事依頼No, 工事依頼No枝番, 宛先事務所コード, 宛先営業所コード, 宛先部コード, 宛先課コード,
-                    宛先係コード, 業者コード, 業者コード枝番) {
+                    宛先係コード, 業者コード, 業者コード枝番, 見積書枝番) {
+      const url = []
+      if (mailPatternNo == 40) {
+        const Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+        let linkUrl = Reafs_W_BaseURL + 'IraiNyuryoku'
+        let paramSet = {
+          パラメータ1: 工事依頼No,
+          PG: 'RD00803'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+      } else if (mailPatternNo == 41) {
+        const Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+        let linkUrl = Reafs_T_BaseURL + 'SyuzenMitsumoriNyuryoku'
+        let paramSet = {
+          パラメータ1: 工事依頼No,
+          パラメータ2: 工事依頼No枝番 != null && 工事依頼No枝番 != '' ? 工事依頼No枝番 : '11', // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230216追加」
+          パラメータ3: 業者コード,
+          パラメータ4: 業者コード枝番,
+          パラメータ5: 見積書枝番 != null && 見積書枝番 != '' ? 見積書枝番 : '011', // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230216追加」
+          PG: 'RD00803'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+      } else if (mailPatternNo == 51) {
+        const Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+        let linkUrl = Reafs_W_BaseURL + 'WD00520/SyuzenIraiSansyoShonin'
+        let paramSet = {
+          パラメータ1: 工事依頼No,
+          パラメータ2: '',
+          パラメータ3: '',
+          パラメータ4: '',
+          PG: 'RD00803'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+      }
+
       const param = {
         msg_type: 0,
         mail_to: '',
@@ -1426,7 +1558,8 @@ export default {
         宛先係コード: 宛先係コード,
         業者コード,
         業者コード枝番,
-        担当者コード: []
+        担当者コード: [],
+        url: url
       }
       console.log(param)
       const res = await this.commonFunctionUI.CM00110SendMail(param)
@@ -1484,7 +1617,12 @@ export default {
         見積金額メール通知: (!this.dataForm.見積金額メール通知)?'0':this.dataForm.見積金額メール通知,
         得意先コード: this.dataForm.得意先コード,
         得意先コード枝番: this.dataForm.得意先コード枝番,
-        見積依頼フラグ:  (!this.dataForm.見積依頼フラグ)?'0':this.dataForm.見積依頼フラグ//'1': 緊急承認時見積依頼あり
+        見積依頼フラグ:  (!this.dataForm.見積依頼フラグ)?'0':this.dataForm.見積依頼フラグ,//'1': 緊急承認時見積依頼あり
+        F001VERSION: this.dataForm.F001VERSION,
+        F042VERSION: this.dataForm.F042VERSION,
+        FW042VERSION: this.dataForm.FW042VERSION,
+        F044VERSION: this.dataForm.F044VERSION,
+        F102VERSION: this.dataForm.F102VERSION
       }
     },
     async UpdateData(sMsg1, sMsg2, s種類) {
@@ -1503,19 +1641,24 @@ export default {
               message: response.message,
             });
             resolve(false)
-          }
-          // this.getData();
-          if(this.showSuccess(sMsg1 + skojiiraiNo + sMsg2)){
-            this.dialogVisible = false;
-            // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」Start
-            if (response.data.f044) {
-              this.paramF044.工事依頼No = response.data.f044.工事依頼No
-              this.paramF044.工事依頼NO枝番 = response.data.f044.工事依頼NO枝番
-              this.paramF044.業者コード = response.data.f044.業者コード
-              this.paramF044.業者コード枝番 = response.data.f044.業者コード枝番
+          } else {
+            // this.getData();
+            if(this.showSuccess(sMsg1 + skojiiraiNo + sMsg2)){
+              this.dialogVisible = false;
+              // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」Start
+              if (response.data.f044) {
+                this.paramF044.工事依頼No = response.data.f044.工事依頼No
+                this.paramF044.工事依頼NO枝番 = response.data.f044.工事依頼NO枝番
+                this.paramF044.業者コード = response.data.f044.業者コード
+                this.paramF044.業者コード枝番 = response.data.f044.業者コード枝番
+                this.paramF044.見積書枝番 = response.data.f044.見積書枝番
+              }
+              // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」End
+              if (response.data.f102Version) {
+                this.dataForm.F102VERSION = response.data.f102Version
+              }
+              resolve(true)
             }
-            // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」End
-            resolve(true)
           }
         })
       })
@@ -1678,7 +1821,8 @@ export default {
       this.paramF044.工事依頼No = null,
       this.paramF044.工事依頼NO枝番 = null,
       this.paramF044.業者コード = null,
-      this.paramF044.業者コード枝番 = null
+      this.paramF044.業者コード枝番 = null,
+      this.paramF044.見積書枝番 = null
     }
     // ハノイ側修正2022/11/15　STEP2_Web_R　課題管理表№1：設計書「修正履歴」シートの「2022/11/14仕様変更分」「架電通知・メール通知機能を追加」End
   },

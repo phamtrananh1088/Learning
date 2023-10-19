@@ -185,6 +185,7 @@
 </template>
 <script>
 import reafsinputtext from "@/components/basic/ReafsControl/ReafsInputText.vue";
+import moment from 'moment'
 
 var $thisValue;
 var $userInfo = {
@@ -196,7 +197,8 @@ var $userInfo = {
 
 export default {
   components: {
-    reafsinputtext
+    reafsinputtext,
+    moment
   },
 
   data() {
@@ -476,6 +478,18 @@ export default {
           }
         })
         return false;
+      }
+
+      if (this.oshiraseHyoji.掲示開始日 && this.oshiraseHyoji.掲示終了日 &&
+          moment(this.oshiraseHyoji.掲示開始日) > moment(this.oshiraseHyoji.掲示終了日)) {
+        this.getMsg('E010352').then((response) => {
+          this.showError(response.data, {
+            callback: () => {
+              this.$refs.ref掲示開始日.focus()
+            }
+          })
+        })
+        return false
       }
 
       if (
@@ -956,6 +970,9 @@ export default {
       } else {
         return false;
       }
+    },
+    getMsg (key) {
+      return this.commonFunctionUI.getMsg(key)
     },
     showError (message, option = null, title = this.$store.getters.getPageTitle()) {
       var self = this

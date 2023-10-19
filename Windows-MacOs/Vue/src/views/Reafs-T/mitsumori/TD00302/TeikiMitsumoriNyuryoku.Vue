@@ -508,6 +508,7 @@
 
 import reafsinputtext from '@/components/basic/ReafsControl/ReafsInputText.vue'
 import reafsinputnumber from '@/components/basic/ReafsControl/ReafsInputNumber.vue'
+import reafsinputnumber2 from '@/components/basic/ReafsControl/ReafsInputNumber2.vue'
 import reafstable from '@/components/table/Grid.vue'
 import reafsmodal from '@/components/modal/Modal.vue'
 // import eigyoten from '@/components/basic/Eigyoten.vue'
@@ -526,6 +527,7 @@ export default {
   components: {
     reafsinputtext,
     reafsinputnumber,
+    reafsinputnumber2,
     reafstable,
     reafsmodal,
     nengetsu,
@@ -585,7 +587,8 @@ export default {
         sendMailEigyosyoCode : '',
         sendMailBuCode : '',
         sendMailKaCode : '',
-        sendMailKakariCode : ''
+        sendMailKakariCode : '',
+        keizokuKBN: ''
       },
 
       KeyDataToTD00302: {
@@ -942,7 +945,7 @@ export default {
             return (
               <div class="cell-body-custome">
                 <reafsinputtext
-                  maxlength="100"
+                  maxlength={50}
                   value={row.sagyomeisyo}
                   ref={'ref作業内容' + rowIndex}
                   width="100%"
@@ -984,9 +987,9 @@ export default {
           renderBodyCell: ({ row, column, rowIndex }) => {
             return (
               <div class="cell-body-custome">
-                <reafsinputnumber
+                <reafsinputnumber2
                   intLength={6}
-                  floatLength={0}
+                  floatLength={2}
                   value={row.suryo}
                   ref={'ref数量' + rowIndex}
                   width="100%"
@@ -995,7 +998,10 @@ export default {
                     this.checkChangedData('グリッド_数量')
                     row['suryo'] = val
                   }}
-                ></reafsinputnumber>
+                  on-change={(val) => {
+                    this.txtSuryoChanged(row, val)
+                  }}
+                ></reafsinputnumber2>
               </div>
             )
           },
@@ -1119,6 +1125,9 @@ export default {
                       row['genkazeiritsu'] = val
                       this.checkChangedData('グリッド_税率')
                       // this.cellDataChange(row, column, val)
+                    }}
+                    on-change={val => {
+                      this.txtgenkazeiritsuChanged(row, val);
                     }}
                   ></reafsinputnumber>
                 </div>
@@ -1358,6 +1367,16 @@ export default {
           _this.searchForm.mitsumoriiraibi = result.data[0].iraibi
           _this.searchForm.keiyakukikan = result.data[0].keiyakuYMS + "~" +result.data[0].keiyakuYME
           _this.searchForm.joutai = result.data[0].joutai
+
+          // 継続区分が保留(1)データは「保留」と表示する
+          if (result.data[0].keizokuKBN == "1") {
+            _this.searchForm.joutai = "保留"
+          }
+          // 継続区分が中止(2)データは「中止」と表示する
+          if (result.data[0].keizokuKBN == "2") {
+            _this.searchForm.joutai = "中止"
+          }
+
           _this.searchForm.shinchokuCode = result.data[0].shinchokuCode
           
           _this.searchForm.bukkenCD = result.data[0].bukkenCD
@@ -1398,6 +1417,8 @@ export default {
           console.log("メール送信用パラメータ：" + _this.searchForm.sendMailJimusyoCode + " " + _this.searchForm.sendMailEigyosyoCode
             + " " + _this.searchForm.sendMailBuCode + " " + _this.searchForm.sendMailKaCode + " " + _this.searchForm.sendMailKakariCode);
 
+          _this.searchForm.keizokuKBN = result.data[0].keizokuKBN
+
           // 一時保存時に必要なデータ群
           _this.KeyDataToTD00302.kaishaCode = result.data[0].kaishaCode
           _this.KeyDataToTD00302.keiyakuNo = _this.searchForm.keiyakuNo 
@@ -1426,6 +1447,14 @@ export default {
             // 全てのボタンが押下可能
             _this.isFirstMode = false
             _this.isDisplayMode = false
+          }
+
+          // 継続区分が保留(1)または、中止(2)のデータは全ての更新が行なえない
+          if (_this.searchForm.keizokuKBN == "1" || _this.searchForm.keizokuKBN == "2") 
+          {
+            // 各テキストボックス、一時保存ボタン、提出ボタンが押せない
+            _this.isFirstMode = false
+            _this.isDisplayMode = true
           }
 
           _this.changeDataFlg = false
@@ -1601,6 +1630,9 @@ export default {
         genkazeiritsu: 0,
         syosaiFLG: 0,
         addMeisaiFLG: 0,
+        sagyoKaisu: 0,
+        genkaKingakuType: 0,
+        genkaKingakuTanka: 0,
         deleteFLG: 0
       }
     },
@@ -1637,9 +1669,6 @@ export default {
         // 遷移元画面へ戻る
         this.$router.back()
       }
-      // this.$router.push({
-      //   name: "TD00300",
-      // });
     },
 
     OnClick(KBN){
@@ -1737,11 +1766,19 @@ export default {
                 });
                 return;
               }
-              if(gridTableData[row].genkazeiKBN === -1)
+              if(gridTableData[row].genkazeiKBN !== 1 && gridTableData[row].genkazeiKBN !== 2)
               {
                 this.MsgErr({
                   title: "見積入力（定期委託）",
                   message: "税区分が未設定です。"
+                });
+                return;
+              }
+              if(gridTableData[row].genkazeiritsu === '')
+              {
+                this.MsgErr({
+                  title: "見積入力（定期委託）",
+                  message: "税率が未設定です。"
                 });
                 return;
               }
@@ -1853,7 +1890,7 @@ export default {
         var torokuGridDate = [];
         var gridTableData = [];
         var tmpSortNO = 1;
-        gridTableData = this.KeyDataToTD00302.TD00302_GridData
+        gridTableData = this.tableDataMeisai
 
         // 今ある明細NOの最大値を取得する。
         const gridTableDataMeisaiNo = gridTableData.map((x) => x.meisaiNO)
@@ -1916,6 +1953,14 @@ export default {
                 });
                 return;
               }
+              if(gridTableData[row].genkazeiritsu === '')
+              {
+                this.MsgErr({
+                  title: "見積入力（定期委託）",
+                  message: "税率が未設定です。"
+                });
+                return;
+              }
               if(gridTableData[row].syosaiFLG === 0)
               {
                 this.MsgErr({
@@ -1967,21 +2012,36 @@ export default {
     },
 
     MitsumoriDataTorikomiOnBackData (e) {
+
       if (e.backData) {
-        const row = this.defaultDataMeisai()
+        
+        // 作業初期化
+        this.tableDataMeisai = []
 
         console.log(e.backData.取込データ)
-        
-        //Object.assign(row, e.backData.取込データ)
-        row.bunruiCode = e.backData.取込データ.bunruiCode
-        row.sagyomeisyo = e.backData.取込データ.sagyomeisyo
-        row.suryo = e.backData.取込データ.suryo
-        row.tani = e.backData.取込データ.tani
-        row.tanka = e.backData.取込データ.tanka
-        row.genkazeiKBN = e.backData.取込データ.genkazeiKBN
-        row.genkazeiritsu = e.backData.取込データ.genkazeiritsu
 
-        this.tableDataMeisai.push(row)
+        for (var torikomiRow in e.backData.取込データ){
+
+          var row = this.defaultDataMeisai()
+
+          row.bunruiCode = e.backData.取込データ[torikomiRow].bunruiCode
+          row.sagyomeisyo = e.backData.取込データ[torikomiRow].sagyomeisyo
+          row.suryo = e.backData.取込データ[torikomiRow].suryo
+          row.tani = e.backData.取込データ[torikomiRow].tani
+          row.tanka = e.backData.取込データ[torikomiRow].tanka
+          row.genkazeiKBN = Number(e.backData.取込データ[torikomiRow].genkazeiKBN)
+          row.genkazeiritsu = e.backData.取込データ[torikomiRow].genkazeiritsu
+
+          this.tableDataMeisai.push(row)
+        }
+
+        if (this.tableDataMeisai.length < 10 && !this.isDisplayMode)
+        {
+          for (let i = this.tableDataMeisai.length; i < 10; i++) {
+            this.tableDataMeisai.push(this.defaultDataMeisai())
+          }
+        }
+
       }
     },
 
@@ -2139,6 +2199,7 @@ export default {
         mail_pattern_no: patternNo,
         工事依頼NO: this.searchForm.iraiNO,
         契約NO: this.searchForm.keiyakuNo,
+        契約No枝番: this.searchForm.hansu,
         履歴NO: this.searchForm.rirekiNO,
         宛先事務所コード: [this.searchForm.sendMailJimusyoCode],
         宛先営業所コード: [this.searchForm.sendMailEigyosyoCode],
@@ -2251,12 +2312,22 @@ export default {
           if(!titleFind)
           {
             // タイトル行検索中なら加算
-            sum += Number(String(this.tableDataMeisai[i].genkakingaku_zeinuki).replace(',', ''))
+            sum += Number(String(this.tableDataMeisai[i].genkakingaku_zeinuki).replaceAll(',', ''))
           }          
           
         } else if (this.tableDataMeisai[i].bunruiCode == 'T') {
-          titleFind = true
-          this.tableDataMeisai[sumRowIndex].genkakingaku_zeinuki = sum.toLocaleString()
+          if(!titleFind)
+          {
+            // タイトル行発見、それまでの合計を合計行にセット
+            titleFind = true
+            this.tableDataMeisai[sumRowIndex].genkakingaku_zeinuki = sum.toLocaleString()
+            sum = 0;
+          }
+          else
+          {
+            // いきなりタイトル行が出てきたパターン、何もしなくていいはず
+          }
+          
           continue
 
         } else if (this.tableDataMeisai[i].bunruiCode == 'G') {
@@ -2265,16 +2336,20 @@ export default {
             //タイトル行のない小計行
             this.tableDataMeisai[sumRowIndex].bunruiCode = ''
             this.tableDataMeisai[sumRowIndex].sagyomeisyo = ''
-            this.tableDataMeisai[sumRowIndex].suryo = 0
+            this.tableDataMeisai[sumRowIndex].suryo = ''
             this.tableDataMeisai[sumRowIndex].tani = ''
             this.tableDataMeisai[sumRowIndex].tanka = 0
             this.tableDataMeisai[sumRowIndex].genkakingaku_zeinuki = 0
             this.tableDataMeisai[sumRowIndex].genkazeiritsu = 0
             this.tableDataMeisai[sumRowIndex].genkazeiKBN = -1
+            this.tableDataMeisai[sumRowIndex].sagyoYotei = ''
+            sumRowIndex = i
+            sum = 0;
+            continue
           }
           else
           {
-            // タイトル検索開始
+            // タイトル行検索開始
             titleFind = false
             sumRowIndex = i
           }
@@ -2287,13 +2362,15 @@ export default {
         //タイトル行のない小計行
         this.tableDataMeisai[sumRowIndex].bunruiCode = ''
         this.tableDataMeisai[sumRowIndex].sagyomeisyo = ''
-        this.tableDataMeisai[sumRowIndex].suryo = 0
+        this.tableDataMeisai[sumRowIndex].suryo = ''
         this.tableDataMeisai[sumRowIndex].tani = ''
         this.tableDataMeisai[sumRowIndex].tanka = 0
         this.tableDataMeisai[sumRowIndex].genkakingaku_zeinuki = 0
         this.tableDataMeisai[sumRowIndex].genkazeiritsu = 0
         this.tableDataMeisai[sumRowIndex].genkazeiKBN = -1
-        this.tableDataMeisai[sumRowIndex].TGDisabled = true
+        this.tableDataMeisai[sumRowIndex].sagyoYotei = ''
+        sumRowIndex = i
+        sum = 0;
       }
     },
 
@@ -2314,18 +2391,20 @@ export default {
       }
       this.tableDataMeisai.splice(rowIndex, 1)
       this.tableDataMeisai.push(this.defaultDataMeisai())
+
+      this.checkBunruiCodeData();
     },
 
     onCopyMeisai (row, rowIndex) {
 
       console.log("グリッド内コピーボタン押下");
 
-      let meisaiCount = 0
+      let meisaiCount = 0;
       for (let i in this.tableDataMeisai)
       {
         if (this.tableDataMeisai[i].meisaiNO != '')
         {
-          meisaiCount += 1
+          meisaiCount += 1;
         }
       }
 
@@ -2334,14 +2413,16 @@ export default {
         return;
       }
 
-      const newRow = JSON.parse(JSON.stringify(row))
-      newRow.meisaiNo = ''
-      newRow.meisaiSORT = ''
-      newRow.syosaiFLG = 0
-      newRow.sagyoYotei = '未予定'
+      const newRow = JSON.parse(JSON.stringify(row));
+      newRow.meisaiNO = '';
+      newRow.meisaiSORT = '';
+      newRow.syosaiFLG = 0;
+      newRow.sagyoYotei = '未予定';
       
-      this.tableDataMeisai.splice(rowIndex + 1, 0, newRow)
-      console.log(this.tableDataMeisai)
+      this.tableDataMeisai.splice(rowIndex + 1, 0, newRow);
+      console.log(this.tableDataMeisai);
+
+      this.checkBunruiCodeData();
     },
 
     onTeikiMitsumoriSyosaiNyuryokuClick(row, rowIndex) {
@@ -2424,7 +2505,8 @@ export default {
       row.tanka = 1
       row.tanka = 0
       row.genkakingaku_zeinuki = 1
-      row.genkakingaku_zeinuki = genkakingaku
+      // 原価金額税抜は行分類が変わったらクリアする
+      row.genkakingaku_zeinuki = 0
       row.genkazeiritsu = 1
       row.genkazeiritsu = 0
       row.genkazeiKBN = 1
@@ -2437,20 +2519,21 @@ export default {
         row.TGDisabled = true
         this.checkBunruiCodeData()
       } else if (row.bunruiCode == 'G') {
+        console.log("計算開始");
         row.TGDisabled = true
 
-        var sum = 0
-        var titleFind = false
+        let sum = 0
+        let titleFind = false
+
         for (var i = index; i >= 0; i--)
         {
-          var rowdata = this.tableDataMeisai[i]
-          if (rowdata.bunruiCode == 'T')
+          if (this.tableDataMeisai[i].bunruiCode == 'T')
           {
             titleFind = true
             break;
           }
 
-          sum += Number(String(rowdata.genkakingaku_zeinuki).replace(',', ''))
+          sum += Number(String(this.tableDataMeisai[i].genkakingaku_zeinuki).replaceAll(',', ''))
         }
 
         if (titleFind)
@@ -2463,17 +2546,16 @@ export default {
           row.bunruiCode = ''
           row.TGDisabled = false
           this.MsgErr({
-          title: "見積入力（定期委託）",
-          message: "集計行を設定する際は対応する見出行を作成してください。"
-        });
+            title: "見積入力（定期委託）",
+            message: "集計行を設定する際は対応する見出行を作成してください。"
+          });
         }
-        
       }
     },
 
     onMeisaiZeiKBNChange(row, column, index) {
 
-      console.log("税区分を変えましたわ～！")
+      console.log("税区分を変えましたわ～！");
 
       if (row.genkazeiKBN == 1)
       {
@@ -2482,7 +2564,10 @@ export default {
        else if (row.genkazeiKBN == 2)
       {
         row.genkazeiritsu = 0
+        row.genkakingaku_zeigaku = 0
       }
+
+      this.checkBunruiCodeData();
     },
 
     onAddRowMeisai () {
@@ -2559,8 +2644,72 @@ export default {
       this.changeDataFlg = true
     },
 
+    txtSuryoChanged(row, val){
+      var targetPosition = val.toString().indexOf('-')
+
+      if (targetPosition > -1) {
+        row.suryo = ''
+      }
+    },
+
     replaceAll (val) {
       return ((val || '') + '').replaceAll(',', '')
+    },
+    
+    async txtgenkazeiritsuChanged (row, val) {
+      await this.http
+        .get('/api/Reafs_T/TeikiMitsumoriNyuryoku/check税期間', { genkazeiritsu: val })
+        .then((response) => {
+          if (response.data !== null) 
+          {
+            if (response.data.isTaxExist == false)
+            {
+              this.MsgErr({
+                title: "見積入力（定期委託）",
+                message: "入力された税率は有効ではありません。"
+              });
+              // 入力された税率は存在しないのでデフォルトの税率をセット
+              row.genkazeiritsu = this.searchForm.defaultTax
+            }
+          }
+          else 
+          {
+            this.MsgErr({
+                title: "見積入力（定期委託）",
+                message: "入力された税率は有効ではありません。"
+              });
+              // 入力された税率は存在しないのでデフォルトの税率をセット
+              row.genkazeiritsu = this.searchForm.defaultTax
+          }
+        });
+    },
+
+    async txtgenkazeiritsuChanged (row, val) {
+      await this.http
+        .get('/api/Reafs_T/TeikiMitsumoriNyuryoku/check税期間', { genkazeiritsu: val })
+        .then((response) => {
+          if (response.data !== null) 
+          {
+            if (response.data.isTaxExist == false)
+            {
+              this.MsgErr({
+                title: "見積入力（定期委託）",
+                message: "入力された税率は有効ではありません。"
+              });
+              // 入力された税率は存在しないのでデフォルトの税率をセット
+              row.genkazeiritsu = this.searchForm.defaultTax
+            }
+          }
+          else 
+          {
+            this.MsgErr({
+                title: "見積入力（定期委託）",
+                message: "入力された税率は有効ではありません。"
+              });
+              // 入力された税率は存在しないのでデフォルトの税率をセット
+              row.genkazeiritsu = this.searchForm.defaultTax
+          }
+        });
     },
 
     ///////////////////////////////////////////////

@@ -138,7 +138,7 @@
         </el-main>
         <el-footer class="home-el-footer" height="auto">
           <div style="margin-left: auto;">
-            <el-button @click="onRegister()" :loading="loading.btnRegister"
+            <el-button @click="onRegister()" :disabled="queryParams.isDisableUpdate == 1" :loading="loading.btnRegister"
               >更新</el-button
             >
           </div>
@@ -168,7 +168,8 @@ export default {
       ],
       queryParams: {
         添付種類: '',
-        工事依頼No: ''
+        工事依頼No: '',
+        isDisableUpdate: 0
       },
       userInfo: {
         ユーザーＩＤ: '',
@@ -197,14 +198,28 @@ export default {
   },
   watch: {
     'koujiiraiNo' (v) {
+    },
+    // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
+    pageData: {
+      handler (val) {
+        if (!this.queryParams.工事依頼No) {
+          const storeData = {
+            pageData: this.pageData,
+            f091Data: this.getDataF091()
+          }
+          this.$store.commit('setIraiTenpuTourokuPageData', storeData)
+        }
+      },
+      deep: true
     }
   },
+  // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
   computed: {
     isUpdate () {
       return true
     }
   },
-  inject: ['hideLeftMenu', 'showLogoutButton', 'showBackShowBtn'], //ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
+  inject: ['hideLeftMenu', 'showLogoutButton', 'showBackShowBtn'], // ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
   created () {
     let userLogIn = this.$store.getters.getUserInfo()
     this.userInfo.ユーザーＩＤ = userLogIn.userId
@@ -213,12 +228,22 @@ export default {
   mounted () {
     this.queryParams = {
       添付種類: this.$route.query.添付種類,
-      工事依頼No: this.$route.query.工事依頼No
+      工事依頼No: this.$route.query.工事依頼No,
+      isDisableUpdate: this.$route.query.isDisableUpdate// ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定…
     }
     this.hideLeftMenu(false)
-    this.showLogoutButton(false) //ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
-    this.showBackShowBtn(true) //ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
-    this.getPageData()
+    this.showLogoutButton(false) // ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
+    this.showBackShowBtn(true) // ハノイ側修正2022/09/26　課題管理表№89：「2022/09/07依頼分」「screenPopupを利用して起動するダイアログ画面を対象に開閉ボタン、ログアウトボタン機能の修正を行う、」
+    // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
+    if (this.queryParams.工事依頼No) {
+      this.getPageData()
+    } else {
+      const sessionStr = this.$store.getters.getIraiTenpuTourokuPageData()
+      if (sessionStr) {
+        this.pageData = sessionStr.pageData
+      }
+    }
+    // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
     // document.getElementById('btnLogout').onclick = function (e) {
     //   e.preventDefault()
     //   alert(1)
@@ -284,16 +309,24 @@ export default {
       }
 
       if (this.pageData[index].添付NO !== '') {
-        let imgdata = this.pageData[index].linkImage
-        if (imgdata) {
-          let imgtype = imgdata.split(';')[0].split(':')[1]
-          let imgbase64 = imgdata.split(',')[1]
-          await this.base.saveFileDownload(imgbase64, fileName, imgtype)
-          this.getMsg('M040020').then(response => {
-            this.showSuccess(response.data)
-          })
+        let linkDownload = this.pageData[index].linkDownload
+        if (linkDownload) {
+          await this.http
+            .post(linkDownload, '', '', {
+              responseType: 'blob'
+            })
+            .then(async blob => {
+              await this.base.saveFileDownload(blob, fileName)
+              this.getMsg('M040020').then(response => {
+                this.showSuccess(response.data)
+              })
+            })
+            .catch(ex => console.log(ex))
+            .finally(() => {
+              this.loading['refDl' + index] = false
+            })
+            .catch(ex => console.log(ex))
         }
-        this.loading['refDl' + index] = false
         return
       }
 
@@ -374,9 +407,9 @@ export default {
           me.loading['btnUploadFile' + index] = false
           return
         }
-        // ファイルアップロードサイズの制限を300MBに変更
-        // if (file.size > this.MSC_5MB_LengthByte) {
-        if (file.size > this.MSC_300MB_LengthByte) {
+        // ファイルアップロードサイズの制限を5MBに変更
+        // if (file.size > this.MSC_300MB_LengthByte) {
+        if (file.size > this.MSC_5MB_LengthByte) { // ハノイ側修正2023/07/21　課題管理表№371：「2023/07/21依頼分」「添付可能なファイルサイズ上限を5MBに修正。」
           e.preventDefault()
           this.getMsg('E040470').then(response => {
             this.showError(response.data)
@@ -388,8 +421,8 @@ export default {
         if (FileReader && file) {
           var fr = new FileReader()
           fr.onload = function () {
-            pageData[index].linkImage = fr.result
-            pageData[index].linkDownload = fr.result
+            pageData[index].linkImage = ''// fr.result
+            pageData[index].linkDownload = ''// fr.result
             pageData[index].ファイル名 = file.name
             pageData[index].imgUploadName = file.name
             me.upLoadImage(index, fr.result.split(',')[1])
@@ -420,6 +453,8 @@ export default {
         })
       if (res.status) {
         this.pageData[index].添付NO = res.data
+        this.pageData[index].linkImage = this.http.ipAddress + 'api/Reafs_W/Common/getImageTempF093?添付NO=' + res.data
+        this.pageData[index].linkDownload = this.http.ipAddress + 'api/Reafs_W/Common/getImageTempF093?添付NO=' + res.data
       } else {
       }
       this.loading['btnUploadFile' + index] = false

@@ -17,6 +17,7 @@
         <div :style="{ width: appendlabelWidth }" :class="[appendBackground ? 'append-background' : '']">
           <el-button
             icon="el-icon-search"
+            class="is-search"
             @click="showDialog = true"
             v-if="!disabled"
           ></el-button>
@@ -336,6 +337,12 @@ export default {
   text-overflow: ellipsis;
   height: 30px;
   line-height: 30px;
+  border: 1px solid #646464;
+  border-left: none;
+  width: 100%;
+}
+.el-button.is-search + .append-label{
+  margin-left: -3px;
 }
 .mobile-append-label {
   padding: 0 15px;

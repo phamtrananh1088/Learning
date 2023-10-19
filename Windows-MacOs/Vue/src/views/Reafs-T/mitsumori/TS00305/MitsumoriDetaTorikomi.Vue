@@ -497,7 +497,7 @@ export default {
             税率: this.getBackData('税率')
           }
         }, '*')*/
-      this.showError("作成開始")
+      this.showSuccess("作成開始")
         window.parent.postMessage({
           'call': 'closePopup',
           backData: this.getCsvData()
@@ -512,6 +512,21 @@ export default {
       for (let row of this.torikomiDetaTable) {
         let 数量 = row[this.getTblData('数量')]
         let 税率 = row[this.getTblData('税率')]
+        let 税区 = row[this.getTblData('課税区分')]
+        let 分類 = row[this.getTblData('分類')]
+        let 作業内容 = row[this.getTblData('作業内容')]
+        if(!(税区 == '1' || 税区 == '2')){
+          税区 = ''
+        }
+         //20230517 add 分類の取込時の不具合を修正
+        if(!(分類 == 'G' || 分類 == 'T')){
+          分類 = ''
+        }
+        if(分類 == 'G'){
+          if(作業内容 == ''){
+            作業内容 = '小計'
+          }
+        }
         if(金額税込Add != ''){
           let 金額税込 = row[this.getTblData('金額（税込）')]
           if (金額税込 == '' ){
@@ -524,13 +539,13 @@ export default {
           //20221028 rep
           let 単価  = this.base.ToRoundDown(金額税抜 / Number(数量))
           data.push({
-            分類 : row[this.getTblData('分類')],
-            作業内容 : row[this.getTblData('作業内容')],
+            分類 : 分類,
+            作業内容 : 作業内容,
             数量 : 数量,
             単位 : row[this.getTblData('単位')],
             単価 : 単価,
             金額_税抜 : 金額税抜,
-            税区 : row[this.getTblData('課税区分')],
+            税区 : 税区,
             税率 : 税率
           })
         }else{
@@ -540,13 +555,13 @@ export default {
           }
           let 単価  = this.base.ToRoundDown(金額税抜 / Number(数量))
           data.push({
-            分類 : row[this.getTblData('分類')],
-            作業内容 : row[this.getTblData('作業内容')],
+            分類 : 分類,
+            作業内容 : 作業内容,
             数量 : 数量,
             単位 : row[this.getTblData('単位')],
             単価 : 単価,
             金額_税抜 : 金額税抜,
-            税区 : row[this.getTblData('課税区分')],
+            税区 : 税区,
             税率 : 税率
           }) 
         }
@@ -614,7 +629,7 @@ export default {
         },
         {
           項目: '作業内容★',
-          桁数: 20,
+          桁数: 100,
           項目名: ''
         },
         {

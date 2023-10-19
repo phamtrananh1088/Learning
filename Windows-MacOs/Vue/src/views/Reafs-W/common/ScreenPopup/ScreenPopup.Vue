@@ -63,6 +63,13 @@ export default {
       if (this.iFrameSrc && this.iFrameSrc.includes('HatchuShoUkesho')) {
         return 'HatchuShoUkesho'
       }
+      if (this.iFrameSrc && this.iFrameSrc.includes('IraiSansyoSub')) {
+        return 'IraiSansyoSub'
+      }
+      if (this.iFrameSrc && this.iFrameSrc.includes('TeikiShiharaiiraiSansyosub')) {
+        return 'TeikiShiharaiiraiSansyosub'
+      }
+
       return ''
     }
   },
@@ -172,6 +179,25 @@ export default {
     Height: 96% !important;
     /* overflow: auto; */
     overflow-y: overlay;
+  }
+  /* .IraiSansyoSub .el-dialog{
+    width: 1600px;
+    margin-top: 20px !important;
+    max-Height: 740px !important;
+    Height: 96% !important;
+    overflow-y: overlay;
+  } */
+  .IraiSansyoSub .el-dialog {
+    width: 95%;
+    margin-top: 4vh !important;
+    height: 95%;
+    overflow: auto;
+  }
+  .TeikiShiharaiiraiSansyosub .el-dialog {
+    width: 75%;
+    margin-top: 4vh !important;
+    height: 95%;
+    overflow: auto;
   }
   /* ハノイ側修正2022/11/08　STEP2_W　課題管理表№205：設計書「不具合管理表」シートの「2022/11/07仕様変更分」「レイアウト調整依頼」START */
   .TyohyoIchiran .el-dialog::-webkit-scrollbar {

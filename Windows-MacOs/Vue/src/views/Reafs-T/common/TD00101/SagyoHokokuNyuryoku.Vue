@@ -27,7 +27,7 @@
                 </reafsinputtext>
               </el-form-item>
             </el-col>
-            <el-col :span="13">
+            <el-col :span="13" id="keizoku">
               &nbsp;
             </el-col>
             <el-col :span="6" style="padding-left: 25px;">
@@ -471,20 +471,36 @@
                   :params="paramsShashinTenpuSabu"
                   :dialogVisible.sync="showDialogShashinTenpuSabu"></screenPopup>
             </el-col>
-            <el-col :span="13">
+            <el-col :span="8">
               <el-button tabindex="31" @click="onAttachedDocument()">添付書類</el-button>
               <screenPopup
                   src="/Reafs_T/ZumenShiryoTenpuSabu"
                   :params="paramsZumenShiryoTenpuSabu"
                   :dialogVisible.sync="showDialogZumenShiryoTenpuSabu"></screenPopup>
             </el-col>
-            <el-col :span="3">
-              <el-button tabindex="32" :disabled=this.displayMode @click="onTemporarilySaved(mode.一時保存)">一時保存</el-button>
-            </el-col>
-            <el-col :span="3">
-              <el-button tabindex="33" :disabled=this.displayMode @click="onFinalReport(mode.完了報告)">完了報告</el-button>
+            <el-col :span="6">
+              <el-form-item
+              ><reafsinputtext
+                  required
+                  tabindex="9"
+                  maxlength="20"
+                  v-model="sagyoForm.報告書作成日"
+                  :width="'85%'"
+                  ref="ref担当者連絡先"
+                  style="display: none"
+                ></reafsinputtext>
+              </el-form-item>
             </el-col>
             <el-col :span="2">
+              <el-button tabindex="32" style="display: none" @click="onReportCreate(mode.再発行)">再発行</el-button>
+            </el-col>
+            <el-col :span="2">
+              <el-button tabindex="32" :disabled=this.displayMode @click="onTemporarilySaved(mode.一時保存)">一時保存</el-button>
+            </el-col>
+            <el-col :span="2">
+              <el-button tabindex="33" :disabled=this.displayMode @click="onFinalReport(mode.完了報告)">完了報告</el-button>
+            </el-col>
+            <el-col :span="1">
               <el-button tabindex="34" @click="onBack" style="float: right">戻る</el-button>
             </el-col>
           </el-row>
@@ -521,8 +537,11 @@ export default {
       },
       sagyoForm: this.dataDefault(),
       paramsShashinTenpuSabu: {
-        添付種類: '902',
-        工事依頼No: ''
+        添付種類: '905',
+        工事依頼No: '',
+        工事依頼No枝番: '',
+        業者コード: '',
+        業者コード枝番: ''
       },
       showDialogShashinTenpuSabu: false,
       paramsZumenShiryoTenpuSabu: {
@@ -532,8 +551,8 @@ export default {
         枝番: ''
       },
       showDialogZumenShiryoTenpuSabu: false,
-      mode: Object.freeze({'一時保存': 1, '完了報告': 2}),
-      displayMode:false
+      mode: Object.freeze({'一時保存': 1, '完了報告': 2, '再発行': 3}),
+      displayMode: false
     }
   },
   computed: {
@@ -557,14 +576,14 @@ export default {
     this.init()
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       this.queryParams = {
-      工事依頼No: this.$route.params.工事依頼No,
-      工事依頼No枝番: this.$route.params.工事依頼No枝番,
-      業者コード: this.$route.params.業者コード,
-      業者コード枝番: this.$route.params.業者コード枝番,
-      発注サブNo: this.$route.params.発注サブNo,
-      検収回数: this.$route.params.検収回数
+        工事依頼No: this.$route.params.工事依頼No,
+        工事依頼No枝番: this.$route.params.工事依頼No枝番,
+        業者コード: this.$route.params.業者コード,
+        業者コード枝番: this.$route.params.業者コード枝番,
+        発注サブNo: this.$route.params.発注サブNo,
+        検収回数: this.$route.params.検収回数
       }
       this.init()
     }
@@ -677,10 +696,15 @@ export default {
               this.sagyoForm.テナント確認 = false
             }
           }
-          if(this.sagyoForm.報告フラグ == '1'){
+          if (this.sagyoForm.報告フラグ == '1' || this.sagyoForm.継続区分 == '1' || this.sagyoForm.継続区分 == '2') {
             this.displayMode = true
+          } else {
+            this.displayMode = false
+          }
+          if(this.sagyoForm.継続区分 == '1' || this.sagyoForm.継続区分 == '2'){
+            document.getElementById("keizoku").innerHTML = '<label>' + this.sagyoForm.継続区分名 + '</label>'
           }else{
-            this.displayMode =  false
+            document.getElementById("keizoku").innerHTML = '<label>&nbsp;</label>'
           }
         })
 
@@ -747,11 +771,14 @@ export default {
     },
     async onCompletionPhoto () {
       this.paramsShashinTenpuSabu.工事依頼No = this.queryParams.工事依頼No
+      this.paramsShashinTenpuSabu.工事依頼No枝番 = this.queryParams.工事依頼No枝番
+      this.paramsShashinTenpuSabu.業者コード = this.queryParams.業者コード
+      this.paramsShashinTenpuSabu.業者コード枝番 = this.queryParams.業者コード枝番
       this.showDialogShashinTenpuSabu = true
     },
     async onAttachedDocument () {
-      //this.paramsZumenShiryoTenpuSabu.業者コード = this.userInfo.業者コード
-      //this.paramsZumenShiryoTenpuSabu.業者コード枝番 = this.userInfo.業者コード枝番
+      // this.paramsZumenShiryoTenpuSabu.業者コード = this.userInfo.業者コード
+      // this.paramsZumenShiryoTenpuSabu.業者コード枝番 = this.userInfo.業者コード枝番
       this.paramsZumenShiryoTenpuSabu.業者コード = this.queryParams.業者コード
       this.paramsZumenShiryoTenpuSabu.業者コード枝番 = this.queryParams.業者コード枝番
       this.paramsZumenShiryoTenpuSabu.工事依頼No = this.queryParams.工事依頼No
@@ -841,7 +868,7 @@ export default {
         this.$refs.ref施工内容_特記事項等.focus()
         return false
       }
-      //20220920 add 半角が入力できないように修正。
+      // 20220920 add 半角が入力できないように修正。
       if (!this.base.isSimpleByte(this.sagyoForm.担当者連絡先)) {
         this.getMsg('E040460').then((response) => {
           this.showError(response.data)
@@ -849,16 +876,16 @@ export default {
         this.$refs.ref担当者連絡先.focus()
         return false
       }
-      //20220920 add
+      // 20220920 add
       return true
     },
     getDataUpdate () {
       return {
         会社コード: this.userInfo.会社コード,
         工事依頼NO: this.queryParams.工事依頼No,
-        //発注サブNo: this.sagyoForm.発注サブNo ? this.sagyoForm.発注サブNo : 0,
+        // 発注サブNo: this.sagyoForm.発注サブNo ? this.sagyoForm.発注サブNo : 0,
         発注サブNo: this.queryParams.発注サブNo ? this.queryParams.発注サブNo : 0,
-        //検収回数: this.sagyoForm.検収回数 ? this.sagyoForm.検収回数 : 0,
+        // 検収回数: this.sagyoForm.検収回数 ? this.sagyoForm.検収回数 : 0,
         検収回数: this.queryParams.検収回数 ? this.queryParams.検収回数 : 0,
         実施日開始: this.sagyoForm.作業完了日開始日,
         実施時間開始: '',
@@ -939,17 +966,27 @@ export default {
           res = response
         })
       if (res.status) {
-
         let res2 = {}
         this.http
           .post('/api/Reafs_T/SagyoHokokuNyuryoku/完了報告書作成', data, 'アクセスしています....')
           .then((result) => {
             res2 = result
-        })
-
-        for(let i = 0; i < res.data.length; i++){
-            let resultMail
-            resultMail = this.commonFunctionUI.CM00110SendMail(res.data[i])
+          })
+        let baseURL = this.commonFunctionUI.getBaseURL('W')
+        baseURL = baseURL + 'WD00520/SyuzenIraiSansyoShonin'
+        for (let i = 0; i < res.data.length; i++) {
+          let paramSet = {
+            パラメータ1: this.queryParams.工事依頼No,
+            パラメータ2: this.queryParams.発注サブNo,
+            パラメータ3: this.queryParams.検収回数,
+            パラメータ4: 'sagyo',
+            PG: 'TD00101'
+          }
+          const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+          let linkUrl = baseURL + '?guid=' + resParam.data.guid
+          linkUrl = encodeURI(linkUrl)
+          res.data[i].url = [linkUrl]
+          const resultMail = this.commonFunctionUI.CM00110SendMail(res.data[i])
         }
 
         this.showSuccess(res.message)
@@ -978,8 +1015,37 @@ export default {
     },
     // ハノイ側修正2022/08/30　STEP2_T　課題管理表№10：作業報告入力「2022/08/29仕様変更分」処理概要の＜一時保存＞＜完了報告＞の内容を追加修正 END
     async onBack () {
-      //this.$router.push({ name: 'TD00100' })
+      // this.$router.push({ name: 'TD00100' })
       this.$router.back()
+    },
+    async onReportCreate (mode) {
+      if (!await this.regisValidate()) {
+        return false
+      }
+      const data = {
+        F052_作業報告明細マスタ: this.getDataUpdate(),
+        mode,
+        工事依頼No枝番: this.queryParams.工事依頼No枝番,
+        業者コード: this.queryParams.業者コード,
+        業者コード枝番: this.queryParams.業者コード枝番,
+        F044_VERSION: this.sagyoForm.F044_VERSION,
+        F052_VERSION: this.sagyoForm.F052_VERSION,
+        負担区分: this.sagyoForm.負担区分,
+        検収金額: this.sagyoForm.検収金額,
+        依頼者事務所コード: this.sagyoForm.依頼者事務所コード,
+        発注確定フラグ: this.sagyoForm.発注確定フラグ,
+        報告書作成日: this.sagyoForm.報告書作成日
+      }
+        this.http
+          .post('/api/Reafs_T/SagyoHokokuNyuryoku/完了報告書作成', data, 'アクセスしています....')
+          .then((result) => {
+            res2 = result
+          })
+        this.showSuccess(res2.message)
+        this.init()
+        // 2022/10/25 ファイルダウンロード処理は不要のためコメント
+        // await this.print(res.data)
+        return true
     },
     formatDate (date) {
       const d = new Date(date)

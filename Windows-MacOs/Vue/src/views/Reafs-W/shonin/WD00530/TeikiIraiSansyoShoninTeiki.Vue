@@ -22,13 +22,13 @@
                     tabindex="2"
                     :eigyotenCd="iraiForm.店コード"
                     @update:eigyotenCd="
-                      (v) => {
+                      v => {
                         this.iraiForm.店コード = v;
                       }
                     "
                     :eigyotenBango="iraiForm.店コード枝番"
                     @update:eigyotenBango="
-                      (v) => {
+                      v => {
                         this.iraiForm.店コード枝番 = v;
                       }
                     "
@@ -196,7 +196,7 @@
         <div style="width: 1px; height: 20px"></div>
 
         <!-- 依頼 -->
-        <el-row :gutter="20" v-show="selectIndex == '1'">
+        <el-row :gutter="20" v-if="selectIndex == '1'">
           <el-col :span="8">
             <el-form-item label="工事区分" prop="工事区分" class="is-readonly">
               <el-select
@@ -296,7 +296,7 @@
           </el-col>
         </el-row>
 
-        <el-row v-show="selectIndex == '1'">
+        <el-row v-if="selectIndex == '1'">
           <el-col :span="8">
             <el-form-item
               label="依頼者"
@@ -335,8 +335,8 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label-width="0" class="is-readonly">
+          <el-col :span="7">
+            <el-form-item label="所属部署・役職" class="is-readonly">
               <reafsinputtext
                 v-model="iraiForm.依頼者所属部署名"
                 readonly
@@ -344,7 +344,7 @@
               >
               </reafsinputtext>
             </el-form-item>
-            <el-form-item label-width="0" class="is-readonly">
+            <el-form-item label="所属部署・役職" class="is-readonly">
               <reafsinputtext
                 v-model="iraiForm.依頼者代理所属部署名"
                 readonly
@@ -405,7 +405,7 @@
           </el-col>
         </el-row>
 
-        <el-row v-show="selectIndex == '1'">
+        <el-row v-if="selectIndex == '1'">
           <el-col :span="14">
             <el-form-item label="依頼コメント" class="is-readonly">
               <reafsinputtext
@@ -489,16 +489,10 @@
               :disabled="画面入力制御disabled.btn添付登録参照"
               >添付<br />参照</el-button
             >
-            <screenPopup
-              src="/Reafs_W/IraiTenpuTouroku"
-              :params="paramsIraiTenpuTouroku"
-              :dialogVisible.sync="showDialogIraiTenpuTouroku"
-              @closePopupEvent="IraiTenpuTourokuClose"
-            ></screenPopup>
           </el-col>
         </el-row>
 
-        <el-row v-show="selectIndex == '1'">
+        <el-row v-if="selectIndex == '1'">
           <el-col :span="7">
             <el-form-item label="中止取下げ区分" class="is-readonly">
               <el-select
@@ -550,6 +544,7 @@
                 v-model="iraiForm.中止取下げ事由"
                 disabled
                 :width="'100%'"
+                :title="iraiForm.中止取下げ事由"
                 ref="ref中止取下げ事由"
               >
               </reafsinputtext>
@@ -569,6 +564,7 @@
                   v-model="iraiForm.否認差戻事由"
                   :disabled="画面入力制御disabled.否認差戻事由"
                   :width="'680px'"
+                  :title="iraiForm.否認差戻事由"
                   ref="ref否認差戻事由"
                   :class="{ pinkcolor: isErrPinkSashimodoshiJiyu }"
                 ></reafsinputtext>
@@ -578,7 +574,7 @@
         </el-row>
 
         <!-- 見積 -->
-        <el-row :gutter="20" v-show="selectIndex == '2'">
+        <el-row :gutter="20" v-if="selectIndex == '2'">
           <el-col :span="5">
             <el-form-item label="見積作成日" class="is-readonly">
               <el-date-picker
@@ -609,14 +605,14 @@
                   v-model="iraiForm.見積番号"
                   disabled
                   class="is-readonly"
-                  :width="'120px'"
+                  :width="'135px'"
                   ref="ref見積番号"
                 ></reafsinputtext>
                 <label>-</label>
                 <reafsinputtext
                   v-model="iraiForm.見積番号枝番"
                   maxlength="3"
-                  :width="'60px'"
+                  :width="'50px'"
                   disabled
                   class="is-readonly"
                 ></reafsinputtext>
@@ -761,6 +757,7 @@
                   v-model="iraiForm.否認差戻事由"
                   :disabled="画面入力制御disabled.否認差戻事由"
                   :width="'680px'"
+                  :title="iraiForm.否認差戻事由"
                   ref="ref否認差戻事由_見積"
                   :class="{ pinkcolor: isErrPinkSashimodoshiJiyu }"
                 ></reafsinputtext>
@@ -772,8 +769,8 @@
         </el-row>
 
         <!-- 契約内容 -->
-        <el-row :gutter="20" v-show="selectIndex == '3'">
-          <el-col :span="5">
+        <el-row :gutter="20" v-if="selectIndex == '3'">
+          <el-col :span="5" v-if="修繕区分小 == '08'">
             <el-form-item
               label="ＳＧＷ契約書番号"
               prop="SGW_KeiyakuBango"
@@ -790,7 +787,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="2">
+          <el-col :span="2" v-if="修繕区分小 == '08'">
             <el-button
               @click="onUpdateKeiyakuBango"
               style="float: right"
@@ -948,6 +945,7 @@
                   v-model="iraiForm.否認差戻事由"
                   :disabled="画面入力制御disabled.否認差戻事由"
                   :width="'680px'"
+                  :title="iraiForm.否認差戻事由"
                   ref="ref否認差戻事由_契約"
                   :class="{ pinkcolor: isErrPinkSashimodoshiJiyu }"
                 ></reafsinputtext>
@@ -958,23 +956,7 @@
 
         <!-- 依頼 -->
 
-        <el-row :gutter="20" v-show="selectIndex == '4'">
-          <!-- <el-col :span="12">
-          <el-form-item
-            label="実施月"
-            prop="実施月"
-            class="is-required"
-          >
-            <reafsinputtext
-              :title="shiharaiForm.実施月"
-              v-model="shiharaiForm.実施月"
-              maxlength="10"
-              :disabled="True"
-              :width="'30%'">
-            </reafsinputtext>
-          </el-form-item>
-        </el-col> -->
-
+        <el-row :gutter="20" v-if="selectIndex == '4'">
           <el-col :span="12">
             <div class="nengetu">
               <el-form-item label="実施月" prop="実施月">
@@ -992,7 +974,7 @@
               </el-form-item>
             </div>
           </el-col>
-          <el-col :span="12" style="padding-left: 20px; padding-top: 2px">
+          <el-col :span="12">
             <el-button
               tabindex="1"
               type="primary"
@@ -1002,13 +984,14 @@
               >検索</el-button
             >
           </el-col>
-          <el-col :span="24">
-            <el-form-item label="作業名称" prop="作業名称" class="is-required">
+
+          <el-col :span="14">
+            <el-form-item label="作業名称" prop="作業名称">
               <el-select
                 tabindex="11"
                 v-model="shiharaiForm.作業名称"
                 disabled
-                :width="'150%'"
+                style="width: 80%"
                 ref="ref作業名称"
               >
                 <el-option
@@ -1021,21 +1004,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="状態" prop="状態" class="is-readonly">
-              <reafsinputtext
-                :title="shiharaiForm.状態"
-                v-model="shiharaiForm.状態"
-                maxlength="10"
-                disabled
-                :width="'30%'"
-              >
-              </reafsinputtext>
-            </el-form-item>
-          </el-col>
-
-          <el-col style="width: 22%" :span="6">
+          <el-col :span="5">
             <el-form-item
               label="進捗（本体）"
               prop="shinchokuHontai"
@@ -1050,7 +1019,7 @@
               </reafsinputtext>
             </el-form-item>
           </el-col>
-          <el-col :span="6" style="padding-left: 10px">
+          <el-col :span="5">
             <el-form-item
               label="進捗（発注）"
               prop="shinchokuHatchu"
@@ -1061,6 +1030,45 @@
                 v-model="shiharaiForm.進捗_発注"
                 disabled
                 :width="'172px'"
+              >
+              </reafsinputtext>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="8">
+            <el-form-item label="状態" prop="状態" class="is-readonly">
+              <reafsinputtext
+                :title="shiharaiForm.状態"
+                v-model="shiharaiForm.状態"
+                maxlength="10"
+                disabled
+                :width="'75%'"
+              >
+              </reafsinputtext>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="8">
+            <el-form-item label="業者状態" prop="業者状態" class="is-readonly">
+              <reafsinputtext
+                :title="shiharaiForm.業者状態"
+                v-model="shiharaiForm.業者状態"
+                maxlength="10"
+                disabled
+                :width="'75%'"
+              >
+              </reafsinputtext>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="8">
+            <el-form-item label="部門確認" prop="部門確認" class="is-readonly">
+              <reafsinputtext
+                :title="shiharaiForm.部門状態"
+                v-model="shiharaiForm.部門状態"
+                maxlength="10"
+                disabled
+                :width="'75%'"
               >
               </reafsinputtext>
             </el-form-item>
@@ -1168,25 +1176,30 @@
           </el-col>
 
           <el-col :span="9">
-            <el-form-item
-              label="費用負担部門"
-              prop="費用負担部門"
-              class="is-readonly date"
-            >
+            <el-form-item label="費用負担部門" prop="費用負担部門">
               <div style="display: flex">
                 <reafsinputtext
                   v-model="shiharaiForm.費用負担部門コード"
-                  maxlength="10"
-                  disabled
-                  :width="'100px'"
+                  maxlength="8"
+                  ref="ref費用負担部門コード"
+                  :width="'110px'"
+                  @change="onChangeShiharaiHiyouHutanBumon"
+                  :disabled="shiharaiForm.費用按分FLG === 1 || this.shiharaiForm.部門状態 == '部門確認済'"
                 >
                 </reafsinputtext>
+                <el-button
+                  class="btnHiyoFutanBumon"
+                  icon="el-icon-search"
+                  style="height:30px; padding-top:6px;"
+                  @click="onShowShiharaiAnbunDialog()"
+                  :disabled="shiharaiForm.費用按分FLG === 1 || this.shiharaiForm.部門状態 == '部門確認済'"
+                ></el-button>
                 <reafsinputtext
                   class="none-border-left"
                   v-model="shiharaiForm.費用負担部門名"
                   maxlength="5"
-                  disabled
                   :width="'100%'"
+                  :disabled="shiharaiForm.費用按分FLG === 1 || this.shiharaiForm.部門状態 == '部門確認済'"
                 >
                 </reafsinputtext>
               </div>
@@ -1194,54 +1207,49 @@
           </el-col>
 
           <el-col :span="9">
-            <el-form-item
-              label="事業領域"
-              prop="事業領域"
-              class="is-readonly date"
-            >
-              <div style="display: flex">
-                <reafsinputtext
-                  v-model="shiharaiForm.事業領域コード"
-                  maxlength="10"
-                  disabled
-                  :width="'100px'"
+            <el-form-item label="事業領域" prop="事業領域">
+              <el-select
+                v-model="shiharaiForm.事業領域コード"
+                ref="ref事業領域コード"
+                placeholder=""
+                :disabled="shiharaiForm.費用按分FLG === 1 || this.shiharaiForm.部門状態 == '部門確認済'"
+              >
+                <el-option
+                  v-for="item in tbl事業領域List"
+                  :key="item.名称コード"
+                  :label="item.名称"
+                  :value="item.名称コード"
                 >
-                </reafsinputtext>
-                <reafsinputtext
-                  class="none-border-left"
-                  v-model="shiharaiForm.事業領域名"
-                  maxlength="5"
-                  disabled
-                  :width="'100%'"
-                >
-                </reafsinputtext>
-              </div>
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
-            <el-form-item
-              label="外内販区分"
-              prop="外内販区分"
-              class="is-readonly date"
-            >
-              <div style="display: flex">
-                <reafsinputtext
-                  v-model="shiharaiForm.外内販区分コード"
-                  maxlength="10"
-                  disabled
-                  :width="'100px'"
+            <el-form-item label="外内販区分" prop="外内販区分">
+              <el-select
+                v-model="shiharaiForm.外内販区分コード"
+                ref="ref外内販区分"
+                placeholder=""
+                :disabled="shiharaiForm.費用按分FLG === 1 || this.shiharaiForm.部門状態 == '部門確認済'"
+              >
+                <el-option
+                  v-for="item in tbl外内販区分List"
+                  :key="item.名称コード"
+                  :label="item.名称"
+                  :value="item.名称コード"
                 >
-                </reafsinputtext>
-                <reafsinputtext
-                  class="none-border-left"
-                  v-model="shiharaiForm.外内販区分名"
-                  maxlength="5"
-                  disabled
-                  :width="'100%'"
-                >
-                </reafsinputtext>
-              </div>
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="24">
+            <el-form-item label="費用按分" prop="費用按分">
+              <el-radio-group v-model="shiharaiForm.費用按分FLG" :disabled="this.shiharaiForm.部門状態 == '部門確認済'">
+                <el-radio :label="0">なし</el-radio>
+                <el-radio :label="1">あり</el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
 
@@ -1273,7 +1281,25 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="14">
+          <el-col :span="2" style="padding-right:3px;">
+            <el-button tabindex="30" @click="onAnbunNyuryokuShiharai()"
+              >按分入力</el-button
+            >
+            <screenPopup
+              src="/Reafs_W/WS00531/TeikiShiharaiiraiSansyosub"
+              :params="paramsShiharaiIraiSansyoShoninParams"
+              :dialogVisible.sync="showWS00532"
+              @closePopupEvent="onCloseAnbunNyuryokuShiharai"
+            ></screenPopup>
+          </el-col>
+
+          <el-col :span="2" style="padding-left:0px;padding-top:10px;">
+            <el-label style="margin-top:3px;"
+              ><label>{{ shiharaiForm.按分情報有無 }}</label></el-label
+            >
+          </el-col>
+
+          <el-col :span="10">
             <el-form-item
               label="支払予定日"
               prop="支払予定日"
@@ -1283,7 +1309,7 @@
                 :title="shiharaiForm.支払予定日"
                 v-model="shiharaiForm.支払予定日"
                 disabled
-                :width="'20%'"
+                :width="'30%'"
               >
               </reafsinputtext>
             </el-form-item>
@@ -1387,7 +1413,7 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="5">
             <el-form-item label="請求書" prop="請求書" class="is-readonly date">
               <div style="display: flex">
                 <reafsinputtext
@@ -1408,27 +1434,37 @@
               </div>
             </el-form-item>
           </el-col>
-
-          <el-col :span="4">
-            <div style="height: 1px"></div>
+          <el-col :span="19">
+            <el-button
+              @click="onViewAttachRegis"
+              :disabled="画面入力制御disabled.btn添付登録参照"
+              >添付参照</el-button
+            >
+            <el-button
+              style="margin(0,0,0,0)"
+              @click="onClickBumonCheck"
+              :disabled="画面入力制御disabled.btn部門確認"
+              >部門確認</el-button
+            >
           </el-col>
-          <el-col :span="6">
+
+          <el-col :span="8">
             <div style="height: 20px"></div>
             <el-form-item
               label="否認・差戻事由"
               prop="HininSashimodoshi_shiharai"
               class="is-required"
             >
-              <div style="display: flex">
-                <reafsinputtext
-                  tabindex="56"
-                  maxlength="100"
-                  v-model="shiharaiForm.否認差戻事由_支払"
-                  :disabled="画面入力制御disabled.否認差戻事由_支払"
-                  :width="'680px'"
-                  ref="ref否認差戻事由_支払"
-                ></reafsinputtext>
-              </div>
+              <reafsinputtext
+                tabindex="56"
+                maxlength="100"
+                v-model="shiharaiForm.否認差戻事由_支払"
+                :disabled="画面入力制御disabled.否認差戻事由_支払"
+                :title="shiharaiForm.否認差戻事由_支払"
+                :width="'680px'"
+                ref="ref否認差戻事由_支払"
+                :class="{ pinkcolor: isErrPinkShiharaiSashimodoshiJiyu }"
+              ></reafsinputtext>
             </el-form-item>
           </el-col>
         </el-row>
@@ -1494,6 +1530,26 @@
         </el-footer>
       </el-container>
     </el-form>
+    <screenPopup
+      src="/Reafs_W/IraiTenpuTouroku"
+      :params="paramsIraiTenpuTouroku"
+      :dialogVisible.sync="showDialogIraiTenpuTouroku"
+      @closePopupEvent="IraiTenpuTourokuClose"
+    ></screenPopup>
+    <screenPopup
+      src="/Reafs_W/WS00531/TeikiIraiSansyoSub"
+      :params="IraiSansyoShoninParams"
+      :dialogVisible.sync="showWS00531"
+      :isCloseConfirm="IraiSansyoShoninParams.cfmFlg"
+      messageCodeCloseCfm="K000001"
+      @closePopupEvent="onCloseAnbunNyuryoku"
+    ></screenPopup>
+    <reafsmodalSearchHiyoFutanBumonSabu
+      :dialogVisible.sync="showDialog"
+      :subParamsObj="subParamsObj"
+      @backData="dataBack"
+    >
+    </reafsmodalSearchHiyoFutanBumonSabu>
   </div>
 </template>
 <script>
@@ -1506,7 +1562,9 @@ import kojikubunsetsumeiichiran from "@/components/modal/KojiKubunSetsumeiIchira
 import opensearch from "@/components/basic/openSearch.vue";
 import nengetsu from "@/components/basic/Nengetsu.vue";
 import reafstable from "@/components/table/Table.vue";
-import screenPopup from "../../common/ScreenPopup/ScreenPopup.vue";
+// import screenPopup from "../../common/ScreenPopup/ScreenPopup.vue";
+import screenPopup from "@/views/Reafs-W/common/ScreenPopup/ScreenPopup.vue";
+import reafsmodalSearchHiyoFutanBumonSabu from "@/views/Reafs-W/search/WS00520/Modal_SearchHiyoFutanBumonSabu.vue";
 
 var $select工事区分value;
 var $select大区分value;
@@ -1525,7 +1583,7 @@ export default {
     this.isMounted = false;
   },
   beforeRouteEnter(to, from, next) {
-    next((vm) => {
+    next(vm => {
       vm.initialize(); // 初期化処理
       next();
     });
@@ -1542,21 +1600,22 @@ export default {
     reafstable,
     nengetsu,
     screenPopup,
+    reafsmodalSearchHiyoFutanBumonSabu
   },
   props: {
     showNo: {
       type: Boolean,
-      default: true,
+      default: true
     },
     showCheck: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   data() {
     var validate営業店コード = (rule, value, callback) => {
       if (this.iraiForm.店コード === "" || this.iraiForm.店コード枝番 === "") {
-        this.getMsg("E040005").then((response) => {
+        this.getMsg("E040005").then(response => {
           callback(new Error(response.data));
         });
       }
@@ -1565,7 +1624,7 @@ export default {
       if (!this.画面入力制御disabled.工事区分) {
         if (this.isInit === false) {
           if (value === "-") {
-            this.getMsg("E040015").then((response) => {
+            this.getMsg("E040015").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1576,7 +1635,7 @@ export default {
       if (!this.画面入力制御disabled.大区分) {
         if (this.isInit === false) {
           if (value === "-") {
-            this.getMsg("E040016").then((response) => {
+            this.getMsg("E040016").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1587,7 +1646,7 @@ export default {
       if (!this.画面入力制御disabled.中区分) {
         if (this.isInit === false) {
           if (value === "-") {
-            this.getMsg("E040017").then((response) => {
+            this.getMsg("E040017").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1598,7 +1657,7 @@ export default {
       if (!this.画面入力制御disabled.小区分) {
         if (this.isInit === false) {
           if (value === "-") {
-            this.getMsg("E040018").then((response) => {
+            this.getMsg("E040018").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1607,39 +1666,39 @@ export default {
     };
     var validate依頼者コード = (rule, value, callback) => {
       if (value === "") {
-        this.getMsg("E040019").then((response) => {
+        this.getMsg("E040019").then(response => {
           callback(new Error(response.data));
         });
       }
     };
     var validate依頼者連絡先 = (rule, value, callback) => {
       if (value === "") {
-        this.getMsg("E040669").then((response) => {
+        this.getMsg("E040669").then(response => {
           callback(new Error(response.data));
         });
       } else if (!this.base.isSimpleByte(value)) {
-        this.getMsg("E040460").then((response) => {
+        this.getMsg("E040460").then(response => {
           callback(new Error(response.data));
         });
       }
     };
     var validate依頼者代理連絡先 = (rule, value, callback) => {
       if (value !== "" && !this.base.isSimpleByte(value)) {
-        this.getMsg("E040460").then((response) => {
+        this.getMsg("E040460").then(response => {
           callback(new Error(response.data));
         });
       }
     };
     var validate対象箇所 = (rule, value, callback) => {
       if (value === "") {
-        this.getMsg("E040661").then((response) => {
+        this.getMsg("E040661").then(response => {
           callback(new Error(response.data));
         });
       }
     };
     var validate依頼内容_状況 = (rule, value, callback) => {
       if (value === "") {
-        this.getMsg("E040034").then((response) => {
+        this.getMsg("E040034").then(response => {
           callback(new Error("                              " + response.data));
         });
       }
@@ -1651,7 +1710,7 @@ export default {
             value === "-" &&
             (this.iraiForm.工事区分 || "").charAt(0) !== "3"
           ) {
-            this.getMsg("E040035").then((response) => {
+            this.getMsg("E040035").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1666,7 +1725,7 @@ export default {
             (this.iraiForm.中止取下げ区分 === "1" ||
               this.iraiForm.中止取下げ区分 === "2")
           ) {
-            this.getMsg("E040003").then((response) => {
+            this.getMsg("E040003").then(response => {
               callback(new Error(response.data));
             });
           }
@@ -1680,13 +1739,31 @@ export default {
           (this.iraiForm.中止取下げ区分 === "1" ||
             this.iraiForm.中止取下げ区分 === "2")
         ) {
-          this.getMsg("E040358").then((response) => {
+          this.getMsg("E040358").then(response => {
             callback(new Error(response.data));
           });
         }
       }
     };
     return {
+      showWS00531: false,
+      showWS00532: false,
+      IraiSansyoShoninParams: {
+        cfmFlg: false,
+        進捗コード_本体: "",
+        会社コード: "",
+        契約NO: "",
+        契約NO枝番: "",
+        契約年度: "",
+        履歴NO: 0,
+        明細NO: 0,
+        相見積番号: 0,
+        修繕区分小: "",
+        負担区分: "",
+        作業名: "",
+        部門コード: "",
+        部門名称: ""
+      },
       isMounted: false,
       isInit: true,
       loading: false,
@@ -1696,15 +1773,15 @@ export default {
       loadingBack: false,
       最終承認フラグ: "",
       修繕区分小: "",
-      SGR担当事務所コード:"",
-      SGR担当営業所コード:"",
-      SGR担当部コード:"",
-      SGR担当課コード:"",
-      SGR担当係コード:"",
+      SGR担当事務所コード: "",
+      SGR担当営業所コード: "",
+      SGR担当部コード: "",
+      SGR担当課コード: "",
+      SGR担当係コード: "",
       userInfo: {
         ユーザーＩＤ: "",
         会社コード: "",
-        UPDATE_HOST: "",
+        UPDATE_HOST: ""
       },
       menuID: "B",
       subMenuID: "WD00530",
@@ -1718,13 +1795,13 @@ export default {
         delivery: false,
         type: [],
         resource: "",
-        desc: "",
+        desc: ""
       },
       searchForm: {
         KeiyakuNanber: "",
         KeiyakuNanberEdaban: "",
         KeiyakuNendo: "",
-        keiaykuNoEdaban: "",
+        keiaykuNoEdaban: ""
       },
       rules: {
         営業店コード: [{ validator: validate営業店コード, trigger: "blur" }],
@@ -1735,24 +1812,24 @@ export default {
         依頼者コード: [{ validator: validate依頼者コード, trigger: "blur" }],
         依頼者連絡先: [{ validator: validate依頼者連絡先, trigger: "blur" }],
         依頼者代理連絡先: [
-          { validator: validate依頼者代理連絡先, trigger: "blur" },
+          { validator: validate依頼者代理連絡先, trigger: "blur" }
         ],
         対象箇所: [{ validator: validate対象箇所, trigger: "blur" }],
         依頼内容_状況: [{ validator: validate依頼内容_状況, trigger: "blur" }],
         依頼状況: [{ validator: validate依頼状況, trigger: "change" }],
         中止取下げ年月日: [
-          { validator: validate中止取下げ年月日, trigger: "change" },
+          { validator: validate中止取下げ年月日, trigger: "change" }
         ],
         中止取下げ事由: [
-          { validator: validate中止取下げ事由, trigger: "blur" },
+          { validator: validate中止取下げ事由, trigger: "blur" }
         ],
         iraiNo: [
           {
             type: "number",
             message: "数値を入力してください",
-            trigger: "blur",
-          },
-        ],
+            trigger: "blur"
+          }
+        ]
       },
       画面入力制御rules: {
         進捗: "",
@@ -1766,7 +1843,7 @@ export default {
             "依頼取下",
             "依頼差戻",
             "-",
-            "中止・取下げ時",
+            "中止・取下げ時"
           ],
           [false, "1 ", "営業店コード", "〇", "×", "〇", "〇", "×", "×"],
           [false, "3 ", "依頼№", "〇", "x", "〇", "〇", "x", "x"],
@@ -1790,7 +1867,7 @@ export default {
             "〇",
             "〇",
             "×",
-            "×",
+            "×"
           ],
           [false, "28", "依頼状況", "〇", "×", "〇", "〇", "×", "×"],
           [
@@ -1802,16 +1879,16 @@ export default {
             "〇",
             "〇",
             "×",
-            "△（※2）",
+            "△（※2）"
           ],
           [false, "31", "中止取下げ年月日", "×", "×", "×", "×", "×", "△（※2）"],
-          [false, "32", "中止取下げ事由", "×", "×", "×", "×", "×", "△（※2）"],
+          [false, "32", "中止取下げ事由", "×", "×", "×", "×", "×", "△（※2）"]
         ],
         metaData: {
           colEnabled: 0,
-          colItem: 2,
+          colItem: 2
         },
-        制御enabled: {},
+        制御enabled: {}
       },
       画面入力制御disabled: {
         営業店コード: false,
@@ -1851,7 +1928,9 @@ export default {
         btn支払差戻: false,
         btn支払承認: false,
         btn帳票一覧: false,
+        btn按分入力: false,
         btn契約書番号更新: false,
+        btn部門確認: false
       },
       画面入力制御disabledOrg: {},
       showDialog: false,
@@ -1912,7 +1991,7 @@ export default {
         金額税込計: "",
         消費税額: "",
         否認差戻事由: "",
-        最終承認フラグ: "",
+        最終承認フラグ: ""
       },
       shiharaiForm: {
         実施月: "",
@@ -1920,6 +1999,8 @@ export default {
         明細no: 0,
         作業名称: "",
         状態: "",
+        業者状態: "",
+        部門状態: "",
         進捗_本体: "",
         進捗_発注: "",
         取引先: "",
@@ -1934,6 +2015,8 @@ export default {
         事業領域名: "",
         外内販区分コード: "",
         外内販区分名: "",
+        費用按分FLG: "",
+        按分情報有無: "",
         税率: "",
         税込支払金額: 0,
         支払予定日: "",
@@ -1947,6 +2030,9 @@ export default {
         請求書_解消日: "",
         否認差戻事由_支払: "",
         支払承認チェック: "",
+        部門確認チェック: "",
+        修繕区分小: "",
+        負担区分: ""
       },
       hikisu: {
         契約NO: "",
@@ -1954,7 +2040,7 @@ export default {
         明細NO: 0,
         契約年月: "",
         契約年度: "",
-        page: "",
+        page: ""
       },
       paramsTyohyoIchiran: {
         工事依頼No: "",
@@ -1962,11 +2048,26 @@ export default {
         契約履歴No: "",
         見積明細No: "",
         契約年月: "",
-        予定年月: "",
+        予定年月: ""
+      },
+      paramsShiharaiIraiSansyoShoninParams: {
+        cfmFlg: false,
+        会社コード: "",
+        契約NO: "",
+        契約NO枝番: "",
+        履歴NO: 0,
+        明細NO: 0,
+        契約年月: "",
+        修繕区分小: "",
+        負担区分: "",
+        取引先: "",
+        部門確認: "",
+        部門コード: "",
+        部門名称: ""
       },
       paramsIraiTenpuTouroku: {
         添付種類: "901",
-        工事依頼No: "",
+        工事依頼No: ""
       },
       showDialogTyohyoIchiran: false,
       showDialogIraiTenpuTouroku: false,
@@ -1991,7 +2092,7 @@ export default {
           type: "string",
           width: 80,
           align: "center",
-          sort: true,
+          sort: true
         },
         {
           field: "tblDaiTyuShoKubun",
@@ -1999,7 +2100,7 @@ export default {
           type: "string",
           width: 300,
           align: "center",
-          sort: true,
+          sort: true
         },
         {
           field: "tblSagyoMeisho",
@@ -2007,7 +2108,131 @@ export default {
           type: "string",
           width: 300,
           align: "center",
-          sort: true,
+          sort: true
+        },
+        {
+          title: "費用負担部門",
+          width: 450,
+          render: (h, { row, column, index }) => {
+            return (
+              <div class="hiyoFutanBumon" style="display: inline-flex;">
+                <div>
+                  <reafsinputtext
+                    style="display:flex;"
+                    maxlength="8"
+                    value={row.tbl費用負担部門コード}
+                    ref={"ref費用負担部門" + index}
+                    width="110px"
+                    disabled={false}
+                    on-input={val => {
+                      row.tbl費用負担部門コード = val;
+                    }}
+                    on-change={value => {
+                      this.onChangeHiyouHutanBumon(value, index);
+                    }}
+                    disabled={row["tbl按分有無"] == 1}
+                  ></reafsinputtext>
+                </div>
+                <div>
+                  <el-button
+                    class="btnHiyoFutanBumon"
+                    icon="el-icon-search"
+                    on-click={() => {
+                      this.onShowAnbunDialog(index);
+                    }}
+                    disabled={row["tbl按分有無"] == 1}
+                  ></el-button>
+                </div>
+                <div>
+                  <span style="line-height: 30px;">
+                    {row.tbl費用負担部門名称}
+                  </span>
+                </div>
+              </div>
+            );
+          }
+        },
+        {
+          title: "事業領域",
+          width: 200,
+          render: (h, { row, column, index }) => {
+            return (
+              <div class="cell-body-custome">
+                <el-select
+                  value={row["tbl事業領域"]}
+                  placeholder=""
+                  style="width: 100%;"
+                  on-change={val => {
+                    row["tbl事業領域"] = val;
+                  }}
+                  disabled={row["tbl按分有無"] == 1}
+                >
+                  {this.tbl事業領域List.map(function(obj, i) {
+                    return (
+                      <el-option
+                        label={obj.名称}
+                        value={obj.名称コード}
+                        key={i}
+                      />
+                    );
+                  })}
+                </el-select>
+              </div>
+            );
+          }
+        },
+        {
+          title: "外内販区分",
+          width: 200,
+          render: (h, { row, column, index }) => {
+            return (
+              <div class="cell-body-custome">
+                <el-select
+                  value={row["tbl外内販区分"]}
+                  placeholder=""
+                  style="width: 100%;"
+                  on-change={val => {
+                    row["tbl外内販区分"] = val;
+                  }}
+                  disabled={row["tbl按分有無"] == 1}
+                >
+                  {this.tbl外内販区分List.map(function(obj, i) {
+                    return (
+                      <el-option
+                        label={obj.名称}
+                        value={obj.名称コード}
+                        key={i}
+                      />
+                    );
+                  })}
+                </el-select>
+              </div>
+            );
+          }
+        },
+        {
+          title: "按分有無",
+          width: 100,
+          render: (h, { row, column, index }) => {
+            return (
+              <div class="cell-body-custome">
+                <el-select
+                  value={row["tbl按分有無"]}
+                  placeholder=""
+                  style="width: 100%;"
+                  on-change={val => {
+                    row["tbl按分有無"] = val;
+                  }}
+                >
+                  {this.tbl按分有無List.map(function(obj, i) {
+                    return (
+                      <el-option label={obj.name} value={obj.value} key={i} />
+                    );
+                  })}
+                </el-select>
+              </div>
+            );
+          }
         },
         {
           field: "tblTorihikiSaki",
@@ -2015,15 +2240,15 @@ export default {
           type: "string",
           width: 250,
           align: "center",
-          sort: true,
+          sort: true
         },
         {
           field: "tblSuuryo",
           title: "数量",
           type: "string",
-          width: 100,
+          width: 115,
           align: "center",
-          sort: true,
+          sort: true
         },
         {
           field: "tblTani",
@@ -2031,11 +2256,11 @@ export default {
           type: "string",
           width: 100,
           align: "center",
-          sort: true,
+          sort: true
         },
         {
           title: "金額",
-          align: "right",
+          align: "left",
           children: [
             {
               title: "単価",
@@ -2043,7 +2268,7 @@ export default {
               align: "right",
               render: (h, { row, column, index }) => {
                 return h("div", { style: {} }, [h("p", row.tblTanka)]);
-              },
+              }
             },
             {
               title: "金額(税抜)",
@@ -2051,7 +2276,7 @@ export default {
               width: 200,
               render: (h, { row, column, index }) => {
                 return h("div", { style: {} }, [h("p", row.tblKingaku)]);
-              },
+              }
             },
             {
               title: "税区分",
@@ -2059,7 +2284,7 @@ export default {
               align: "center",
               render: (h, { row, column, index }) => {
                 return h("div", { style: {} }, [h("p", row.tblZeiKubun)]);
-              },
+              }
             },
             {
               title: "税率",
@@ -2067,10 +2292,37 @@ export default {
               align: "center",
               render: (h, { row, column, index }) => {
                 return h("div", { style: {} }, [h("p", row.tblZeiRitu)]);
-              },
-            },
-          ],
+              }
+            }
+          ]
         },
+        {
+          title: "按分入力",
+          width: 100,
+          align: "center",
+          render: (h, { row, column, index }) => {
+            return (
+              <el-link
+                class="link_color"
+                type="primary"
+                size="mini"
+                on-click={() => {
+                  this.onAnbunNyuryoku(row);
+                }}
+              >
+                按分入力
+              </el-link>
+            );
+          }
+        },
+        {
+          title: "按分状況",
+          width: 100,
+          field: "tblNyuryokuKbn",
+          type: "string",
+          align: "center",
+          sort: false
+        }
       ],
 
       ///////////////////////////////////////////////
@@ -2078,13 +2330,20 @@ export default {
       ///////////////////////////////////////////////
       tblKeiyakuData: [],
       tblKeiyakuDataGoukei: [],
+      tbl事業領域List: [],
+      tbl外内販区分List: [],
+      tbl按分有無List: [
+        { name: "", value: "" },
+        { name: "なし", value: 0 },
+        { name: "あり", value: 1 }
+      ],
       tblKeiyakuColumns: [
         {
           field: "tblSgyoKoumoku",
           title: "",
           type: "string",
           width: 120,
-          align: "center",
+          align: "center"
         },
         {
           field: "tblMonth04",
@@ -2092,7 +2351,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth05",
@@ -2100,7 +2359,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth06",
@@ -2108,7 +2367,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth07",
@@ -2116,7 +2375,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth08",
@@ -2124,7 +2383,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth09",
@@ -2132,7 +2391,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth10",
@@ -2140,7 +2399,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth11",
@@ -2148,7 +2407,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth12",
@@ -2156,7 +2415,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth01",
@@ -2164,7 +2423,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth02",
@@ -2172,7 +2431,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblMonth03",
@@ -2180,7 +2439,7 @@ export default {
           type: "string",
           width: 120,
           align: "right",
-          sort: true,
+          sort: true
         },
         {
           field: "tblNenngaku",
@@ -2188,8 +2447,8 @@ export default {
           type: "Number",
           width: 120,
           align: "right",
-          sort: true,
-        },
+          sort: true
+        }
       ],
       ///////////////////////////////////////////////
       // 作業結果/支払テーブル
@@ -2203,9 +2462,10 @@ export default {
       isErrPinkKeiyakuNo: false,
       isErrPinkHininJiyu: false,
       isErrPinkSashimodoshiJiyu: false,
+      isErrPinkShiharaiSashimodoshiJiyu: false,
       isErrPinkSyonin: false,
       isErrPinkKeiyakusyoBango: false,
-      isErrPinkSagyotsuki:false,
+      isErrPinkSagyotsuki: false
     };
   },
   computed: {
@@ -2214,12 +2474,12 @@ export default {
         ログイン会社コード: this.userInfo.会社コード,
         契約No: this.searchForm.KeiyakuNanber,
         契約No枝番: this.searchForm.KeiyakuNanberEdaban,
-        契約年度: this.searchForm.KeiyakuNendo,
+        契約年度: this.searchForm.KeiyakuNendo
       };
     },
     isUpdate() {
       return this.iraiForm.依頼番号.trim();
-    },
+    }
   },
   inject: ["setPageTitle"],
   created() {
@@ -2237,15 +2497,17 @@ export default {
   },
 
   methods: {
-    initialize() {
+    async initialize() {
+      console.log("WD00530_initialize");
+
       this.isMounted = true;
       this.getPageTitleByMenu();
-      this.hikisu.契約NO = this.$route.query.契約NO;
-      this.hikisu.履歴NO = this.$route.query.履歴NO;
-      this.hikisu.明細NO = this.$route.query.明細NO;
-      this.hikisu.契約年月 = this.$route.query.契約年月;
-      this.hikisu.契約年度 = this.$route.query.契約年度;
-      this.page = this.$route.query.page;
+      this.hikisu.契約NO = this.$route.params.契約NO;
+      this.hikisu.履歴NO = this.$route.params.履歴NO;
+      this.hikisu.明細NO = this.$route.params.明細NO;
+      this.hikisu.契約年月 = this.$route.params.契約年月;
+      this.hikisu.契約年度 = this.$route.params.契約年度;
+      this.page = this.$route.params.page;
 
       // 検索処理起動
       if (this.hikisu.契約NO != "") {
@@ -2253,18 +2515,17 @@ export default {
         this.searchForm.KeiyakuNanberEdaban = this.hikisu.契約NO.substring(8);
         this.searchForm.KeiyakuNendo = this.hikisu.契約年度;
         this.iraiForm.履歴no = this.hikisu.履歴NO;
-
-        this.onSearch();
+        await this.onSearch();
         //起動時のみの検索※対象データがなくてもメッセージ出さない
-        this.shiharaiForm.実施月 = this.$route.query.契約年月;
-        this.shiharaiForm.作業名称 = parseInt(this.$route.query.明細NO);
+        this.shiharaiForm.実施月 = this.$route.params.契約年月;
+        this.shiharaiForm.作業名称 = parseInt(this.$route.params.明細NO);
         this.kidouSiharaiSearch();
       }
     },
 
     getPageTitleByMenu() {
       let menuInfo = this.$store.getters.getMenuInfo();
-      const menuOptions = menuInfo.find((item) => {
+      const menuOptions = menuInfo.find(item => {
         return item.MenuId === this.menuID && item.SubMenuId === this.subMenuID;
       });
       Object.assign(this.menuOptions, menuOptions);
@@ -2275,6 +2536,8 @@ export default {
       Object.assign(this.画面入力制御disabledOrg, this.画面入力制御disabled);
       Object.assign(this.iraiFormInit, this.iraiForm);
     },
+
+    // 未使用？
     reInit() {
       let temp画面入力制御disabled = {};
       let tempiraiForm = {};
@@ -2286,7 +2549,10 @@ export default {
       Object.assign(tempiraiForm, this.iraiFormInit);
       this.iraiForm = tempiraiForm;
     },
+
     init() {
+      console.log("init_Starting");
+
       let userLogIn = this.$store.getters.getUserInfo();
       this.userInfo.ユーザーＩＤ = userLogIn.userId;
       this.userInfo.会社コード = userLogIn.会社コード;
@@ -2297,7 +2563,7 @@ export default {
           "/api/Reafs_W/Shonin/WD00530/GetStartInfo",
           "アクセスしています...."
         )
-        .then((response) => {
+        .then(response => {
           // Get Dropdown工事区分
           $select工事区分value.工事区分value = response.data.名称取得方法07;
           this.iraiForm.工事区分 = "-";
@@ -2317,7 +2583,9 @@ export default {
           this.$nextTick(() => {
             this.isInit = false;
           });
+
           this.afterInit();
+
           const pageData = this.$store.getters.getPageData();
           if (
             pageData &&
@@ -2342,39 +2610,9 @@ export default {
       this.画面入力制御disabled.btn依頼承認 = true;
       this.画面入力制御disabled.btn添付登録参照 = true;
       this.画面入力制御disabled.btn帳票一覧 = true;
+      this.画面入力制御disabled.btn按分入力 = true;
+      this.画面入力制御disabled.btn部門確認 = false;
     },
-    showSuccess(message, title = this.menuOptions.SubMenuName) {
-      var self = this;
-      this.MsgInfo({
-        title,
-        message,
-        callback: function (a, b) {
-          self.hideLoading();
-        },
-      });
-    },
-    showError(
-      message,
-      option = null,
-      title = this.$store.getters.getPageTitle()
-    ) {
-      var self = this;
-      this.MsgErr({
-        title,
-        message,
-        callback: function (a, b) {
-          self.hideLoading();
-          if (option && typeof option.callback === "function") {
-            option.callback();
-          }
-        },
-      });
-      // this.$message.error({
-      //   message,
-      //   onClose: this.hideLoading
-      // })
-    },
-
     hideLoading() {
       this.loading = false;
       this.loading_差戻 = false;
@@ -2382,29 +2620,13 @@ export default {
       this.loading_否認 = false;
       this.loadingBack = false;
     },
-
-    confirm(message, title = this.menuOptions.SubMenuName) {
-      return new Promise((resolve, reject) => {
-        this.MsgConf({
-          title,
-          message,
-          callback: function (a, b) {
-            if (a === "confirm") {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          },
-        });
-      });
-    },
     set画面入力制御(isScreenDisplayTiming = true) {
       const 進捗コード_本体 = this.iraiForm.進捗コード_本体;
       const 中止取下げ区分 = this.iraiForm.中止取下げ区分;
       const s進捗内容 = this.get進捗(中止取下げ区分, 進捗コード_本体);
       this.画面入力制御rules.進捗 = s進捗内容;
       const col = this.画面入力制御rules.制御data[0].findIndex(
-        (e) => e === s進捗内容
+        e => e === s進捗内容
       );
       for (
         let index = 1;
@@ -2425,16 +2647,17 @@ export default {
       for (const item in this.画面入力制御disabled) {
         if (this.画面入力制御rules.制御enabled.hasOwnProperty(item)) {
           // mapping enabled to disabled
-          this.画面入力制御disabled[item] =
-            !this.画面入力制御rules.制御enabled[item];
+          this.画面入力制御disabled[item] = !this.画面入力制御rules.制御enabled[
+            item
+          ];
         }
       }
       if (isScreenDisplayTiming) {
         for (const item in this.画面入力制御disabledOrg) {
           if (this.画面入力制御rules.制御enabled.hasOwnProperty(item)) {
             // mapping enabled to disabled
-            this.画面入力制御disabledOrg[item] =
-              !this.画面入力制御rules.制御enabled[item];
+            this.画面入力制御disabledOrg[item] = !this.画面入力制御rules
+              .制御enabled[item];
           }
         }
       }
@@ -2443,6 +2666,9 @@ export default {
         this.selectKojiKubun(this.iraiForm.工事区分);
       }
     },
+    ///////////////////////////////////////////////
+    // 依頼進捗取得
+    ///////////////////////////////////////////////
     get進捗(中止取下げ区分, 進捗コード_本体, 進捗コード_発注) {
       let s進捗内容 = "";
       if (中止取下げ区分 === "1" || 中止取下げ区分 === "2") {
@@ -2463,10 +2689,17 @@ export default {
 
       return s進捗内容;
     },
+
     get進捗Condition2(isScreenDisplayTiming) {
       return !(isScreenDisplayTiming && this.iraiForm.中止取下げ区分 === "2");
     },
+
+    ///////////////////////////////////////////////
+    // ボタン制御
+    ///////////////////////////////////////////////
     checkDspbtn() {
+      console.log("実施判断時ボタン活性制御処理");
+
       //支払承認のデータが取得されている場合は戻る
       if (this.tblShiharaiData !== null) {
         return;
@@ -2486,22 +2719,61 @@ export default {
       this.画面入力制御disabled.btn添付登録参照 = false;
       this.画面入力制御disabled.btn帳票一覧 = false;
     },
+
     checkDspbtn_支払() {
+      console.log("支払時ボタン活性処理");
+
       if (this.tblShiharaiData === null) {
         return;
       }
 
       const checkDspbtn承認 = this.shiharaiForm.支払承認チェック;
-      if (checkDspbtn承認 === true) {
-        this.画面入力制御disabled.btn依頼否認 = false;
-        this.画面入力制御disabled.btn依頼差戻 = false;
-        this.画面入力制御disabled.btn依頼承認 = false;
+      const check部門確認 = this.shiharaiForm.部門確認チェック;
+
+      if (check部門確認 === true) {
+        if (checkDspbtn承認 === true) {
+          // 部門確認済かつ承認権限、部門確認ボタンだけ押下不可
+          this.画面入力制御disabled.btn依頼否認 = false;
+          this.画面入力制御disabled.btn依頼差戻 = false;
+          this.画面入力制御disabled.btn依頼承認 = false;
+          this.画面入力制御disabled.btn部門確認 = true;
+        } else {
+          // 部門確認済かつ承認権限なし、全て押下不可
+          this.画面入力制御disabled.btn依頼否認 = true;
+          this.画面入力制御disabled.btn依頼差戻 = true;
+          this.画面入力制御disabled.btn依頼承認 = true;
+          this.画面入力制御disabled.btn部門確認 = true;
+        }
       } else {
-        this.画面入力制御disabled.btn依頼否認 = true;
-        this.画面入力制御disabled.btn依頼差戻 = true;
-        this.画面入力制御disabled.btn依頼承認 = true;
+        if (checkDspbtn承認 === true) {
+          // 部門未確認かつ承認権限あり、承認ボタンのみ押下不可
+          this.画面入力制御disabled.btn依頼否認 = false;
+          this.画面入力制御disabled.btn依頼差戻 = false;
+          this.画面入力制御disabled.btn依頼承認 = true;
+          this.画面入力制御disabled.btn部門確認 = false;
+        } else {
+          // 部門未確認かつ承認権限なし、全て押下不可
+          this.画面入力制御disabled.btn依頼否認 = true;
+          this.画面入力制御disabled.btn依頼差戻 = true;
+          this.画面入力制御disabled.btn依頼承認 = true;
+          this.画面入力制御disabled.btn部門確認 = true;
+        }
       }
 
+      //不備による承認ボタンの制御は直接のみ
+      if (this.修繕区分小 === "08") {
+        if (this.shiharaiForm.完了報告書 != ' ' && this.shiharaiForm.完了報告書_解消日 == ''){
+          // 完了報告書不備あり。 支払承認不可
+          this.画面入力制御disabled.btn依頼承認 = true;
+        }
+        
+        if (this.shiharaiForm.請求書 != ' ' && this.shiharaiForm.請求書_解消日 == ''){
+          // 請求書不備あり。 支払承認不可
+          this.画面入力制御disabled.btn依頼承認 = true;
+        }
+       
+      }
+      
       this.画面入力制御disabled.btn添付登録参照 = false;
       this.画面入力制御disabled.btn帳票一覧 = false;
 
@@ -2512,8 +2784,13 @@ export default {
       // }
     },
 
+    ///////////////////////////////////////////////
+    // 検索
+    ///////////////////////////////////////////////
     async onSearch() {
-      console.log("検索実行");
+      console.log("onSearchStart " + this.iraiForm.依頼No);
+      console.log("2023/08/08 確認３");
+
       this.loading = true;
       this.savePageSearchData();
 
@@ -2525,21 +2802,25 @@ export default {
         this.isErrPinkKeiyakuNo = true;
         return false;
       }
-
+console.log("2023/08/08 確認４");
       let checkExist = false;
       await this.http
         .get("/api/Reafs_W/Shonin/WD00530/CheckF011Exist", {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
+          契約NO定期:this.hikisu.契約NO,
+          履歴NO: this.hikisu.履歴NO,
+          明細NO: this.hikisu.明細NO,
+          契約年月:this.hikisu.契約年月
+
         })
-        .then((response) => {
+        .then(response => {
           checkExist = response.data.isF011Exist;
         });
 
       if (!checkExist) {
-        this.getMsg("E000014").then((response) => {
-
+        this.getMsg("E000014").then(response => {
           this.showError(response.data);
         });
         this.$refs.KeiyakuNanber.focus();
@@ -2556,7 +2837,7 @@ export default {
         index = index || 0;
         return obj ? obj[Object.keys(obj)[index]] : "";
       };
-
+console.log("2023/08/08 確認５");
       await this.http
         .get(
           "/api/Reafs_W/Shonin/WD00530/GetPageData",
@@ -2567,10 +2848,12 @@ export default {
             契約年度: this.searchForm.KeiyakuNendo,
             履歴no: this.hikisu.履歴NO,
             依頼no: this.iraiForm.依頼No,
+            明細NO: this.hikisu.明細NO,
+            契約年月:this.hikisu.契約年月
           },
           "アクセスしています...."
         )
-        .then((response) => {
+        .then(response => {
           this.isInit = true;
           this.loading = false;
 
@@ -2590,17 +2873,20 @@ export default {
           $select中止取下げ区分value.中止取下げ区分value =
             response.data.名称取得方法15;
 
-          //メール用
-          this.SGR担当事務所コード  = response.data.SGR担当事務所コード;
-          this.SGR担当営業所コード  = response.data.SGR担当営業所コード;
-          this.SGR担当部コード  = response.data.SGR担当部コード;
-          this.SGR担当課コード  = response.data.SGR担当課コード;
-          this.SGR担当係コード  = response.data.SGR担当係コード;
+          // メール用
+          this.SGR担当事務所コード = response.data.SGR担当事務所コード;
+          this.SGR担当営業所コード = response.data.SGR担当営業所コード;
+          this.SGR担当部コード = response.data.SGR担当部コード;
+          this.SGR担当課コード = response.data.SGR担当課コード;
+          this.SGR担当係コード = response.data.SGR担当係コード;
           console.log(this.SGR担当事務所コード);
           console.log(this.SGR担当営業所コード);
           console.log(this.SGR担当部コード);
           console.log(this.SGR担当課コード);
           console.log(this.SGR担当係コード);
+
+          this.tbl事業領域List = response.data.名称取得方法23;
+          this.tbl外内販区分List = response.data.名称取得方法24;
 
           this.oldData = JSON.parse(JSON.stringify(response.data));
           response.data.対象箇所 = response.data.不具合場所;
@@ -2677,8 +2963,10 @@ export default {
           ///////////////////////////////////////////////
           this.iraiForm.ＳＧＷ契約書番号 =
             response.data.F011_契約書番号取得結果;
+          
           this.修繕区分小 = response.data.F011_修繕区分小取得結果;
-          console.log("契約書内容タブ色々制御");
+          console.log("2023/08/08 確認６");
+          console.log("修繕区分小：" + this.修繕区分小);
           if (
             response.data.F011_修繕区分小取得結果 === "08" &&
             response.data.F011_負担区分取得結果 === "2"
@@ -2737,6 +3025,8 @@ export default {
 
       if (this.selectIndex === 4) {
         this.activeIndex = "4";
+      } else if (this.selectIndex === 2) {
+        this.activeIndex = "2";
       } else {
         this.activeIndex = "1";
       }
@@ -2754,10 +3044,10 @@ export default {
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
           履歴no: this.hikisu.履歴NO,
-          修繕区分小: this.修繕区分小,
+          修繕区分小: this.修繕区分小
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblMitumoriData = response.data;
         });
     },
@@ -2772,10 +3062,10 @@ export default {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblKeiyakuData = response.data;
         });
     },
@@ -2790,10 +3080,10 @@ export default {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblKeiyakuDataGoukei = response.data;
         });
     },
@@ -2808,10 +3098,10 @@ export default {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblKeiyakuData = response.data;
         });
     },
@@ -2827,10 +3117,10 @@ export default {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblKeiyakuDataGoukei = response.data;
         });
     },
@@ -2856,9 +3146,9 @@ export default {
         this.http
           .get("/api/Reafs_W/Shonin/WD00530/Get物件コードInfo", {
             ログイン会社コード: this.userInfo.会社コード,
-            テナント営業所コード,
+            テナント営業所コード
           })
-          .then((response) => {
+          .then(response => {
             if (response.data !== null) {
               this.iraiForm.物件コード = response.data.物件コード;
               this.iraiForm.物件名 = response.data.物件名;
@@ -2879,38 +3169,49 @@ export default {
     // 作業結果/支払タブの情報セット
     ///////////////////////////////////////////////
     async onSearchShiharai() {
-      // 検索実行
-      let _this = this;
-      console.log(this.shiharaiForm.実施月);
-      let letYear = new Object();
-      let letMonth = new Object();
-      let letNengetsu = new Object();
+      console.log("onSearchShiharai_Start");
 
-      letYear = this.shiharaiForm.実施月.getFullYear();
-      letMonth = this.shiharaiForm.実施月.getMonth() + 1;
-      letMonth = ("00" + letMonth).slice(-2);
-      letNengetsu = letYear + "/" + letMonth;
-      console.log(letNengetsu);
-
-      await this.http
-        .get("/api/Reafs_W/Shonin/WD00530/GetPageData_支払", {
-          会社コード: this.userInfo.会社コード,
-          契約No: this.searchForm.KeiyakuNanber,
-          契約No枝番: this.searchForm.KeiyakuNanberEdaban,
-          契約年度: this.searchForm.KeiyakuNendo,
-          契約年月: letNengetsu,
-          明細NO: this.shiharaiForm.作業名称,
-          履歴no: this.hikisu.履歴NO,
-        })
-        // 検索実行後処理
-        .then(function (response) {
-          _this.tblShiharaiData = response.data;
-          _this.shiharaiForm.支払承認チェック = response.data.支払承認チェック;
-
-          //画面表示※コンボボックス切り替わった際の処理に飛ぶ予定
-          _this.selectSagyomeisyo();
-        });
+      await this.onSearch();
       this.checkDspbtn_支払();
+
+      // 作業結果/支払タブを初期表示
+      this.selectIndex = 4;
+      this.activeIndex = 4;
+
+      // // 検索実行
+      // let _this = this;
+      // console.log(this.shiharaiForm.実施月);
+      // let letYear = new Object();
+      // let letMonth = new Object();
+      // let letNengetsu = new Object();
+
+      // letYear = this.shiharaiForm.実施月.getFullYear();
+      // letMonth = this.shiharaiForm.実施月.getMonth() + 1;
+      // letMonth = ("00" + letMonth).slice(-2);
+      // letNengetsu = letYear + "/" + letMonth;
+      // console.log(letNengetsu);
+
+      // await this.http
+      //   .get("/api/Reafs_W/Shonin/WD00530/GetPageData_支払", {
+      //     会社コード: this.userInfo.会社コード,
+      //     契約No: this.searchForm.KeiyakuNanber,
+      //     契約No枝番: this.searchForm.KeiyakuNanberEdaban,
+      //     契約年度: this.searchForm.KeiyakuNendo,
+      //     契約年月: letNengetsu,
+      //     明細NO: this.shiharaiForm.作業名称,
+      //     履歴no: this.hikisu.履歴NO
+      //   })
+      //   // 検索実行後処理
+      //   .then(function(response) {
+      //     _this.tblShiharaiData = response.data;
+      //     _this.shiharaiForm.支払承認チェック = response.data.支払承認チェック;
+
+      //     //画面表示※コンボボックス切り替わった際の処理に飛ぶ予定
+      //     _this.selectSagyomeisyo();
+
+      //     // ボタン活性制御
+      //     _this.checkDspbtn_支払();
+      //   });
     },
 
     ///////////////////////////////////////////////
@@ -2927,13 +3228,13 @@ export default {
           契約年度: this.searchForm.KeiyakuNendo,
           契約年月: this.shiharaiForm.実施月,
           明細NO: this.shiharaiForm.作業名称,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblShiharaiData = response.data;
           _this.shiharaiForm.支払承認チェック = response.data.支払承認チェック;
-
+          _this.shiharaiForm.部門確認チェック = response.data.部門確認チェック;
           //画面表示※コンボボックス切り替わった際の処理に飛ぶ予定
           _this.selectSagyomeisyo();
 
@@ -2942,6 +3243,7 @@ export default {
         });
       this.checkDspbtn_支払();
     },
+
     ///////////////////////////////////////////////
     // 作業結果/支払タブの情報セット
     ///////////////////////////////////////////////
@@ -2954,10 +3256,10 @@ export default {
           契約No: this.searchForm.KeiyakuNanber,
           契約No枝番: this.searchForm.KeiyakuNanberEdaban,
           契約年度: this.searchForm.KeiyakuNendo,
-          履歴no: this.hikisu.履歴NO,
+          履歴no: this.hikisu.履歴NO
         })
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.作業名称value = response.data;
         });
     },
@@ -2982,9 +3284,9 @@ export default {
       } else {
         this.http
           .get("/api/Reafs_W/Shonin/WD00530/GetDataN011_12", {
-            社員コード: this.iraiForm.依頼者コード,
+            社員コード: this.iraiForm.依頼者コード
           })
-          .then((response) => {
+          .then(response => {
             if (response.data !== null) {
               if (response.data.名称取得方法11 !== null) {
                 this.iraiForm.依頼者名 = response.data.名称取得方法11.社員名;
@@ -2999,11 +3301,11 @@ export default {
                 this.iraiForm.依頼者課コード = "";
                 this.iraiForm.依頼者係コード = "";
                 this.iraiForm.依頼者役職コード = "";
-                this.getMsg("E040020").then((response) => {
+                this.getMsg("E040020").then(response => {
                   this.showError(response.data, {
                     callback: () => {
                       this.$refs.ref依頼者コード.focus();
-                    },
+                    }
                   });
                 });
                 return false;
@@ -3052,6 +3354,7 @@ export default {
           });
       }
     },
+
     reafsmodalBackIraiShadairi() {
       this.iraiForm.依頼者代理コード = obj.torihikisakicd;
       this.iraiForm.依頼者代理名 = obj.torihikisakinm;
@@ -3072,9 +3375,9 @@ export default {
       } else {
         this.http
           .get("/api/Reafs_W/Shonin/WD00530/GetDataN011_12", {
-            社員コード: this.iraiForm.依頼者コード,
+            社員コード: this.iraiForm.依頼者コード
           })
-          .then((response) => {
+          .then(response => {
             if (response.data !== null) {
               if (response.data.名称取得方法11 !== null) {
                 this.iraiForm.依頼者代理名 =
@@ -3090,11 +3393,11 @@ export default {
                 this.iraiForm.依頼者代理課コード = "";
                 this.iraiForm.依頼者代理係コード = "";
                 this.iraiForm.依頼者代理役職コード = "";
-                this.getMsg("E040020").then((response) => {
+                this.getMsg("E040020").then(response => {
                   this.showError(response.data, {
                     callback: () => {
                       this.$refs.ref依頼者代理コード.focus();
-                    },
+                    }
                   });
                 });
                 return false;
@@ -3143,6 +3446,7 @@ export default {
           });
       }
     },
+
     onBlurKeiyakuNanber() {
       if (
         this.searchForm.KeiyakuNanber === "" ||
@@ -3157,6 +3461,7 @@ export default {
       }
       this.savePageSearchData();
     },
+
     onBlurKeiyakuNanberEdaban() {
       if (
         this.searchForm.KeiyakuNanberEdaban === "" ||
@@ -3171,6 +3476,7 @@ export default {
       }
       this.savePageSearchData();
     },
+
     onBlurKeiyakuNendo() {
       if (
         this.searchForm.KeiyakuNendo === "" ||
@@ -3185,19 +3491,35 @@ export default {
       }
       this.savePageSearchData();
     },
+
     savePageSearchData() {
       this.$store.commit("setPageData", {
         searchForm: this.searchForm,
         契約No: this.searchForm.KeiyakuNanber,
         契約No枝番: this.searchForm.KeiyakuNanberEdaban,
-        契約年度: this.searchForm.KeiyakuNendo,
+        契約年度: this.searchForm.KeiyakuNendo
       });
     },
+
+    // タブ変更時処理
+    // key 1:依頼 2:見積 3:契約内容 4:作業結果/支払
     handleSelect(key, keyPath) {
-      console.log("btn契約書番号更新_bef: " + this.画面入力制御disabled.btn契約書番号更新);
+      console.log(
+        "タブ変更時処理開始:key " +
+          key +
+          " / selectIndex " +
+          this.selectIndex +
+          " / activeIndex " +
+          this.activeIndex
+      );
+
+      // 問題なければ表示タブ変更
       this.selectIndex = key;
-      console.log("btn契約書番号更新_af: " + this.画面入力制御disabled.btn契約書番号更新);
     },
+
+    ///////////////////////////////////////////////
+    // 作業区分処理
+    ///////////////////////////////////////////////
     selectKojiKubun(val) {
       if (this.iraiForm.工事区分 && this.iraiForm.工事区分.charAt(0) === "4") {
         this.iraiForm.大区分 = "-";
@@ -3212,34 +3534,36 @@ export default {
         this.画面入力制御disabled.大区分 = this.画面入力制御disabledOrg.大区分;
         this.画面入力制御disabled.中区分 = this.画面入力制御disabledOrg.中区分;
         this.画面入力制御disabled.小区分 = this.画面入力制御disabledOrg.小区分;
-        this.画面入力制御disabled.依頼状況 =
-          this.画面入力制御disabledOrg.依頼状況;
+        this.画面入力制御disabled.依頼状況 = this.画面入力制御disabledOrg.依頼状況;
       }
     },
+
     selectDaiKubun(val) {
       // Get Dropdown中区分
       this.http
         .get("/api/Reafs_W/Shonin/WD00530/GetDropdown中区分", {
-          大区分: this.iraiForm.大区分,
+          大区分: this.iraiForm.大区分
         })
-        .then((response) => {
+        .then(response => {
           $select中区分value.中区分value = response.data;
           this.iraiForm.中区分 = "-";
           this.iraiForm.小区分 = "-";
         });
     },
+
     selectChuKubun(val) {
       // Get Dropdown小区分
       this.http
         .get("/api/Reafs_W/Shonin/WD00530/GetDropdown小区分", {
           大区分: this.iraiForm.大区分,
-          中区分: this.iraiForm.中区分,
+          中区分: this.iraiForm.中区分
         })
-        .then((response) => {
+        .then(response => {
           $select小区分value.小区分value = response.data;
           this.iraiForm.小区分 = "-";
         });
     },
+
     selectChushiHoryuKubun(val) {
       if (this.isUpdate) {
         if (
@@ -3252,17 +3576,24 @@ export default {
           this.iraiForm.中止取下げ事由 = "";
           this.$refs.refIraiForm.clearValidate([
             "中止取下げ年月日",
-            "中止取下げ事由",
+            "中止取下げ事由"
           ]);
           this.set画面入力制御(true);
         }
       }
     },
+
     selectSagyomeisyo() {
-      //データセット
+      console.log("支払データセット");
+
+      this.shiharaiForm.部門状態 = "";
+
+      // データセット
       this.shiharaiForm.明細no = this.tblShiharaiData.明細No;
       this.shiharaiForm.実施月_元 = this.tblShiharaiData.契約年月;
       this.shiharaiForm.状態 = this.tblShiharaiData.状態;
+      this.shiharaiForm.業者状態 = this.tblShiharaiData.業者状態;
+      this.shiharaiForm.部門状態 = this.tblShiharaiData.部門状態;
       this.shiharaiForm.進捗_本体 = this.tblShiharaiData.進捗_本体;
       this.shiharaiForm.進捗_発注 = this.tblShiharaiData.進捗_発注;
       this.shiharaiForm.取引先 = this.tblShiharaiData.業者名;
@@ -3271,118 +3602,57 @@ export default {
       this.shiharaiForm.作業完了日_FROM = this.tblShiharaiData.実施日開始;
       this.shiharaiForm.作業完了日_TO = this.tblShiharaiData.実施日終了;
       this.shiharaiForm.完了報告 = this.tblShiharaiData.完了報告;
-      this.shiharaiForm.費用負担部門コード =
-        this.tblShiharaiData.SGW用計上部門コード;
+      this.shiharaiForm.費用負担部門コード = this.tblShiharaiData.SGW用計上部門コード;
       this.shiharaiForm.費用負担部門名 = this.tblShiharaiData.SGW費用負担部門名;
       this.shiharaiForm.事業領域コード = this.tblShiharaiData.SGW用事業領域;
       this.shiharaiForm.事業領域名 = this.tblShiharaiData.SGW用事業領域名;
       this.shiharaiForm.外内販区分コード = this.tblShiharaiData.SGW用外内販区分;
       this.shiharaiForm.外内販区分名 = this.tblShiharaiData.SGW用外内販区分名;
+      this.shiharaiForm.費用按分FLG = this.tblShiharaiData.費用按分FLG;
+      this.shiharaiForm.按分情報有無 = this.tblShiharaiData.按分情報有無;
 
-      this.shiharaiForm.税率 = this.tblShiharaiData.検収発注税率 + "%";
+      this.shiharaiForm.税率 = this.tblShiharaiData.検収発注税率;
       this.shiharaiForm.税込支払金額 = this.tblShiharaiData.検収発注金額_税込;
       this.shiharaiForm.支払予定日 = this.tblShiharaiData.支払予定日;
       this.shiharaiForm.完了確認日 = this.tblShiharaiData.作業結果承認日;
       this.shiharaiForm.完了確認者 = this.tblShiharaiData.作業結果確認者;
 
       this.shiharaiForm.点検書類待ち = this.tblShiharaiData.点検書類待ち;
-      this.shiharaiForm.点検書類待ち_解消日 =
-        this.tblShiharaiData.点検書類待ち解消日;
+      this.shiharaiForm.点検書類待ち_解消日 = this.tblShiharaiData.点検書類待ち解消日;
       this.shiharaiForm.完了報告書 = this.tblShiharaiData.完了報告書不備;
-      this.shiharaiForm.完了報告書_解消日 =
-        this.tblShiharaiData.完了報告書不備解消日;
+      this.shiharaiForm.完了報告書_解消日 = this.tblShiharaiData.完了報告書不備解消日;
       this.shiharaiForm.請求書 = this.tblShiharaiData.請求書不備;
       this.shiharaiForm.請求書_解消日 = this.tblShiharaiData.請求書不備解消日;
 
       this.shiharaiForm.否認差戻事由_支払 = this.tblShiharaiData.否認差戻事由;
+
+      this.shiharaiForm.修繕区分小 = this.tblShiharaiData.修繕区分小;
+      this.shiharaiForm.負担区分 = this.tblShiharaiData.負担区分;
     },
 
-    async GetM018削除区分(区分コード, 名称コード, 連動区分) {
-      return new Promise((resolve) => {
-        this.http
-          .post("/api/Reafs_W/Shonin/WD00530/GetM018削除区分", {
-            区分コード: 区分コード,
-            名称コード: 名称コード,
-            連動区分: 連動区分,
-          })
-          .then((response) => {
-            return resolve(response.data);
-          });
-      });
-    },
-    checkVersion() {
-      return new Promise((resolve) => {
-        this.http
-          .get("/api/Reafs_W/Shonin/WD00530/CheckF011Version", {
-            会社コード: this.tblMitumoriData[0].会社コード,
-            契約No: this.tblMitumoriData[0].契約No,
-            履歴No: this.tblMitumoriData[0].履歴No,
-          })
-          .then((response) => {
-            if (
-              this.tblMitumoriData[0].VERSION &&
-              (this.tblMitumoriData[0].VERSION !== response.data.version ||
-                !response.data.version)
-            ) {
-              resolve(false);
-            } else {
-              resolve(true);
-            }
-          });
-      });
-    },
-    checkVersionFW042() {
-      //承認の種類を判断する。
-      let 種類 = "";
-      if (this.tblShiharaiData !== null) {
-        種類 = "61";
-      } else {
-        種類 = "32";
-      }
-      return new Promise((resolve) => {
-        this.http
-          .get("/api/Reafs_W/Shonin/WD00530/CheckFW042Version", {
-            会社コード: this.tblShiharaiData.会社コード,
-            契約No: this.tblShiharaiData.契約No,
-            履歴No: this.tblShiharaiData.履歴No,
-            明細No: this.tblShiharaiData.明細No,
-            契約年月: this.tblShiharaiData.契約年月,
-            サブNO: this.tblShiharaiData.サブNO,
-            種類: 種類,
-          })
-          .then((response) => {
-            if (
-              this.tblShiharaiData.VERSION &&
-              (this.tblShiharaiData.VERSION !== response.data.version ||
-                !response.data.version)
-            ) {
-              resolve(false);
-            } else {
-              resolve(true);
-            }
-          });
-      });
-    },
+    ///////////////////////////////////////////////
+    // 営業店参照範囲
+    ///////////////////////////////////////////////
     check参照権限() {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         if (
           this.名称取得方法17 &&
           this.名称取得方法17.filter(
-            (x) => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
+            x => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
           ).length > 0
         ) {
           const allPOSITIVE7Length = this.名称取得方法17.filter(
-            (x) => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
+            x => x.POSITIVE組織コード && x.POSITIVE組織コード.length === 7
           );
           const allRange = allPOSITIVE7Length.map(
-            (x) => x.支社コード + x.支社コード枝番
+            x => x.支社コード + x.支社コード枝番
           );
           if (!allRange || allRange.length <= 0) {
             return resolve(false);
           }
           if (
             allPOSITIVE7Length.find(
-              (x) => x.営業所コード && x.営業所コード.substring(0, 4) === "9900"
+              x => x.営業所コード && x.営業所コード.substring(0, 4) === "9900"
             )
           ) {
             return resolve(true);
@@ -3391,19 +3661,19 @@ export default {
             .post("/api/Reafs_W/Shonin/WD00530/get営業店CheckData", {
               lst支社コード: allRange,
               店コード: this.iraiForm.店コード,
-              店コード枝番: this.iraiForm.店コード枝番,
+              店コード枝番: this.iraiForm.店コード枝番
             })
-            .then((response) => {
+            .then(response => {
               if (
                 !response.data.Range名称取得方法18 ||
                 !response.data.Range名称取得方法18.find(
-                  (x) =>
+                  x =>
                     x.店コード === this.iraiForm.店コード &&
                     x.店コード枝番 === this.iraiForm.店コード枝番
                 )
               ) {
                 if (!response.data.店コード) {
-                  this.getMsg("E040662").then((res) => {
+                  this.getMsg("E040662").then(res => {
                     this.showError(res.data);
                   });
                   this.$refs.ref営業店.eigyotenCdFocus();
@@ -3417,23 +3687,1157 @@ export default {
         }
       });
     },
+
     getDataCheck営業店() {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.http
           .get("/api/Reafs_W/Shonin/WD00530/Check営業店", {
             店コード: this.iraiForm.店コード,
-            店コード枝番: this.iraiForm.店コード枝番,
+            店コード枝番: this.iraiForm.店コード枝番
           })
-          .then((response) => {
+          .then(response => {
             resolve(response.data);
           });
       });
     },
+
     ddlValue(val) {
       if (val) {
         val = val.replace("-", "");
       }
       return val;
+    },
+
+    getDataF028() {
+      return {
+        会社コード: this.tblMitumoriData[0].会社コード,
+        契約No: this.tblMitumoriData[0].契約No,
+        依頼No: this.iraiForm.依頼No,
+        履歴No: this.tblMitumoriData[0].履歴No,
+        明細No: this.shiharaiForm.明細no,
+        契約No枝番: this.iraiForm.見積番号枝番,
+        相見積番号: this.tblMitumoriData[0].相見積番号,
+        契約年月: this.shiharaiForm.実施月_元
+      };
+    },
+
+    formatDate(date) {
+      const d = new Date(date);
+      let month = "" + (d.getMonth() + 1);
+      let day = "" + d.getDate();
+      const year = d.getFullYear();
+
+      if (month.length < 2) {
+        month = "0" + month;
+      }
+      if (day.length < 2) {
+        day = "0" + day;
+      }
+
+      return [year, month, day].join("/");
+    },
+
+    async onIraiHinin(mode) {
+      this.loading_否認 = true;
+
+      //ボタン押下時のタブにより、処理分岐
+      //if(this.selectIndex == 4){
+      if (this.tblShiharaiData !== null) {
+        //登録時エラーチェック
+        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm, '否認'))) {
+          this.loading_否認 = false;
+          exit;
+        }
+
+        let msg = (await this.getMsg("K040066")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_否認 = false;
+          return false;
+        }
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: this.shiharaiForm.否認差戻事由_支払,
+          mode: 1, //否認
+          種類: "61",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小,
+          費用負担部門コード: "",
+          事業領域: "",
+          外内販区分: "",
+          按分有無: "",
+          F018_Update: this.tblMitumoriData
+        };
+        let res = {};
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+        const msg2 = (await this.getMsg("M040013")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          //this.onSearchShiharai();
+          // 再検索処理実行
+          this.onSearch();
+          this.kidouSiharaiSearch();
+        }
+
+        this.loading_否認 = false;
+      } else {
+        //登録時エラーチェック
+        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
+          this.loading_否認 = false;
+          exit;
+        }
+        let msg = (await this.getMsg("K040014")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_否認 = false;
+          return false;
+        }
+        this.shiharaiForm.明細no = 0;
+        this.shiharaiForm.実施月_元 = "9999/99";
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: this.iraiForm.否認差戻事由,
+          mode: 1, //否認
+          種類: "32",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小
+        };
+        let res = {};
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+        const msg2 = (await this.getMsg("M040013")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          this.onSearch();
+        }
+      }
+
+      this.loading_否認 = false;
+      return true;
+    },
+
+    async onIraiSashimodoshi() {
+      console.log("差戻ボタン押下");
+
+      this.loading_差戻 = true;
+      //ボタン押下時のタブにより、処理分岐
+      //if(this.selectIndex == 4){
+      //支払差戻
+      if (this.tblShiharaiData !== null) {
+        if (this.shiharaiForm.否認差戻事由_支払 == "") {
+          this.fnc_void_showInfoMsg("E040357");
+          this.loading_差戻 = false;
+          this.isErrPinkShiharaiSashimodoshiJiyu = true;
+          return false;
+        }
+
+        //登録時エラーチェック
+        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm, '差戻'))) {
+          this.loading_差戻 = false;
+          this.isErrPinkShiharaiSashimodoshiJiyu = true;
+          return false;
+        } else {
+          this.loading_差戻 = true;
+          this.isErrPinkShiharaiSashimodoshiJiyu = false;
+        }
+        //確認メッセージ表示
+        let msg = (await this.getMsg("K040070")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_差戻 = false;
+          return false;
+        }
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: this.shiharaiForm.否認差戻事由_支払,
+          mode: 2, //差戻
+          種類: "61",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小,
+          F018_Update: this.tblMitumoriData
+        };
+        let res = {};
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+        const msg2 = (await this.getMsg("M040014")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          //this.onSearchShiharai();
+          // 再検索処理実行
+          this.onSearch();
+          this.kidouSiharaiSearch();
+        }
+
+        this.loading_差戻 = false;
+      } else {
+        //実施判断差戻
+        console.log("支払じゃない差戻");
+        if (
+          this.iraiForm.否認差戻事由 == "" ||
+          this.iraiForm.否認差戻事由 == null
+        ) {
+          this.fnc_void_showInfoMsg("E040357");
+          this.loading_差戻 = false;
+          this.isErrPinkSashimodoshiJiyu = true;
+          return false;
+        } else {
+          this.loading_差戻 = true;
+          this.isErrPinkSashimodoshiJiyu = false;
+        }
+        //登録時エラーチェック
+        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
+          this.loading_差戻 = false;
+          exit;
+        }
+
+        let msg = (await this.getMsg("K040013")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_差戻 = false;
+          return false;
+        }
+        this.shiharaiForm.明細no = 0;
+        this.shiharaiForm.実施月_元 = "9999/99";
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: this.iraiForm.否認差戻事由,
+          mode: 2, //差戻
+          種類: "32",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小,
+          F018_Update: this.tblMitumoriData
+        };
+        let res = {};
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+        const msg2 = (await this.getMsg("M040014")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          this.onSearch();
+        }
+      }
+
+      this.loading_差戻 = false;
+      return true;
+    },
+
+    async onIraiShonin() {
+      this.loading_承認 = true;
+      //ボタン押下時のタブにより、処理分岐
+      //if(this.selectIndex == 4){
+      if (this.tblShiharaiData !== null) {
+        // 支払承認
+        //登録時エラーチェック
+        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm, '承認'))) {
+          this.loading_承認 = false;
+          exit;
+        }
+
+        let msg = (await this.getMsg("K040065")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_承認 = false;
+          return false;
+        }
+
+        this.shiharaiForm.明細no = this.tblShiharaiData.明細No;
+        this.shiharaiForm.実施月_元 = this.tblShiharaiData.契約年月;
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: "",
+          mode: 3, //承認
+          種類: "61",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小,
+          F018_Update: this.tblMitumoriData
+        };
+        let res = {};
+
+        console.log("承認メール送信確認");
+
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+        const msg2 = (await this.getMsg("M040010")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          // 再検索処理実行
+          this.onSearch();
+          this.kidouSiharaiSearch();
+          
+          this.selectIndex = 4;
+          this.activeIndex = 4;
+        }
+      } else {
+        // 実施判断承認
+        //登録時エラーチェック
+        console.log("実施判断_承認ボタン押下");
+        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
+          this.loading_承認 = false;
+          exit;
+        }
+
+        for (var i = 0; i < this.tblMitumoriData.length; i++) {
+          if (
+            this.tblMitumoriData[i].tbl按分有無 == 1 &&
+            this.tblMitumoriData[i].tbl按分存在フラグ == "0"
+          ) {
+            this.fnc_void_showInfoMsg("E040777");
+
+            return false;
+          }
+        }
+
+        let msg = (await this.getMsg("K040015")).data;
+
+        if (!(await this.confirm(msg))) {
+          this.loading_承認 = false;
+          return false;
+        }
+
+        this.shiharaiForm.明細no = 0;
+        this.shiharaiForm.実施月_元 = "9999/99";
+
+        const data = {
+          F050_作業報告マスタ: this.getDataF028(),
+          否認差戻事由: "",
+          mode: 3, //承認
+          種類: "32",
+          修繕区分小: this.tblMitumoriData[0].修繕区分小,
+          F018_Update: this.tblMitumoriData
+        };
+
+        let res = {};
+
+        console.log("承認メール送信確認");
+
+        await this.http
+          .post(
+            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
+            data,
+            "登録しています...."
+          )
+          .then(function(response) {
+            if (response.status == true) {
+              res = response;
+            } else {
+              // 登録失敗メッセージ表示
+              this.fnc_void_showInfoMsg("E040059");
+            }
+          });
+
+        const msg2 = (await this.getMsg("M040010")).data;
+        if (res.status) {
+          // 登録完了メッセージ表示
+          this.showSuccess(msg2);
+
+          // 再検索処理実行
+          this.onSearch();
+
+          console.log("承認メール送信直前");
+          console.log(this.最終承認フラグ);
+
+          //メール送信（最終承認の時だけ）
+          if (this.最終承認フラグ === 1) {
+            console.log("承認メール送信");
+
+            let patternNo = 0;
+            if (this.修繕区分小 === "08") {
+              patternNo = 12;
+            } else {
+              patternNo = 10;
+            }
+
+            console.log(this.searchForm.KeiyakuNanber);
+            console.log(this.searchForm.KeiyakuNanberEdaban);
+
+            let param = {
+              msg_type: 0,
+              pg_id: "TD00530",
+              st_kbn: 2,
+              mail_pattern_no: patternNo,
+              工事依頼NO: this.iraiForm.依頼No,
+              契約NO:
+                this.searchForm.KeiyakuNanber +
+                this.searchForm.KeiyakuNanberEdaban,
+              履歴NO: this.hikisu.履歴NO,
+              契約No枝番: this.iraiForm.見積番号枝番,
+              宛先事務所コード: [this.SGR担当事務所コード],
+              宛先営業所コード: [this.SGR担当営業所コード],
+              宛先部コード: [this.SGR担当部コード],
+              宛先課コード: [this.SGR担当課コード],
+              宛先係コード: [this.SGR担当係コード]
+            };
+
+            resultMail = this.commonFunctionUI.CM00110SendMail(param);
+          }
+        }
+      }
+      this.loading_承認 = false;
+      return retCode;
+    },
+
+    ///////////////////////////////////////////////
+    // 承認前エラーチェック
+    ///////////////////////////////////////////////
+    async fnc_obj_SyoninmaeErrorChk(valSyoninJoken) {
+      //バージョンチェック処理
+      if (!(await this.checkVersion())) {
+        this.getMsg("E040098").then(response => {
+          this.showError(response.data);
+        });
+        return false;
+      }
+      return true;
+    },
+
+    async fnc_obj_ShiharaiSyoninmaeErrorChk(valSyoninJoken, mode) {
+      // バージョンチェック処理
+      if (!(await this.checkVersionFW042())) {
+        this.getMsg("E040098").then(response => {
+          this.showError(response.data);
+        });
+        return false;
+      }
+
+      // 請求処理確認
+      // 請求合意区分が0(請求合意待ち)かつ修繕区分小が08(直接)のデータを承認する時のみチェックを行なう
+      if (this.shiharaiForm.業者状態 === '請求合意待ち' && this.修繕区分小 == "08"  && mode == '承認') {
+        this.getMsg("E040783").then(response => {
+          this.showError(response.data);
+        });
+        
+        return false;
+      }
+
+      return true;
+    },
+
+    checkVersion() {
+      return new Promise(resolve => {
+        this.http
+          .get("/api/Reafs_W/Shonin/WD00530/CheckF011Version", {
+            会社コード: this.tblMitumoriData[0].会社コード,
+            契約No: this.tblMitumoriData[0].契約No,
+            履歴No: this.tblMitumoriData[0].履歴No
+          })
+          .then(response => {
+            if (
+              this.tblMitumoriData[0].VERSION &&
+              (this.tblMitumoriData[0].VERSION !== response.data.version ||
+                !response.data.version)
+            ) {
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          });
+      });
+    },
+
+    checkVersionFW042() {
+      //承認の種類を判断する。
+      let 種類 = "";
+      if (this.tblShiharaiData !== null) {
+        種類 = "61";
+      } else {
+        種類 = "32";
+      }
+      return new Promise(resolve => {
+        this.http
+          .get("/api/Reafs_W/Shonin/WD00530/CheckFW042Version", {
+            会社コード: this.tblShiharaiData.会社コード,
+            契約No: this.tblShiharaiData.契約No,
+            履歴No: this.tblShiharaiData.履歴No,
+            明細No: this.tblShiharaiData.明細No,
+            契約年月: this.tblShiharaiData.契約年月,
+            サブNO: this.tblShiharaiData.サブNO,
+            種類: 種類
+          })
+          .then(response => {
+            if (
+              this.tblShiharaiData.VERSION &&
+              (this.tblShiharaiData.VERSION !== response.data.version ||
+                !response.data.version)
+            ) {
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+          });
+      });
+    },
+
+    async fnc_void_Syonin(valSyoninJoken) {
+      await this.http
+        .post(
+          "/api/Reafs_W/Shonin/WD00530/Jisshi_Syonin_IraiData",
+          valSyoninJoken,
+          "登録しています...."
+        )
+        .then(function(response) {
+          if (response.status == true) {
+            // 登録完了メッセージ表示
+            this.fnc_void_showInfoMsg("M040021");
+          } else {
+            // 登録失敗メッセージ表示
+            this.fnc_void_showInfoMsg("E040059");
+          }
+        });
+    },
+
+    onSeeAttachment() {
+      // this.paramsTyohyoIchiran.工事依頼No = this.iraiForm.依頼No
+      this.paramsTyohyoIchiran.契約No = this.tblMitumoriData[0].契約No;
+      this.paramsTyohyoIchiran.契約履歴No = this.tblMitumoriData[0].履歴No;
+
+      if (this.tblShiharaiData !== null) {
+        this.paramsTyohyoIchiran.見積明細No = this.tblShiharaiData.明細No;
+        this.paramsTyohyoIchiran.契約年月 = this.tblShiharaiData.契約年月;
+        this.paramsTyohyoIchiran.予定年月 = this.tblShiharaiData.契約年月;
+      } else {
+        this.paramsTyohyoIchiran.見積明細No = 0;
+        this.paramsTyohyoIchiran.契約年月 = "0000/00";
+      }
+
+      this.showDialogTyohyoIchiran = true;
+    },
+
+    onViewAttachRegis() {
+      // this.$router.push({ name: 'WD00120' })
+      console.log("添付参照ボタン押下時処理実行");
+
+      this.paramsIraiTenpuTouroku.工事依頼No = this.iraiForm.依頼No;
+      this.showDialogIraiTenpuTouroku = true;
+    },
+
+    IraiTenpuTourokuClose() {
+      this.onSearch();
+    },
+
+    async onBack() {
+      this.$store.commit('setKeepAliveFlag', 0);
+      this.$store.commit('setRouterBackFlag', 1);
+      this.loadingBack = true;
+      let isChange = false;
+
+      if (!this.iraiForm.依頼No) {
+        for (const prop in this.iraiFormInit) {
+          if (prop !== "大区分" && prop !== "中区分" && prop !== "小区分") {
+            if (this.iraiFormInit[prop] !== this.iraiForm[prop]) {
+              isChange = true;
+              this.loadingBack = false;
+              break;
+            }
+          }
+        }
+      } else {
+        if (this.iraiForm.依頼番号 !== this.iraiForm.依頼No) {
+          isChange = true;
+          this.loadingBack = false;
+        } else {
+          for (const prop in this.iraiFormInit) {
+            if (prop !== "大区分" && prop !== "中区分" && prop !== "小区分") {
+              if (this.iraiFormSearched[prop] !== this.iraiForm[prop]) {
+                isChange = true;
+                this.loadingBack = false;
+                break;
+              }
+            }
+          }
+        }
+      }
+      if (isChange) {
+        this.loadingBack = false;
+        if (await this.confirm((await this.getMsg("K000001")).data)) {
+          this.$store.commit('setKeepAliveFlag', 0);
+          this.$store.commit('setRouterBackFlag', 1);
+          this.$router.back();
+        } else {
+          // this.loadingBack = false
+        }
+      } else {
+        this.loadingBack = false;
+        this.$store.commit('setKeepAliveFlag', 0);
+        this.$store.commit('setRouterBackFlag', 1);
+        this.$router.back();
+      }
+    },
+
+    onHelp() {
+      this.showDialogKojikubunsetsumeiichiran = true;
+    },
+
+    checkKeiyakuNanber() {
+      if (this.searchForm.KeiyakuNanber == "") {
+        this.getMsg("E040002").then(response => {
+          this.showError(response.data);
+        });
+        this.$refs.KeiyakuNanber.focus();
+        return false;
+      }
+    },
+
+    getMsg(key) {
+      return this.commonFunctionUI.getMsg(key);
+    },
+
+    ///////////////////////////////////////////////
+    // 契約書番号更新釦クリック処理
+    ///////////////////////////////////////////////
+    onUpdateKeiyakuBango() {
+      let _this = this;
+
+      // 確認メッセージ
+      this.getMsg("K000005").then(response => {
+        this.MsgConf(
+          {
+            title: "依頼参照・承認",
+            message: response.data
+          },
+          () => {
+            // 「はい」釦が選択された場合
+            //　契約書番号更新
+
+            const data = {
+              契約no:
+                this.searchForm.KeiyakuNanber +
+                this.searchForm.KeiyakuNanberEdaban,
+              履歴no: this.hikisu.履歴NO,
+              契約no枝番: this.iraiForm.見積番号枝番,
+              契約管理番号: this.iraiForm.ＳＧＷ契約書番号
+            };
+
+            this.http
+              .post(
+                "/api/Reafs_W/Shonin/WD00530/UpdatekeiyakusyoNo",
+                data,
+                "登録しています...."
+              )
+              .then(function(response) {
+                if (response.status == true) {
+                  // 登録完了メッセージ表示
+                  _this.fnc_void_showInfoMsg("M000012");
+                } else {
+                  // 登録失敗メッセージ表示
+                  _this.fnc_void_showInfoMsg("E040059");
+                }
+              });
+
+            return true;
+          },
+          () => {
+            // 「いいえ」釦が選択された場合
+            return false;
+          }
+        );
+      });
+    },
+
+    ///////////////////////////////////////////////
+    // 検索前ピンク色等データクリア
+    ///////////////////////////////////////////////
+    fnc_void_clearData() {
+      let _this = this;
+      _this.tblData = [];
+      _this.hitKensu = "0  件";
+    },
+
+    ///////////////////////////////////////////////
+    // リンククリック時の画面遷移またはモーダル表示処理
+    ///////////////////////////////////////////////
+    fnc_clickLink(row, column, rowIndex) {
+      fnc_void_clearColor();
+      switch (column.field) {
+        // 予約申請 -> 定期作業報告入力をポップアップ
+        case "tblKeiyakuMeisho":
+          break;
+
+        // 完了報告 -> 定期作業報告入力をポップアップ
+        case "tblKanryoHokoku":
+          break;
+
+        default:
+      }
+    },
+
+    ///////////////////////////////////////////////
+    // keyからS016メッセージマスタにアクセスしメッセージ取得
+    ///////////////////////////////////////////////
+    fnc_rtn_getMsg(key) {
+      return this.commonFunctionUI.getMsg(key);
+    },
+
+    fnc_void_clearColor() {
+      let _this = this;
+
+      _this.isErrPinkKeiyakuNo = false;
+      _this.isErrPinkHininJiyu = false;
+      _this.isErrPinkSashimodoshiJiyu = false;
+      _this.isErrPinkSyonin = false;
+      _this.isErrPinkKeiyakusyoBango = false;
+    },
+
+    ///////////////////////////////////////////////
+    // 按分画面表示
+    ///////////////////////////////////////////////
+    // 実施判断時按分画面
+    onAnbunNyuryoku(row) {
+      console.log("按分画面呼び出し");
+
+      if (row.tbl按分有無 != 1) {
+        this.fnc_void_showErrorMsg("E040788"); // 按分有無がなしとなっているため、按分入力は出来ません。
+
+        return false;
+      }
+
+      // パラメータセット
+      this.IraiSansyoShoninParams.会社コード = this.userInfo.会社コード;
+      this.IraiSansyoShoninParams.契約NO = row.契約No;
+      this.IraiSansyoShoninParams.契約NO枝番 = row.契約No枝番;
+      this.IraiSansyoShoninParams.履歴NO = row.履歴No;
+      this.IraiSansyoShoninParams.明細NO = row.明細No;
+      this.IraiSansyoShoninParams.相見積番号 = row.相見積番号;
+      this.IraiSansyoShoninParams.契約年度 = this.searchForm.KeiyakuNendo;
+      // this.IraiSansyoShoninParams.作業名 = row.tblSagyoMeisho;
+      this.IraiSansyoShoninParams.修繕区分小 = this.修繕区分小;
+      this.IraiSansyoShoninParams.負担区分 = row.負担区分;
+      this.IraiSansyoShoninParams.進捗コード_本体 = this.iraiForm.進捗コード_本体;
+      this.IraiSansyoShoninParams.部門コード = row.tbl費用負担部門コード;
+      this.IraiSansyoShoninParams.部門名称 = row.tbl費用負担部門名称;
+
+      this.showWS00531 = true;
+    },
+
+    // 支払承認時按分画面
+    onAnbunNyuryokuShiharai() {
+      console.log("按分画面_支払の呼び出し");
+
+      if (this.shiharaiForm.費用按分FLG !== 1) {
+        this.fnc_void_showErrorMsg("E040788"); // 按分有無がなしとなっているため、按分入力は出来ません。
+
+        return false;
+      }
+
+      // パラメータセット
+      this.paramsShiharaiIraiSansyoShoninParams.会社コード = this.userInfo.会社コード;
+      this.paramsShiharaiIraiSansyoShoninParams.契約NO = this.searchForm.KeiyakuNanber;
+      this.paramsShiharaiIraiSansyoShoninParams.契約NO枝番 = this.searchForm.KeiyakuNanberEdaban;
+      this.paramsShiharaiIraiSansyoShoninParams.履歴NO = this.hikisu.履歴NO;
+      this.paramsShiharaiIraiSansyoShoninParams.明細NO = this.hikisu.明細NO;
+      this.paramsShiharaiIraiSansyoShoninParams.取引先 = this.shiharaiForm.取引先;
+      this.paramsShiharaiIraiSansyoShoninParams.契約年月 = this.tblShiharaiData.契約年月;
+      this.paramsShiharaiIraiSansyoShoninParams.修繕区分小 = this.tblShiharaiData.修繕区分小;
+      this.paramsShiharaiIraiSansyoShoninParams.負担区分 = this.tblShiharaiData.負担区分;
+      this.paramsShiharaiIraiSansyoShoninParams.部門確認 = this.shiharaiForm.部門状態;
+      this.paramsShiharaiIraiSansyoShoninParams.部門コード = this.shiharaiForm.費用負担部門コード;
+      this.paramsShiharaiIraiSansyoShoninParams.部門名称 = this.shiharaiForm.費用負担部門名;
+
+      // 画面表示フラグON
+      this.showWS00532 = true;
+    },
+
+    //　費用負担部門変更時処理
+    onChangeHiyouHutanBumon(value, rowIndex) {
+      console.log("費用負担部門変更時処理");
+
+      let _this = this;
+
+      if (value == "") {
+        _this.tblMitumoriData[rowIndex].tbl費用負担部門名称 = "";
+      } else {
+        this.http
+          .get("/api/Reafs_W/Shonin/WD00520/Get名称取得方法No34", {
+            費用負担部門コード: value
+          })
+          .then(response => {
+            if (response.data !== null) {
+              console.log(response.data.費用負担部門);
+              _this.tblMitumoriData[rowIndex].tbl費用負担部門名称 =
+                response.data.費用負担部門;
+            } else {
+              _this
+                .fnc_rtn_getMsg("E040747")
+                .then(response => {
+                  _this.fnc_void_showError(response.data, () => {
+                    _this.$refs[`ref費用負担部門${Index}`].focus();
+                  });
+                })
+                .finally(() => {});
+              _this.tblMitumoriData[rowIndex].tbl費用負担部門名称 = "";
+            }
+          });
+      }
+    },
+
+    dataBack(obj) {
+      console.log("費用負担部門選択サブ画面が閉じられたよ");
+      const rowIndex = this.rowIndex;
+
+      if (rowIndex > -1) {
+        // 見積側
+        this.tblMitumoriData[rowIndex].tbl費用負担部門コード = obj.txtCd;
+        this.tblMitumoriData[rowIndex].tbl費用負担部門名称 = obj.lblNm;
+      } else {
+        // 支払側
+        this.shiharaiForm.費用負担部門コード = obj.txtCd;
+        this.shiharaiForm.費用負担部門名 = obj.lblNm;
+      }
+    },
+
+    onCloseAnbunNyuryoku() {
+      console.log("見積按分入力サブ画面を閉じたよ！");
+
+      // 再検索処理実施
+      this.onSearch();
+
+      this.selectIndex = 2;
+      this.activeIndex = 2;
+    },
+
+    onCloseAnbunNyuryokuShiharai() {
+      console.log("支払按分入力サブ画面を閉じたよ！");
+
+      // 再検索処理実行
+      this.onSearch();
+      this.kidouSiharaiSearch();
+
+      this.selectIndex = 4;
+      this.activeIndex = 4;
+    },
+
+    onShowAnbunDialog(index) {
+      this.rowIndex = index;
+      this.showDialog = true;
+    },
+
+    onShowShiharaiAnbunDialog() {
+      this.rowIndex = -1;
+      this.showDialog = true;
+    },
+
+    onChangeShiharaiHiyouHutanBumon() {
+      console.log("費用負担部門変更時処理");
+
+      let _this = this;
+
+      if (_this.shiharaiForm.費用負担部門コード == "") {
+        _this.shiharaiForm.費用負担部門名 = "";
+      } else {
+        this.http
+          .get("/api/Reafs_W/Shonin/WD00520/Get名称取得方法No34", {
+            費用負担部門コード: _this.shiharaiForm.費用負担部門コード
+          })
+          .then(response => {
+            if (response.data !== null) {
+              console.log(response.data.費用負担部門);
+              _this.shiharaiForm.費用負担部門名 = response.data.費用負担部門;
+            } else {
+              _this
+                .fnc_rtn_getMsg("E040747")
+                .then(response => {
+                  _this.fnc_void_showError(response.data, () => {
+                    _this.$refs[`ref費用負担部門コード`].focus();
+                  });
+                })
+                .finally(() => {});
+              _this.shiharaiForm.費用負担部門名 = "";
+            }
+          });
+      }
+    },
+
+    ///////////////////////////////////////////////
+    // 部門確認
+    ///////////////////////////////////////////////
+    onClickBumonCheck() {
+      console.log("部門確認開始");
+
+      if (
+        this.shiharaiForm.費用按分FLG === 1 &&
+        this.shiharaiForm.按分情報有無 === "未入力"
+      ) {
+        // 按分有無がありで、按分状況が未入力の場合エラーとする
+        this.fnc_void_showInfoMsg("E040777");
+
+        return false;
+      }
+
+      this.fnc_rtn_getMsg("K000005").then(response => {
+        this.MsgConf(
+          {
+            title: "依頼参照・承認",
+            message: response.data
+          },
+          () => {
+            // 「はい」が選択された場合
+            this.fnc_void_UpdateCheckBumonData();
+            return true;
+          },
+          () => {
+            // 「いいえ」釦が選択された場合
+            return false;
+          }
+        );
+      });
+    },
+
+    // 部門確認承認登録
+    fnc_void_UpdateCheckBumonData() {
+      let mode = 0;
+
+      if (this.修繕区分小 == "08"){
+        // 直接なら見るのは原価、F025
+        mode = 2;
+      } else if(this.修繕区分小 == "09"){
+        // 請負なら見るのは売価、F024
+        mode = 1;
+      }
+
+      console.log("費用按分FLG：" + this.shiharaiForm.費用按分FLG);
+
+      const data = {
+        会社コード: this.userInfo.会社コード,
+        契約No: this.searchForm.KeiyakuNanber + this.searchForm.KeiyakuNanberEdaban,
+        履歴No: this.hikisu.履歴NO,
+        明細No: this.shiharaiForm.作業名称,
+        契約年月: this.hikisu.契約年月,
+        按分有無: this.shiharaiForm.費用按分FLG,
+        費用負担部門: this.shiharaiForm.費用負担部門コード,
+        事業領域: this.shiharaiForm.事業領域コード,
+        外内販区分: this.shiharaiForm.外内販区分コード,
+        mode: mode
+      };
+
+      let _this = this;
+
+      this.http
+        .post(
+          "/api/Reafs_W/Shonin/WD00530/PutCheckBumonData",
+          data,
+          "登録しています...."
+        )
+        .then(function(response) {
+          if (response.status == true) {
+            // 登録完了メッセージ表示
+            _this.fnc_void_showInfoMsg("M000012");
+            _this.kidouSiharaiSearch();
+          } else {
+            console.log(response.code);
+            if (response.code == 311)
+            {
+              // 按分金額と按分元金額が一致しなかった
+              _this.fnc_void_showInfoMsg("E040776");
+            }
+            else
+            {
+              // 登録失敗メッセージ表示
+              _this.fnc_void_showInfoMsg("E040059");
+            }
+          }
+        });
+    },
+    ///////////////////////////////////////////////
+    // メッセージ出力
+    ///////////////////////////////////////////////
+    // お知らせメッセージ
+
+    fnc_void_showInfoMsg(MsgCode) {
+      this.fnc_rtn_getMsg(MsgCode).then(response => {
+        this.MsgInfo({
+          title: "[定期] 依頼参照/承認",
+          message: response.data
+        });
+      });
+    },
+
+    // エラーメッセージ
+    fnc_void_showError(
+      message,
+      option = null,
+      title = "依頼参照・承認（実施判断）"
+    ) {
+      var self = this;
+      this.MsgErr({
+        title,
+        message,
+        callback: function(a, b) {
+          self.hideLoading();
+          if (option && typeof option.callback === "function") {
+            option.callback();
+          }
+        }
+      });
+    },
+
+    fnc_void_showErrorMsg(MsgCode) {
+      this.fnc_rtn_getMsg(MsgCode).then(response => {
+        this.MsgErr({
+          title: "[定期] 依頼参照/承認",
+          message: response.data
+        });
+      });
+    },
+
+    showSuccess(message, title = this.menuOptions.SubMenuName) {
+      var self = this;
+      this.MsgInfo({
+        title,
+        message,
+        callback: function(a, b) {
+          self.hideLoading();
+        }
+      });
+    },
+
+    showError(
+      message,
+      option = null,
+      title = this.$store.getters.getPageTitle()
+    ) {
+      var self = this;
+      this.MsgErr({
+        title,
+        message,
+        callback: function(a, b) {
+          self.hideLoading();
+          if (option && typeof option.callback === "function") {
+            option.callback();
+          }
+        }
+      });
+      // this.$message.error({
+      //   message,
+      //   onClose: this.hideLoading
+      // })
+    },
+
+    // いるのか分からんﾔﾂﾗ
+    confirm(message, title = this.menuOptions.SubMenuName) {
+      return new Promise((resolve, reject) => {
+        this.MsgConf({
+          title,
+          message,
+          callback: function(a, b) {
+            if (a === "confirm") {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          }
+        });
+      });
+    },
+
+    async GetM018削除区分(区分コード, 名称コード, 連動区分) {
+      return new Promise(resolve => {
+        this.http
+          .post("/api/Reafs_W/Shonin/WD00530/GetM018削除区分", {
+            区分コード: 区分コード,
+            名称コード: 名称コード,
+            連動区分: 連動区分
+          })
+          .then(response => {
+            return resolve(response.data);
+          });
+      });
+    },
+
+    getDataInsertFW042(依頼日) {
+      return {
+        会社コード: this.userInfo.会社コード,
+        依頼No: this.iraiForm.依頼番号,
+        種類: "10",
+        履歴NO: "0",
+        発注サブNo: "0",
+        検収回数: "0",
+        明細No: "0",
+        契約年月: "",
+        区分: "1",
+        申請日: this.formatDate(new Date()),
+        申請時間: new Date().toLocaleTimeString("en-US", { hour12: false }),
+        申請区分: "",
+        承認区分: "",
+        物件コード: this.iraiForm.物件コード,
+        表示日付: 依頼日,
+        削除区分: !this.isUpdate
+          ? "0"
+          : this.iraiForm.中止取下げ区分 === "0"
+          ? "0"
+          : this.iraiForm.中止取下げ区分 === "1"
+          ? "3"
+          : "2"
+      };
     },
 
     getDisplayData() {
@@ -3478,590 +4882,9 @@ export default {
           ? "0"
           : this.iraiForm.中止取下げ区分 === "1"
           ? "3"
-          : "2",
+          : "2"
       };
     },
-
-    getDataInsertFW042(依頼日) {
-      return {
-        会社コード: this.userInfo.会社コード,
-        依頼No: this.iraiForm.依頼番号,
-        種類: "10",
-        履歴NO: "0",
-        発注サブNo: "0",
-        検収回数: "0",
-        明細No: "0",
-        契約年月: "",
-        区分: "1",
-        申請日: this.formatDate(new Date()),
-        申請時間: new Date().toLocaleTimeString("en-US", { hour12: false }),
-        申請区分: "",
-        承認区分: "",
-        物件コード: this.iraiForm.物件コード,
-        表示日付: 依頼日,
-        削除区分: !this.isUpdate
-          ? "0"
-          : this.iraiForm.中止取下げ区分 === "0"
-          ? "0"
-          : this.iraiForm.中止取下げ区分 === "1"
-          ? "3"
-          : "2",
-      };
-    },
-    getDataF028() {
-      return {
-        会社コード: this.tblMitumoriData[0].会社コード,
-        契約No: this.tblMitumoriData[0].契約No,
-        依頼No: this.iraiForm.依頼No,
-        履歴No: this.tblMitumoriData[0].履歴No,
-        明細No: this.shiharaiForm.明細no,
-        契約年月: this.shiharaiForm.実施月_元,
-      };
-    },
-    formatDate(date) {
-      const d = new Date(date);
-      let month = "" + (d.getMonth() + 1);
-      let day = "" + d.getDate();
-      const year = d.getFullYear();
-
-      if (month.length < 2) {
-        month = "0" + month;
-      }
-      if (day.length < 2) {
-        day = "0" + day;
-      }
-
-      return [year, month, day].join("/");
-    },
-
-    async onIraiHinin(mode) {
-      this.loading_否認 = true;
-
-      //ボタン押下時のタブにより、処理分岐
-      //if(this.selectIndex == 4){
-      if (this.tblShiharaiData !== null) {
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_否認 = false;
-          exit;
-        }
-
-        let msg = (await this.getMsg("K040066")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_否認 = false;
-          return false;
-        }
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: this.shiharaiForm.否認差戻事由_支払,
-          mode: 1, //否認
-          種類: "61",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-        const msg2 = (await this.getMsg("M040013")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          this.onSearchShiharai();
-        }
-
-        this.loading_否認 = false;
-      } else {
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_否認 = false;
-          exit;
-        }
-        let msg = (await this.getMsg("K040014")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_否認 = false;
-          return false;
-        }
-        this.shiharaiForm.明細no = 0;
-        this.shiharaiForm.実施月_元 = "9999/99";
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: this.iraiForm.否認差戻事由,
-          mode: 1, //否認
-          種類: "32",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-        const msg2 = (await this.getMsg("M040013")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          this.onSearch();
-        }
-      }
-
-      this.loading_否認 = false;
-      return true;
-    },
-
-    async onIraiSashimodoshi() {
-      console.log("差戻ボタン押下");
-
-      this.loading_差戻 = true;
-      //ボタン押下時のタブにより、処理分岐
-      //if(this.selectIndex == 4){
-      if (this.tblShiharaiData !== null) {
-        if (this.shiharaiForm.否認差戻事由_支払 == "") {
-          this.fnc_void_showInfoMsg("E040357");
-          this.loading_差戻 = false;
-          this.isErrPinkSashimodoshiJiyu = true;
-          return false;
-        }
-
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_差戻 = false;
-          this.isErrPinkSashimodoshiJiyu = true;
-          return false;
-        }
-
-        let msg = (await this.getMsg("K040070")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_差戻 = false;
-          return false;
-        }
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: this.shiharaiForm.否認差戻事由_支払,
-          mode: 2, //差戻
-          種類: "61",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-        const msg2 = (await this.getMsg("M040014")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          this.onSearchShiharai();
-        }
-
-        this.loading_差戻 = false;
-      } else {
-        console.log("支払じゃない差戻");
-        if (
-          this.iraiForm.否認差戻事由 == "" ||
-          this.iraiForm.否認差戻事由 == null
-        ) {
-          this.fnc_void_showInfoMsg("E040357");
-          this.loading_差戻 = false;
-          this.isErrPinkSashimodoshiJiyu = true;
-          return false;
-        }
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_差戻 = false;
-          exit;
-        }
-
-        let msg = (await this.getMsg("K040013")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_差戻 = false;
-          return false;
-        }
-        this.shiharaiForm.明細no = 0;
-        this.shiharaiForm.実施月_元 = "9999/99";
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: this.iraiForm.否認差戻事由,
-          mode: 2, //差戻
-          種類: "32",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-        const msg2 = (await this.getMsg("M040014")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          this.onSearch();
-        }
-      }
-
-      this.loading_差戻 = false;
-      return true;
-    },
-
-    async onIraiShonin() {
-      this.loading_承認 = true;
-      //ボタン押下時のタブにより、処理分岐
-      //if(this.selectIndex == 4){
-      if (this.tblShiharaiData !== null) {
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_ShiharaiSyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_承認 = false;
-          exit;
-        }
-
-        let msg = (await this.getMsg("K040065")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_承認 = false;
-          return false;
-        }
-
-        this.shiharaiForm.明細no = this.tblShiharaiData.明細No;
-        this.shiharaiForm.実施月_元 = this.tblShiharaiData.契約年月;
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: "",
-          mode: 3, //承認
-          種類: "61",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-        const msg2 = (await this.getMsg("M040010")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          this.onSearchShiharai();
-        }
-      } else {
-        //登録時エラーチェック
-        if (!(await this.fnc_obj_SyoninmaeErrorChk(this.iraiForm))) {
-          this.loading_承認 = false;
-          exit;
-        }
-        let msg = (await this.getMsg("K040015")).data;
-
-        if (!(await this.confirm(msg))) {
-          this.loading_承認 = false;
-          return false;
-        }
-        this.shiharaiForm.明細no = 0;
-        this.shiharaiForm.実施月_元 = "9999/99";
-
-        const data = {
-          F050_作業報告マスタ: this.getDataF028(),
-          否認差戻事由: "",
-          mode: 3, //承認
-          種類: "32",
-          修繕区分小: this.tblMitumoriData[0].修繕区分小,
-        };
-        let res = {};
-
-        console.log("承認メール送信確認");
-
-        await this.http
-          .post(
-            "/api/Reafs_W/Shonin/WD00530/UpdateTeikiShiharaiShonin",
-            data,
-            "登録しています...."
-          )
-          .then(function (response) {
-            if (response.status == true) {
-              res = response;
-            } else {
-              // 登録失敗メッセージ表示
-              this.fnc_void_showInfoMsg("E040059");
-            }
-          });
-
-        const msg2 = (await this.getMsg("M040010")).data;
-        if (res.status) {
-          // 登録完了メッセージ表示
-          this.showSuccess(msg2);
-
-          console.log("承認メール送信直前");
-          console.log(this.最終承認フラグ);
-          //メール送信（最終承認の時だけ）
-          if (this.最終承認フラグ === 1){
-            console.log("承認メール送信");
-
-            let patternNo = 0;
-            if (this.修繕区分小 === "08"){
-                patternNo = 12
-            }else{
-                patternNo = 10
-            }
-
-            console.log(this.searchForm.KeiyakuNanber);
-            console.log(this.searchForm.KeiyakuNanberEdaban);
-            
-            let param = {
-                          msg_type: 0,
-                          pg_id: 'TD00530',
-                          st_kbn: 2,
-                          mail_pattern_no: patternNo,
-                          工事依頼NO: this.iraiForm.依頼No,
-                          契約NO: this.searchForm.KeiyakuNanber + this.searchForm.KeiyakuNanberEdaban,
-                          履歴NO: this.hikisu.履歴NO,
-                          宛先事務所コード: [this.SGR担当事務所コード],
-                          宛先営業所コード: [this.SGR担当営業所コード],
-                          宛先部コード: [this.SGR担当部コード],
-                          宛先課コード: [this.SGR担当課コード],
-                          宛先係コード: [this.SGR担当係コード],
-                        }
-
-                        resultMail = this.commonFunctionUI.CM00110SendMail(param)
-          }
-
-
-
-          this.onSearch();
-        }
-
-      }
-      this.loading_承認 = false;
-      return retCode;
-    },
-
-    showSuccess(message, title = this.menuOptions.SubMenuName) {
-      var self = this;
-      this.MsgInfo({
-        title,
-        message,
-        callback: function (a, b) {
-          self.hideLoading();
-        },
-      });
-    },
-
-    ///////////////////////////////////////////////
-    // 承認前エラーチェック
-    ///////////////////////////////////////////////
-    async fnc_obj_SyoninmaeErrorChk(valSyoninJoken) {
-      //バージョンチェック処理
-      if (!(await this.checkVersion())) {
-        this.getMsg("E040098").then((response) => {
-          this.showError(response.data);
-        });
-        return false;
-      }
-      return true;
-    },
-    async fnc_obj_ShiharaiSyoninmaeErrorChk(valSyoninJoken) {
-      //バージョンチェック処理
-      if (!(await this.checkVersionFW042())) {
-        this.getMsg("E040098").then((response) => {
-          this.showError(response.data);
-        });
-        return false;
-      }
-      return true;
-    },
-
-    async fnc_void_Syonin(valSyoninJoken) {
-      await this.http
-        .post(
-          "/api/Reafs_W/Shonin/WD00530/Jisshi_Syonin_IraiData",
-          valSyoninJoken,
-          "登録しています...."
-        )
-        .then(function (response) {
-          if (response.status == true) {
-            // 登録完了メッセージ表示
-            this.fnc_void_showInfoMsg("M040021");
-          } else {
-            // 登録失敗メッセージ表示
-            this.fnc_void_showInfoMsg("E040059");
-          }
-        });
-    },
-
-    ///////////////////////////////////////////////
-    // エラーメッセージ出力
-    ///////////////////////////////////////////////
-    // お知らせメッセージ
-
-    fnc_void_showInfoMsg(MsgCode) {
-      this.fnc_rtn_getMsg(MsgCode).then((response) => {
-        this.MsgInfo({
-          title: "WD00530",
-          message: response.data,
-        });
-      });
-    },
-    onSeeAttachment() {
-      // this.paramsTyohyoIchiran.工事依頼No = this.iraiForm.依頼No
-      this.paramsTyohyoIchiran.契約No = this.tblMitumoriData[0].契約No;
-      this.paramsTyohyoIchiran.契約履歴No = this.tblMitumoriData[0].履歴No;
-
-      if (this.tblShiharaiData !== null) {
-        this.paramsTyohyoIchiran.見積明細No = this.tblShiharaiData.明細No;
-        this.paramsTyohyoIchiran.契約年月 = this.tblShiharaiData.契約年月;
-        this.paramsTyohyoIchiran.予定年月 = this.tblShiharaiData.契約年月;
-      } else {
-        this.paramsTyohyoIchiran.見積明細No = 0;
-        this.paramsTyohyoIchiran.契約年月 = "0000/00";
-      }
-
-      this.showDialogTyohyoIchiran = true;
-    },
-    onViewAttachRegis() {
-      // this.$router.push({ name: 'WD00120' })
-      this.paramsIraiTenpuTouroku.工事依頼No = this.iraiForm.依頼No;
-      this.showDialogIraiTenpuTouroku = true;
-    },
-    IraiTenpuTourokuClose() {
-      this.onSearch();
-    },
-    async onBack() {
-      this.$store.commit('setKeepAliveFlag', 0);
-      this.$store.commit('setRouterBackFlag', 1);
-      this.loadingBack = true;
-      let isChange = false;
-
-      if (!this.iraiForm.依頼No) {
-        for (const prop in this.iraiFormInit) {
-          if (prop !== "大区分" && prop !== "中区分" && prop !== "小区分") {
-            if (this.iraiFormInit[prop] !== this.iraiForm[prop]) {
-              isChange = true;
-              this.loadingBack = false;
-              break;
-            }
-          }
-        }
-      } else {
-        if (this.iraiForm.依頼番号 !== this.iraiForm.依頼No) {
-          isChange = true;
-          this.loadingBack = false;
-        } else {
-          for (const prop in this.iraiFormInit) {
-            if (prop !== "大区分" && prop !== "中区分" && prop !== "小区分") {
-              if (this.iraiFormSearched[prop] !== this.iraiForm[prop]) {
-                isChange = true;
-                this.loadingBack = false;
-                break;
-              }
-            }
-          }
-        }
-      }
-      if (isChange) {
-        this.loadingBack = false;
-        if (await this.confirm((await this.getMsg("K000001")).data)) {
-          // if (this.page === 'WD00510') {
-          //   this.$router.push({ name: 'WD00510' })
-          // } else if (this.page === 'WD00210') {
-          //   this.$router.push({ name: 'WD00210' })
-          // }else{
-          //   this.$router.push({ name: 'WD00010' })
-          // }
-          this.$store.commit('setKeepAliveFlag', 0);
-          this.$store.commit('setRouterBackFlag', 1);
-          this.$router.back();
-        } else {
-          // this.loadingBack = false
-        }
-      } else {
-        this.loadingBack = false;
-        // if (this.page === 'WD00510') {
-        //   this.$router.push({ name: 'WD00510' })
-        // } else if (this.page === 'WD00210') {
-        //   this.$router.push({ name: 'WD00210' })
-        // }else{
-        //   this.$router.push({ name: 'WD00010' })
-        // }
-        this.$store.commit('setKeepAliveFlag', 0);
-        this.$store.commit('setRouterBackFlag', 1);
-        this.$router.back();
-      }
-    },
-    onHelp() {
-      this.showDialogKojikubunsetsumeiichiran = true;
-    },
-    checkKeiyakuNanber() {
-      if (this.searchForm.KeiyakuNanber == "") {
-        this.getMsg("E040002").then((response) => {
-          this.showError(response.data);
-        });
-        this.$refs.KeiyakuNanber.focus();
-        return false;
-      }
-    },
-    getMsg(key) {
-      return this.commonFunctionUI.getMsg(key);
-    },
-
     ///////////////////////////////////////////////
     // 検索ボタンクリック時処理
     ///////////////////////////////////////////////
@@ -4069,8 +4892,9 @@ export default {
       // 検索前処理
       let letKensakuJokenConvertDataAfter = new Object();
 
-      letKensakuJokenConvertDataAfter =
-        this.fnc_rtrn_getKensakuBefore(valKensakuJoken);
+      letKensakuJokenConvertDataAfter = this.fnc_rtrn_getKensakuBefore(
+        valKensakuJoken
+      );
 
       //エラーなければ検索実行
       if (letKensakuJokenConvertDataAfter[0] === true) {
@@ -4088,7 +4912,7 @@ export default {
       this.http
         .post("/api/Sagyo/TD00400_GET_KensakuKekka", KensakuJokenConvertAfter)
         // 検索実行後処理
-        .then(function (response) {
+        .then(function(response) {
           _this.tblData = response.data;
           _this.hitKensu = response.data.length + "  件";
 
@@ -4097,101 +4921,8 @@ export default {
             _this.fnc_void_showErrorMsg("E010224"); // 対象データが存在しません。
           }
         });
-    },
-    ///////////////////////////////////////////////
-    // 契約書番号更新釦クリック処理
-    ///////////////////////////////////////////////
-    onUpdateKeiyakuBango() {
-      let _this = this;
-      // 確認メッセージ
-      this.getMsg("K000005").then((response) => {
-        this.MsgConf(
-          {
-            title: "依頼参照・承認",
-            message: response.data,
-          },
-          () => {
-            // 「はい」釦が選択された場合
-            //　契約書番号更新
-
-            const data = {
-              契約no:
-                this.searchForm.KeiyakuNanber +
-                this.searchForm.KeiyakuNanberEdaban,
-              履歴no: this.hikisu.履歴NO,
-              契約no枝番: this.iraiForm.見積番号枝番,
-              契約管理番号: this.iraiForm.ＳＧＷ契約書番号,
-            };
-
-            this.http
-              .post(
-                "/api/Reafs_W/Shonin/WD00530/UpdatekeiyakusyoNo",
-                data,
-                "登録しています...."
-              )
-              .then(function (response) {
-                if (response.status == true) {
-                  // 登録完了メッセージ表示
-                  _this.fnc_void_showInfoMsg("M000012");
-                } else {
-                  // 登録失敗メッセージ表示
-                  _this.fnc_void_showInfoMsg("E040059");
-                }
-              });
-
-            return true;
-          },
-          () => {
-            // 「いいえ」釦が選択された場合
-            return false;
-          }
-        );
-      });
-    },
-    ///////////////////////////////////////////////
-    // 検索前ピンク色等データクリア
-    ///////////////////////////////////////////////
-    fnc_void_clearData() {
-      let _this = this;
-      _this.tblData = [];
-      _this.hitKensu = "0  件";
-    },
-
-    ///////////////////////////////////////////////
-    // リンククリック時の画面遷移またはモーダル表示処理
-    ///////////////////////////////////////////////
-    fnc_clickLink(row, column, rowIndex) {
-      fnc_void_clearColor();
-      switch (column.field) {
-        // 予約申請 -> 定期作業報告入力をポップアップ
-        case "tblKeiyakuMeisho":
-          break;
-
-        // 完了報告 -> 定期作業報告入力をポップアップ
-        case "tblKanryoHokoku":
-          break;
-
-        default:
-      }
-    },
-
-    ///////////////////////////////////////////////
-    // keyからS016メッセージマスタにアクセスしメッセージ取得
-    ///////////////////////////////////////////////
-    fnc_rtn_getMsg(key) {
-      return this.commonFunctionUI.getMsg(key);
-    },
-
-    fnc_void_clearColor() {
-      let _this = this;
-
-      _this.isErrPinkKeiyakuNo = false;
-      _this.isErrPinkHininJiyu = false;
-      _this.isErrPinkSashimodoshiJiyu = false;
-      _this.isErrPinkSyonin = false;
-      _this.isErrPinkKeiyakusyoBango = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -4341,5 +5072,11 @@ export default {
 }
 .pinkcolor_text >>> .el-textarea__inner {
   background-color: lightpink !important;
+}
+.link_color {
+  color: blue;
+}
+.el-dialog {
+  width: 90%;
 }
 </style>

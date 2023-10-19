@@ -132,22 +132,57 @@ export default {
   },
   methods: {
     async switchScreen() {
+      // クエリパラメータのguidより、登録したパラメータを取得する
       let params = await this.commonFunctionUI.getQueryParameter(this.$route.query.guid)
 
+      // 起動時URLより遷移先の画面情報を取得する
       const router = this.$router.resolve({ path: this.path })
-      
+      // this.$router.push({ name: router.route.name, params: this.パラメータ })
       // URL指定起動の場合、遷移先画面を判定してパラメータを設定する
-      
-      // 画面毎に処理を分岐
-      // Wですが、サンプルここから　※コメント解除して確認してください
-      // if(router.route.name==='WD00111'){
-      //   // パラメータ1とパラメータ2を利用(最大10まで)
-      //   let paramWD00111 = { 工事依頼No: (!params.data)?'':params.data.パラメータ1
-      //                 , page: (!params.data)?'':params.data.パラメータ2 }
-      //   // 指定したパラメータを引数にして遷移する
-      //   this.$router.push({ name: router.route.name, query: paramWD00111 })
-      // }
-      // サンプルここまで
+
+      if (router.route.name === 'TD00101') {
+        let param = {
+          工事依頼No: (!params.data) ? '' : params.data.パラメータ1,
+          工事依頼No枝番: (!params.data) ? '' : params.data.パラメータ2,
+          業者コード: (!params.data) ? '' : params.data.パラメータ3,
+          業者コード枝番: (!params.data) ? '' : params.data.パラメータ4,
+          発注サブNo: (!params.data) ? '' : params.data.パラメータ5,
+          検収回数: (!params.data) ? '' : params.data.パラメータ6
+        }
+        this.$router.push({ name: router.route.name, params: param })
+      } else if (router.route.name === 'TD00100') {
+        let param = {
+          StartupMode: (!params.data) ? '' : params.data.パラメータ1,
+          工事名称: (!params.data) ? '' : params.data.パラメータ2
+        }
+        this.$router.push({ name: router.route.name, params: param })
+      } else if (router.route.name === 'TD00301') {
+        let param = {
+          工事依頼No: (!params.data) ? '' : params.data.パラメータ1,
+          工事依頼No枝番: (!params.data) ? '' : params.data.パラメータ2,
+          業者コード: (!params.data) ? '' : params.data.パラメータ3,
+          業者コード枝番: (!params.data) ? '' : params.data.パラメータ4,
+          見積書枝番: (!params.data) ? '' : params.data.パラメータ5
+        }
+        this.$router.push({ name: router.route.name, params: param })
+      } else if (router.route.name === 'TD00302') {
+        let param = {
+          keiyakuNO: (!params.data) ? '' : params.data.パラメータ1,
+          hansu: (!params.data) ? '' : params.data.パラメータ2,
+          rirekiNO: (!params.data) ? '' : params.data.パラメータ3
+        }
+        this.$router.push({ name: router.route.name, params: param })
+      } else if (router.route.name === 'TD00400') {
+        let param = {
+          keiyaku_no: (!params.data) ? '' : params.data.パラメータ1,
+          履歴NO: (!params.data) ? '' : params.data.パラメータ2,
+          明細NO: (!params.data) ? '' : params.data.パラメータ3,
+          契約年月: (!params.data) ? '' : params.data.パラメータ4,
+          keiyakumeisai: (!params.data) ? '' : params.data.パラメータ5,
+          StartupMode: (!params.data) ? '' : params.data.パラメータ6
+        }
+        this.$router.push({ name: router.route.name, params: param })
+      }
     },
     loginPress (e) {
       if (e.keyCode == 13) {

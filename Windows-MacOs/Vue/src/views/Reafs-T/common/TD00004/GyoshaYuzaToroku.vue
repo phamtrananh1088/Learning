@@ -648,9 +648,9 @@ export default {
           if (column.key !== '1') {
             if (check削除区分 === 1) {
               sClass = 'disable-row'
-            } else if (d利用期間終了 <= dCurrDate) {
+            } else if (d利用期間終了 < dCurrDate) {
               sClass = 'disable-row'
-            } else if (dパスワード期限終了 <= dCurrDate) {
+            } else if (dパスワード期限終了 < dCurrDate) {
               sClass = 'warning-row'
             } else { sClass = '' }
             if ((check許可 === '0' && iユーザー種別 === '0') || (check許可 === '1' && iユーザー種別 === '1')) {
@@ -1028,7 +1028,7 @@ export default {
               // show success
               let msgComplete = (await this.getMsg('M000003')).data
               //20221212 add メール送信を追加
-              this.putSendMail(response.data.ユーザーＩＤ)
+              this.putSendMail(response.data.ユーザーＩＤ,"1")
               //20221212 add
               this.showSuccess('ユーザーID：' + response.data.ユーザーＩＤ + msgComplete)
             }
@@ -1154,7 +1154,7 @@ export default {
           this.loading = false
           if (res.status === true) {
             //20221212 add メール送信を追加
-            this.putSendMail(this.ShutsuryoRowSelected.ユーザーＩＤ)
+            this.putSendMail(this.ShutsuryoRowSelected.ユーザーＩＤ,"2")
             //20221212 add
             this.getMsg('M040028').then((response) => {
               this.showSuccess(response.data, 'パスワード再発行')
@@ -1166,10 +1166,11 @@ export default {
     getMsg (key) {
       return this.commonFunctionUI.getMsg(key)
     },
-    putSendMail (userId) {
+    putSendMail (userId,mode) {
     //20221212 add メール送信メソッド追加
       const data = {
-        ユーザーＩＤ: userId.replace('-', '')
+        ユーザーＩＤ: userId.replace('-', ''),
+        mode
       }
       this.http.post('/api/Reafs_T/GyoshaYuzaToroku/PostSendMail', data)
       //20221212 add

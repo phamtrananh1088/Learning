@@ -100,6 +100,14 @@
                       v-if="scope.$index == 0"
                       >{{ scope.row ? scope.row.実施判断 : "" }}</el-link
                     >
+                    <!-- ハノイ側修正2023/06/29　STEP2_W　課題管理表№359：「2023/06/29依頼分」「実施判断の差戻のリンクを削除」 Start -->
+                    <el-link
+                      target="_blank"
+                      :underline="false"
+                      type='primary'
+                      v-else-if="scope.$index == 3"
+                      ></el-link>
+                    <!-- ハノイ側修正2023/06/29　STEP2_W　課題管理表№359：「2023/06/29依頼分」「実施判断の差戻のリンクを削除」 End -->  
                     <el-link
                       target="_blank"
                       @click="onJumpTo(scope, '実施判断')"
@@ -326,7 +334,7 @@ export default {
   },
   methods: {
     init() {
-      this.getNoticeData();  
+      this.getNoticeData();
       // ステータスデータ取得
       // 2022/11/29 【暫定対応】自動取得は実行しない
       // this.getStatusData();
@@ -337,7 +345,7 @@ export default {
             this.getStatusData();
           }
         })
-        
+
     },
     onJumpTo(scope, key) {
       // 0件でも遷移はできるようにしておく→指摘があり遷移できないようにする。
@@ -357,14 +365,14 @@ export default {
 
       let jumpParamWD00410 = {
         name: null,
-        query: {
+        params: {
           StartuoMode: ''
         }
       }
       switch (key) {
         case "点検予定確認":
           jumpParamWD00410.name = 'WD00410' //作業状況一覧に遷移 sw003 既存データから　:WD00410 sagyoJoukyoIchiran
-          jumpParamWD00410.query.StartuoMode = '1' // 点検予定確認件数押下時
+          jumpParamWD00410.params.StartuoMode = '1' // 点検予定確認件数押下時
           break
         case "依頼承認":
           jumpParamWD00510.name = 'WD00510' //未承認/承認履歴一覧に遷移。sw003 既存データから　:WD00510 mishoninShoninIchiran
@@ -387,7 +395,7 @@ export default {
           if (scope.row.ROWTYPE == '承認待ち') {
             jumpParamWD00510.query.対象履歴 = '稟議申請待ち'
           } else if (scope.row.ROWTYPE == '差戻') {
-            jumpParamWD00510.query.対象履歴 = '履歴/稟議取下／否認'
+            jumpParamWD00510.query.対象履歴 = '稟議取下／否認' // ハノイ側修正2023/04/21　STEP2_W　課題管理表№327：設計書「修正履歴」シートの「2023/04/21仕様変更分」「Ver.1.11 稟議申請-差戻の件数押下時の遷移条件を変更」
           }
           jumpParamWD00510.query.修繕定期 = '－'
           break

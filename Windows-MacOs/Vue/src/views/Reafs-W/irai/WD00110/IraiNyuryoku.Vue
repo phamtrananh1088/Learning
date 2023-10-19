@@ -13,7 +13,7 @@
           <el-row>
             <el-col :span="8">
               <div style="display: flex">
-                <el-form-item label="営業店" prop="営業店コード" class="is-required 営業店">
+                <el-form-item label="営業所" prop="営業店コード" class="is-required 営業店">
                   <eigyoten
                     required
                     :eigyotenCd="iraiForm.店コード"
@@ -153,6 +153,9 @@
                 </div>
               </el-form-item>
             </el-col>
+            <el-col :span="5" style="margin-top: -9px; width: 25% !important;">
+              <div style="margin-left: 10px; color: red; font-weight: bold; font-size: 15px;">営業所で選択した場所に協力会社が向かいます。</div>
+            </el-col>
           </el-row>
         </el-header>
         <el-main class="home-el-main">
@@ -163,6 +166,7 @@
               <el-form-item label="工事区分" prop="工事区分" class="is-required">
                 <el-select
                   required
+                  popper-class = "el-popper-required"
                   v-model="iraiForm.工事区分"
                   :disabled="画面入力制御disabled.工事区分"
                   @change="selectKojiKubun"
@@ -183,6 +187,7 @@
               <el-form-item label="大区分" prop="大区分" class="is-required">
                 <el-select
                   required
+                  popper-class = "el-popper-required"
                   v-model="iraiForm.大区分"
                   :disabled="画面入力制御disabled.大区分"
                   @change="selectDaiKubun"
@@ -201,6 +206,7 @@
               <el-form-item label="中区分" prop="中区分" class="is-required">
                 <el-select
                   required
+                  popper-class = "el-popper-required"
                   v-model="iraiForm.中区分"
                   :disabled="画面入力制御disabled.中区分"
                   @change="selectChuKubun"
@@ -219,6 +225,7 @@
               <el-form-item label="小区分" prop="小区分" class="is-required">
                 <el-select
                   required
+                  popper-class = "el-popper-required"
                   v-model="iraiForm.小区分"
                   :disabled="画面入力制御disabled.小区分"
                   ref="ref小区分"
@@ -238,6 +245,7 @@
               <el-form-item label="依頼状況" prop="依頼状況" class="is-required">
                 <el-select
                   required
+                  popper-class = "el-popper-required"
                   v-model="iraiForm.依頼状況"
                   :disabled="画面入力制御disabled.依頼状況"
                   style="width: 100%"
@@ -252,9 +260,18 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item style ="height: 31px;">
+              <el-form-item style ="height: 31px; margin-left: -125px;">
+                <div style="margin: -5px 0 0 -45px; font-weight: bold; font-size: 13px; color: black;">【工事区分について】</div>
+                <div style="margin: -10px 0 0 -55px; font-weight: bold; font-size: 13px; color: black;">修繕工事一般・・・・ 見積先行工事。通常はこちらを使います。</div>
+                <div style="margin: -10px 0 0 -55px; font-weight: bold; font-size: 13px; color: black;">修繕工事緊急6項目・・すぐに工事対応が必要な案件です。詳細は「？」マークを押下して参照してください。</div>
+                <div style="margin: -10px 0 0 -55px; font-weight: bold; font-size: 13px; color: black;">修繕工事緊急・・・・ 上記修繕工事緊急6項目以外。（案件によっては一般に切り替える場合があります。）</div>
               </el-form-item>
               <div style="width: 1px; height: 92px"></div>
+            </el-col>
+            <el-col :span="5">
+              <div style="margin-left: 20px; margin-bottom: 4px; color: red; font-weight: bold; font-size: 15px;">【依頼状況について】</div>
+              <div style="margin-left: 10px; margin-bottom: 4px; color: red; font-weight: bold; line-height: 25px; font-size: 15px;">先行してコールセンターに電話で手配した場合は、必ず02の「緊急を要したためSGRコールセンターに電話で依頼済みです」を選択してください。</div>
+              <div style="margin-left: 10px; color: red; font-weight: bold; font-size: 15px;">（二重手配を避けるため）</div>
             </el-col>
           </el-row>
           <el-row>
@@ -427,7 +444,21 @@
                     class="el-form-item__label item_label_iraiNaiyo_fuguaiJokyo"
                     >依頼内容／<br />不具合状況</label
                   >
-                  <el-input
+                  <!--  ハノイ側修正2023/05/10　課題管理表№337：「改行コードをWindows用のコードに変換した上で文字数チェックを行う入力コントロール開発依頼」Start -->
+                  <reafsinputtext
+                  required
+                  maxlength="200"
+                  class="is-required item_input_iraiNaiyo_fuguaiJokyo"
+                  v-model="iraiForm.依頼内容_状況"
+                  @update:replaceValue="value=>iraiForm.依頼内容_状況 = value"
+                  :disabled="画面入力制御disabled['依頼内容／不具合状況']"
+                  :width="'100%'"
+                  type="textarea"
+                  resize="none"
+                  :rows="3"
+                  ref="iraiNaiyo_fuguaiJokyo"
+                ></reafsinputtext>
+                  <!-- <el-input
                     required
                     class="is-required item_input_iraiNaiyo_fuguaiJokyo"
                     maxlength="200"
@@ -438,16 +469,16 @@
                     :disabled="画面入力制御disabled['依頼内容／不具合状況']"
                     ref="iraiNaiyo_fuguaiJokyo"
                   >
-                  </el-input>
+                  </el-input> -->
+                  <!--  ハノイ側修正2023/05/10　課題管理表№337：「改行コードをWindows用のコードに変換した上で文字数チェックを行う入力コントロール開発依頼」End -->
                 </div>
               </el-form-item>
             </el-col>
-            <el-col class="comment" style="width: 31%;">
+            <el-col class="comment" style="width: 32%;">
               <br />
               <br />
-              <br />
-              <br />
-              <br />
+              <div style="font-family: Meiryo; margin-top: 2px; margin-left: -10px; color: red; font-weight: 900; font-size: 14pt; line-height: 20px;">【注意】</div>
+              <div style="font-family: Meiryo; margin-left: 10px; font-weight: 900;"><span style="font-size: 14pt; color: black;">添付できる写真は</span><span style="font-size: 16pt; color: red;">1ファイル5MB未満</span><span style="font-size: 14pt; color: black;">です。</span></div>
               <el-form-item label="添付一覧" label-width="100%">
               </el-form-item>
               <div style="padding-bottom: 20px">
@@ -467,7 +498,7 @@
               <br />
               <br />
             </el-col>
-            <el-col style="width: 10%;">
+            <el-col style="width: 9%; margin-left: 8px;">
               <br />
               <br />
               <br />
@@ -478,7 +509,8 @@
               <el-button
                 @click="onViewAttachRegis"
                 style="float: right"
-                :disabled="画面入力制御disabled.btn添付登録参照">添付登録参照</el-button>
+                ref="ref添付登録参照"
+                >添付登録参照</el-button>
                 <screenPopup
                   src="/Reafs_W/IraiTenpuTouroku"
                   :params="paramsIraiTenpuTouroku"
@@ -527,6 +559,7 @@
                   v-model="iraiForm.中止保留事由"
                   :disabled="画面入力制御disabled.中止保留事由"
                   :width="'100%'"
+                  :title="iraiForm.中止保留事由"
                   ref="ref中止保留事由"
                 >
                 </reafsinputtext>
@@ -564,17 +597,25 @@
                 </reafsinputtext>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              &nbsp;
+            </el-col>
+            <el-col :span="10" style="margin-top: 2px;">
+              <div style="font-family: Meiryo; margin-left: 40px; color: red; font-weight: bold; font-size: 14pt;">【注意】</div>
+              <div style="font-family: Meiryo; margin-left: 60px;"><span style="font-size: 14pt; color: black;"> 必ず「登録」後、</span> <span style="font-size: 16pt; font-weight: 900; color: red;">「申請」ボタンを押してください。</span></div>
+              <div style="font-family: Meiryo; margin-left: 60px; font-size: 14pt; color: black;">※登録だけでは依頼はされません。</div>
+            </el-col>
           </el-row>
         </el-main>
         <el-footer class="home-el-footer" height="auto">
           <el-row>
-            <el-col :span="15">
+            <el-col :span="14">
               <el-button
                 @click="onDelete"
                 :disabled="画面入力制御disabled.btn削除"
                  :loading="loading削除">削除</el-button>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="3" style="margin-left: 2.6%;">
               <el-button v-if="isUpdate" :loading="loading_登録_更新" @click="onRegister()" :disabled="画面入力制御disabled.btn登録_更新">更新</el-button>
               <el-button v-else :loading="loading_登録_更新" @click="onRegister()" :disabled="画面入力制御disabled.btn登録_更新">登録</el-button>
             </el-col>
@@ -590,7 +631,7 @@
                 :disabled="画面入力制御disabled.btn取下"
                  :loading="loading_取下">取下</el-button>
             </el-col>
-            <el-col :span="2">
+            <el-col :span="2" style="margin-left: 0.7%;">
               <el-button @click="onBack" :loading="loadingBack" style="float: right">戻る</el-button>
             </el-col>
           </el-row>
@@ -902,7 +943,6 @@ export default {
         btn削除: false,
         btn申請: false,
         btn取下: false,
-        btn添付登録参照: false,
         btn登録_更新: false // ハノイ側修正2022/11/22　STEP2_W　課題管理表№221：設計書「修正履歴」シートの「2022/11/21仕様変更分」「登録／更新ボタン押下条件追加。」
       },
       画面入力制御disabledInit: {},
@@ -956,7 +996,12 @@ export default {
         '依頼入力済※1': '',
         依頼承認チェック: '',
         依頼申請取下チェック: '',
-        依頼No: ''
+        依頼No: '',
+        ログイン者事務所コード: '',
+        ログイン者営業所コード: '',
+        ログイン者部コード: '',
+        ログイン者課コード: '',
+        ログイン者係コード: ''
       },
       iraiFormInit: {},
       iraiFormSearched: {},
@@ -974,7 +1019,8 @@ export default {
       paramsKojiIraiSho: {
         工事依頼No: '',
         page: ''
-      }
+      },
+      StartupMode: '' // ハノイ側修正2023/07/17　STEP2_W　課題管理表№368：「WD00110：依頼入力画面にて、営業店と物件コードが紐づかない状態で、F100に登録されているデータがあるようです。」
     }
   },
   watch: {
@@ -1005,23 +1051,31 @@ export default {
     $select小区分value = this
     $select依頼状況value = this
     $select中止保留区分value = this
+    // ハノイ側修正2023/07/17　STEP2_W　課題管理表№368：「WD00110：依頼入力画面にて、営業店と物件コードが紐づかない状態で、F100に登録されているデータがあるようです。」START
+    if (this.$route.params && this.$route.params.工事依頼No) {
+      this.StartupMode = '1'
+    } else {
+      this.StartupMode = '0'
+    }
+    // ハノイ側修正2023/07/17　STEP2_W　課題管理表№368：「WD00110：依頼入力画面にて、営業店と物件コードが紐づかない状態で、F100に登録されているデータがあるようです。」END
     this.init()
   },
   mounted () {
     this.isMounted = true
     this.initOnMounted()
+    this.$store.commit('setIraiTenpuTourokuPageData', '')// ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
   },
   methods: {
     initOnMounted () {
       // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 Start
       this.paramsKojiIraiSho = {
-        工事依頼No: this.$route.query.工事依頼No,
-        page: this.$route.query.page
+        工事依頼No: this.$route.params.工事依頼No,
+        page: this.$route.params.page
       }
 
-      if (this.$route.query && this.$route.query.工事依頼No) {
-        this.searchForm.koujiiraiNo = this.$route.query.工事依頼No.substring(0, 2)
-        this.searchForm.koujiiraiNo1 = this.$route.query.工事依頼No.substring(2)
+      if (this.$route.params && this.$route.params.工事依頼No) {
+        this.searchForm.koujiiraiNo = this.$route.params.工事依頼No.substring(0, 2)
+        this.searchForm.koujiiraiNo1 = this.$route.params.工事依頼No.substring(2)
         this.onSearch()
       }
     // ハノイ側修正2022/09/16　STEP2_W　課題管理表№97：設計書「修正履歴」シートの「2022/09/07仕様変更分」承認種類＝「10：依頼承認」の場合 工事件名／依頼内容／不具合状況の画面遷移先修正 End
@@ -1067,9 +1121,18 @@ export default {
           $select中止保留区分value.中止保留区分value = response.data.名称取得方法15
           this.名称取得方法17 = response.data.名称取得方法17
           this.iraiForm.中止保留区分 = '0'
+          // ハノイ側修正2023/07/17　STEP2_W　課題管理表№368：「WD00110：依頼入力画面にて、営業店と物件コードが紐づかない状態で、F100に登録されているデータがあるようです。」START
+          if (this.StartupMode === '0') {
+            this.iraiForm.店コード = response.data.店コード
+            this.iraiForm.店コード枝番 = response.data.店コード枝番
+          }
           this.$nextTick(() => {
             this.isInit = false
+            if (this.StartupMode === '0') {
+              this.$refs.ref営業店.changeEvent(response.data.店コード枝番)
+            }
           })
+          // ハノイ側修正2023/07/17　STEP2_W　課題管理表№368：「WD00110：依頼入力画面にて、営業店と物件コードが紐づかない状態で、F100に登録されているデータがあるようです。」END
           this.afterInit()
           // ハノイ側修正2022/09/05　STEP2_W　課題管理表№71：設計書「修正履歴」シートの「2022/08/31仕様変更分」データを呼び出した状態でメニューから画面を開くと、再度同じデータが呼び出されてしまう。 Start
           // const pageData = this.$store.getters.getPageData()
@@ -1088,7 +1151,6 @@ export default {
       this.画面入力制御disabled.btn削除 = true
       this.画面入力制御disabled.btn申請 = true
       this.画面入力制御disabled.btn取下 = true
-      this.画面入力制御disabled.btn添付登録参照 = true
     },
     showError (message, option = null, title = this.$store.getters.getPageTitle()) {
       var self = this
@@ -1218,7 +1280,9 @@ export default {
     },
     checkDspbtn () {
       const checkDspBtn削除_申請 = this.iraiForm.依頼承認チェック
-      if (checkDspBtn削除_申請 === true) {
+      // ハノイ側修正2023/08/07　STEP2_W　課題管理表№377：設計書「修正履歴」シートの「2023/08/07仕様変更分」「削除ボタン、登録／更新ボタン、申請ボタン押下条件追加。」 
+      const checkDspBtn削除_申請2 = this.iraiForm.更新不可チェック 
+      if (checkDspBtn削除_申請 === true || checkDspBtn削除_申請2 === true) { 
         this.画面入力制御disabled.btn削除 = true
         this.画面入力制御disabled.btn申請 = true
         this.画面入力制御disabled.btn登録_更新 = true // ハノイ側修正2022/11/22　STEP2_W　課題管理表№221：設計書「修正履歴」シートの「2022/11/21仕様変更分」「登録／更新ボタン押下条件追加。」
@@ -1227,6 +1291,7 @@ export default {
         this.画面入力制御disabled.btn申請 = false
         this.画面入力制御disabled.btn登録_更新 = false // ハノイ側修正2022/11/22　STEP2_W　課題管理表№221：設計書「修正履歴」シートの「2022/11/21仕様変更分」「登録／更新ボタン押下条件追加。」
       }
+      // ハノイ側修正2023/08/07　STEP2_W　課題管理表№377：設計書「修正履歴」シートの「2023/08/07仕様変更分」「削除ボタン、登録／更新ボタン、申請ボタン押下条件追加。」
 
       const checkDspBtn取下 = this.iraiForm.依頼申請取下チェック
       if (checkDspBtn取下 === true) {
@@ -1234,7 +1299,6 @@ export default {
       } else {
         this.画面入力制御disabled.btn取下 = true
       }
-      this.画面入力制御disabled.btn添付登録参照 = false
     },
     async onSearch () {
       this.savePageSearchData()
@@ -1684,7 +1748,8 @@ export default {
         // ハノイ側修正2022/12/12　STEP2_W　課題管理表№241：設計書「修正履歴」シートの「2022/07/14仕様変更分」「変更コメント、否認・差戻事由追加, 工事区分の緊急6項目のチェック条件修正」Start
         const dataCheckM020 = await this.getDataCheckM020()
         if (this.isInit === false) {
-          if (!(timeNow >= this.m001Info.急便始業時間 && timeNow <= this.m001Info.急便終業時間) && !dataCheckM020) {
+          // 2023/02/13 M.Ootsuka 緊急6項目は時間条件と日付条件を両方満たしている場合のみ選択可能に修正 「2023/02/13仕様変更分」
+          if (!(timeNow >= this.m001Info.急便始業時間 && timeNow <= this.m001Info.急便終業時間) || !dataCheckM020) {
             this.getMsg('E040671').then((response) => {
               this.showError(response.data)
             })
@@ -1796,7 +1861,7 @@ export default {
       }
       return false
     },
-    async regisValidate () {
+    async regisValidate (mode) {
       // 営業店
       if (!this.iraiForm.店コード || !this.iraiForm.店コード枝番) {
         this.getMsg('E040005').then((response) => {
@@ -2052,6 +2117,19 @@ export default {
         this.$refs.ref中止保留事由.focus()
         return false
       }
+      // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
+      if (mode !== '申請') {
+        if (this.iraiForm.工事区分 && this.iraiForm.工事区分.charAt(0) != '4' &&
+      !this.iraiForm.部位コメント1 && !this.iraiForm.部位コメント2 &&
+      !this.iraiForm.部位コメント3 && !this.iraiForm.部位コメント4) {
+          this.getMsg('E040789').then((response) => {
+            this.showError(response.data)
+          })
+          this.$refs.ref添付登録参照.$el.focus()
+          return false
+        }
+      }
+      // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
       if (this.isUpdate && !await this.checkVersion()) {
         this.getMsg('E040098').then((response) => {
           this.showError(response.data)
@@ -2224,7 +2302,7 @@ export default {
         this.loading_登録_更新 = true
       }
       let type = 1
-      if (!await this.regisValidate()) {
+      if (!await this.regisValidate(mode)) {
         this.loading_登録_更新 = false
         return false
       }
@@ -2319,6 +2397,15 @@ export default {
       const data = {
         F100_依頼マスタ: this.getDataF100()
       }
+      // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
+      if (!this.isUpdate) {
+        const sessionStr = this.$store.getters.getIraiTenpuTourokuPageData()
+        if (sessionStr) {
+          data.F091Data = sessionStr.f091Data
+        }
+        data.old依頼No = this.oldData.依頼No
+      }
+      // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
       const url = this.isUpdate ? '/api/Reafs_W/Irai/WD00110/Update' : '/api/Reafs_W/Irai/WD00110/Insert'
       let res = {}
       await this.http
@@ -2533,38 +2620,61 @@ export default {
     },
     onViewAttachRegis () {
       this.paramsIraiTenpuTouroku.工事依頼No = this.iraiForm.依頼No
+      this.paramsIraiTenpuTouroku.isDisableUpdate = !this.searchForm.koujiiraiNo || !this.searchForm.koujiiraiNo1 ? 1 : 0// ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定…
       this.showDialogIraiTenpuTouroku = true
     },
+    // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
     IraiTenpuTourokuClose () {
-      // this.onSearch()
-      this.http
-        .get('/api/Reafs_W/Irai/WD00110/Get名称取得方法16',
-          { 会社コード: this.iraiForm.会社コード, 工事依頼No: this.oldData.依頼No })
-        .then((response) => {
-          if (response.status) {
-            this.iraiForm.部位コメント1 = ''
-            this.iraiForm.部位コメント2 = ''
-            this.iraiForm.部位コメント3 = ''
-            this.iraiForm.部位コメント4 = ''
+      if (this.oldData.依頼No) {
+        this.http
+          .get('/api/Reafs_W/Irai/WD00110/Get名称取得方法16',
+            { 会社コード: this.iraiForm.会社コード, 工事依頼No: this.oldData.依頼No })
+          .then((response) => {
+            if (response.status) {
+              this.iraiForm.部位コメント1 = ''
+              this.iraiForm.部位コメント2 = ''
+              this.iraiForm.部位コメント3 = ''
+              this.iraiForm.部位コメント4 = ''
 
-            if (response.data.length > 0) {
-              var lst部位コメント = response.data.values()
-              for (let item of lst部位コメント) {
-                if (item.ファイルNo === 1) {
-                  this.iraiForm.部位コメント1 = item.部位コメント
-                } else if (item.ファイルNo === 2) {
-                  this.iraiForm.部位コメント2 = item.部位コメント
-                } else if (item.ファイルNo === 3) {
-                  this.iraiForm.部位コメント3 = item.部位コメント
-                } else if (item.ファイルNo === 4) {
-                  this.iraiForm.部位コメント4 = item.部位コメント
+              if (response.data.length > 0) {
+                var lst部位コメント = response.data.values()
+                for (let item of lst部位コメント) {
+                  if (item.ファイルNo === 1) {
+                    this.iraiForm.部位コメント1 = item.部位コメント
+                  } else if (item.ファイルNo === 2) {
+                    this.iraiForm.部位コメント2 = item.部位コメント
+                  } else if (item.ファイルNo === 3) {
+                    this.iraiForm.部位コメント3 = item.部位コメント
+                  } else if (item.ファイルNo === 4) {
+                    this.iraiForm.部位コメント4 = item.部位コメント
+                  }
                 }
               }
+              this.$forceUpdate()
             }
-            this.$forceUpdate()
+          })
+      } else {
+        // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… Start
+        const sessionStr = this.$store.getters.getIraiTenpuTourokuPageData()
+        if (sessionStr) {
+          const pageData = sessionStr.pageData
+          for (let i = 0; i < pageData.length; i++) {
+            const item = pageData[i]
+            if (i == 0) {
+              this.iraiForm.部位コメント1 = item.ファイル名
+            } else if (i == 1) {
+              this.iraiForm.部位コメント2 = item.ファイル名
+            } else if (i == 2) {
+              this.iraiForm.部位コメント3 = item.ファイル名
+            } else if (i == 3) {
+              this.iraiForm.部位コメント4 = item.ファイル名
+            }
           }
-        })
+        }
+        // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
+      }
     },
+    // ハノイ側修正2023/03/03　STEP2_W　課題管理表№300：設計書「修正履歴」シートの「2023/03/01仕様変更分」№16修正 添付元ファイル名に変更 営業店コード初期値設定… End
     async onBack () {
       this.$store.commit('setKeepAliveFlag', 0)
       this.$store.commit('setRouterBackFlag', 1)
@@ -2611,13 +2721,30 @@ export default {
       if (!mailPatternNo) {
         return
       }
+      const Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+      const st_kbn = f100.工事区分 == '41' || f100.工事区分 == '42' ? 2 : 1
+      const url = []
+      let linkUrl = ''
+      if (st_kbn == 1) {
+        linkUrl = Reafs_W_BaseURL + 'SyuzenIraiSansyoShonin'
+      } else {
+        linkUrl = Reafs_W_BaseURL + 'TeikiIraiSansyoShonin'
+      }
+      let paramSet = {
+        パラメータ1: f100.依頼No,
+        PG: 'WD00110'
+      }
+      const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+      linkUrl = linkUrl + '?guid=' + resParam.data.guid
+      linkUrl = encodeURI(linkUrl)
+      url.push(linkUrl)
       const param = {
         msg_type: 0,
         mail_to: '',
         msg_head: '',
         msg_body: '',
         pg_id: 'WD00110',
-        st_kbn: f100.工事区分 == '41' || f100.工事区分 == '42' ? 2 : 1, // ハノイ側修正2022/10/27　STEP2_W　課題管理表№195：設計書「修正履歴」シートの「2022/10/27仕様変更分」「定期分のパラメータ追加」
+        st_kbn: st_kbn, // ハノイ側修正2022/10/27　STEP2_W　課題管理表№195：設計書「修正履歴」シートの「2022/10/27仕様変更分」「定期分のパラメータ追加」
         mail_pattern_no: mailPatternNo,
         工事依頼NO: f100.依頼No,
         // 工事依頼NO枝番:
@@ -2625,14 +2752,15 @@ export default {
         // 履歴NO
         // 明細NO
         // 契約年月
-        宛先事務所コード: [f100.事務所コード_依頼者],
-        宛先営業所コード: [f100.営業所コード_依頼者],
-        宛先部コード: [f100.部コード_依頼者],
-        宛先課コード: [f100.課コード_依頼者],
-        宛先係コード: [f100.係コード_依頼者],
+        宛先事務所コード: [this.iraiForm.ログイン者事務所コード],
+        宛先営業所コード: [this.iraiForm.ログイン者営業所コード],
+        宛先部コード: [this.iraiForm.ログイン者部コード],
+        宛先課コード: [this.iraiForm.ログイン者課コード],
+        宛先係コード: [this.iraiForm.ログイン者係コード],
         // 業者コード
         // 業者コード枝番
-        担当者コード: []
+        担当者コード: [],
+        url: url
       }
       const res = await this.commonFunctionUI.CM00110SendMail(param)
       return res
@@ -2688,7 +2816,7 @@ export default {
   margin-bottom: 17px;
 }
 .comment{
-  padding-left: 20px;
+  padding-left: 15px;
 }
 .commentContent{
   padding: 1px 0 1px 0;
@@ -2719,7 +2847,7 @@ export default {
   width: calc(100% - 120px);
 }
 .home-el-header {
-  padding: 0 0 20px 0;
+  padding: 0 0 11px 0;
 }
 .home-el-main {
   padding: 0;
@@ -2751,12 +2879,12 @@ export default {
   .IraiNyuryoku .append-background {
     width: 212px !important;
   }
-  
+
     .KojiKubunSetsumeiIchiran .el-dialog {
     margin-top: 97px !important;
     margin-left: 255px !important;
   }
-  
+
   .IraiNyuryoku .営業店 .append-background {
     width: 202px !important;
   }

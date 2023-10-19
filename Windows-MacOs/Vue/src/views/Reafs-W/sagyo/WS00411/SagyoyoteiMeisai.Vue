@@ -1,5 +1,4 @@
 <template>
-
   <el-dialog width="50%" class="SagyoyoteiMeisai" :visible="dialogVisible" @open="onOpen()" @close="onClose_click()" :close-on-click-modal="false">
     <table width="95%">
       <tr>
@@ -25,6 +24,21 @@
                       :width="'530px'"
                       class="el-input-len-10 "
                       v-model="WS00411_privateData.bukken_name"
+                    ></reafsinputtext>
+                  </el-form-item>
+                </el-form>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <el-form>
+                  <el-form-item label="営業店" label-width="150px" class="row">
+                    <reafsinputtext
+                      :disabled="disabledable_text_nomal_true"
+                      maxlength="8"
+                      :width="'530px'"
+                      class="el-input-len-10 "
+                      v-model="WS00411_privateData.tblEigyoten"
                     ></reafsinputtext>
                   </el-form-item>
                 </el-form>
@@ -229,6 +243,7 @@ export default {
     },
 
   },
+
   data() {
     return {
       ///////////////////////////////////////////////
@@ -240,7 +255,6 @@ export default {
       ///////////////////////////////////////////////
       dialogVisible: false,
       pagination: { total: 22, size: 10, sortName: "", page: 1 },
-
 
       ///////////////////////////////////////////////
       // エラーフラグ DATEPICKERをピンクにする為に使用
@@ -257,7 +271,9 @@ export default {
       disabledable_button: false
     };
   },
+
   created() {},
+
   ///////////////////////////////////////////////
   // グリッド表示
   ///////////////////////////////////////////////
@@ -269,9 +285,11 @@ export default {
         .setAttribute("rowSpan", 8);
     });
   },
+
   mounted() {
     console.log("111");
   },
+
   methods: {
     // window: (onload = function() {
     //   alert("click_ServerAccessChk");
@@ -287,9 +305,11 @@ export default {
     onchange_text() {
       this.change_time += 1;
     },
-	onOpen(){
+
+	  onOpen(){
       this.isErrPinkSashimodoshiJiyu = false;
     },
+
     onClose_click() {
       if (this.change_time >= 1) {
         this.fnc_void_showErrorMsg_close("K000001"); // 確認メッセージ出力
@@ -323,10 +343,8 @@ export default {
 
       //日付チェック・コンバート
       if (
-
         valKakuninJoken.sagyo_date === "" ||
         valKakuninJoken.sagyo_date == undefined
-
       ) {
         
         this.fnc_void_showErrorMsg("E040705"); // 請求書月分を入力して下さい。
@@ -334,26 +352,22 @@ export default {
         exit;
 
       } else if (
-
         valKakuninJoken.sagyo_date.startDate.constructor == Date ||
         valKakuninJoken.sagyo_date.endDate.constructor == Date
-
       ) {
-        
         valKakuninJoken.sagyoyotei_kaisi_date = this.fnc_obj_NengetsuConvert(
           valKakuninJoken.sagyo_date.startDate
         );
+
         valKakuninJoken.sagyoyotei_syuuryou_date = this.fnc_obj_NengetsuConvert(
           valKakuninJoken.sagyo_date.endDate
         );
 
-      }else{
-
+      } else {
         valKakuninJoken.sagyoyotei_kaisi_date = valKakuninJoken.sagyo_date.startDate;
         valKakuninJoken.sagyoyotei_kaisi_time = valKakuninJoken.sagyo_date.startTime;
         valKakuninJoken.sagyoyotei_syuuryou_date = valKakuninJoken.sagyo_date.endDate;
         valKakuninJoken.sagyoyotei_syuuryou_time = valKakuninJoken.sagyo_date.endTime;
-
       }
 
       // 登録時エラーチェック
@@ -393,10 +407,6 @@ export default {
       var kaisi = valKakuninJoken.sagyoyotei_kaisi_date;
       var syuuryou = valKakuninJoken.sagyoyotei_syuuryou_date;
 
-      console.log("ここ")
-      console.log(valKakuninJoken.sagyo_date)
-      console.log(kaisi)
-      console.log(syuuryou)
       if (
         //作業実施月が表示と異なる場合
         valKakuninJoken.JissiYoteiNengetsu !== kaisi.substr(0, 7) ||
@@ -410,6 +420,7 @@ export default {
 
       return true;
     },
+
     checkVersion (valKakuninJoken) {
       return new Promise((resolve) => {
         this.http
@@ -449,27 +460,14 @@ export default {
         .then((response) => {
           // res = response
           if (response.status) {
-            // this.showSuccess(msg004 + res.data.依頼No + (await this.getMsg(smesSucess)).data)
+            console.log("登録完了")
             _this.fnc_void_showInfoMsg("M040021");
+            _this.fnc_void_closeWindow();
+          } else {
+            // 登録失敗メッセージ表示
+            _this.fnc_void_showInfoMsg("E040059");
           }
         })
-        
-          
-        console.log("登録完了")
-        // .then(function(response) {
-        //   console.log("分岐")
-        //   if (response.status == true) {
-        //     // 登録完了メッセージ表示
-        //     console.log("メッセージ表示")
-        //     this.fnc_void_showInfoMsg("M040021");
-        //   } else {
-        //     // 登録失敗メッセージ表示
-        //     console.log("メッセージ表示エラー")
-        //     this.fnc_void_showInfoMsg("E040059");
-        //   }
-          
-        // });
-
     },
 
     ///////////////////////////////////////////////
@@ -564,6 +562,7 @@ export default {
           if (response.status) {
             // 登録完了メッセージ表示
             _this.fnc_void_showInfoMsg("M040014");
+            _this.fnc_void_closeWindow();
           } else {
             mail = false;
             // 登録失敗メッセージ表示
@@ -575,6 +574,23 @@ export default {
       //メール送信　10/26
       if (mail === true){
         console.log("メール送信");
+        const url = []
+        let Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+        let linkUrl = Reafs_T_BaseURL + 'SagyoJokyoIchiran'
+        let paramSet = {
+          パラメータ1: valSashimodoshiJoken.KeiyakuNo,
+          パラメータ2: valSashimodoshiJoken.RirekiNo,
+          パラメータ3: valSashimodoshiJoken.MeisaiNo,
+          パラメータ4: valSashimodoshiJoken.KeiyakuNengetsu,
+          パラメータ5: valSashimodoshiJoken.KeiyakuNengetsuMeisai,
+          パラメータ6: 4,
+          PG: 'WD00410'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+
         let param = {
                 msg_type: 0,
                 pg_id: 'WD00410',
@@ -585,9 +601,10 @@ export default {
                 履歴NO: valSashimodoshiJoken.RirekiNo,
                 明細NO: valSashimodoshiJoken.MeisaiNo,
                 契約年月: valSashimodoshiJoken.KeiyakuNengetsu,
+                契約年月明細NO: valSashimodoshiJoken.KeiyakuNengetsuMeisai,
                 業者コード: valSashimodoshiJoken.tblTehaiGyoshaCode,
                 業者コード枝番: valSashimodoshiJoken.tblTehaiGyoshaCodeEdaban,
-                担当者コード:[valSashimodoshiJoken.tblTehaiGyoshaCode]
+                担当者コード:[valSashimodoshiJoken.tblTehaiGyoshaCode],
                 // msg_type: 0,
                 // pg_id: 'WD00410',
                 // st_kbn: 2,
@@ -605,6 +622,7 @@ export default {
                 // 宛先課コード: ['599', '021'],
                 // 宛先係コード: ['9999', '9999'],
                 // 担当者コード:['1234567']
+                url: url
               }
             let resultMail
             resultMail = this.commonFunctionUI.CM00110SendMail(param)
@@ -650,6 +668,7 @@ export default {
 
       return letNengetsu;
     },
+
     ///////////////////////////////////////////////
     // 時間コンバート
     ///////////////////////////////////////////////
@@ -664,6 +683,7 @@ export default {
 
       return letTime;
     },
+
     ///////////////////////////////////////////////
     // keyからS016メッセージマスタにアクセスしメッセージ取得
     ///////////////////////////////////////////////
@@ -675,7 +695,6 @@ export default {
     // エラーメッセージ出力
     ///////////////////////////////////////////////
     // お知らせメッセージ
-
     fnc_void_showInfoMsg(MsgCode) {
       this.fnc_rtn_getMsg(MsgCode).then(response => {
         this.MsgInfo({
@@ -684,8 +703,8 @@ export default {
         });
       });
     },
-    // エラーメッセージ
 
+    // エラーメッセージ
     fnc_void_showErrorMsg(MsgCode) {
       this.fnc_rtn_getMsg(MsgCode).then(response => {
         this.MsgErr({
@@ -694,6 +713,7 @@ export default {
         });
       });
     },
+
     //閉じるボタン処理
     fnc_void_showErrorMsg_close(MsgCode) {
       console.log("閉じるボタン");
@@ -716,6 +736,7 @@ export default {
         );
       });
     },
+
     fnc_void_closeWindow() {
       console.log("close_WS00411");
 
@@ -724,6 +745,7 @@ export default {
       this.$emit('closePopupEvent', this);
     }
   },
+
   watch: {
     testkey: function(newval) {
       newval = newval.replace(/[^0-9]/g, "");

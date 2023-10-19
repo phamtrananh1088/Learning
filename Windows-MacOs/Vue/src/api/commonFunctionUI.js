@@ -1,7 +1,7 @@
 
 import http from '@/../src/api/http.js'
 import store from '../store/index'
-
+import webconfig from '../../static/webconfig.json'
 // let $vue = null;
 let commonFunctionUI = {
   // init(vue) {
@@ -140,6 +140,18 @@ let commonFunctionUI = {
           })
         })
     })
+  },
+  /*
+    @param {*} type : W, T, R
+  */
+  getBaseURL(type) {
+    if (type == 'W') {
+      return webconfig.Reafs_W_BaseURL
+    } else if (type == 'T') {
+      return webconfig.Reafs_T_BaseURL
+    } else if (type == 'R') {
+      return webconfig.Reafs_R_BaseURL
+    }
   }
 }
 

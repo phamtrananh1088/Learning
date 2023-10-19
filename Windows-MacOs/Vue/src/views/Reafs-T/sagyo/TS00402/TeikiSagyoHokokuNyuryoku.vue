@@ -2,8 +2,6 @@
   <el-dialog
     width="1500px"
     :visible="dialogVisible"
-    @close="onClose_click()"
-    :close-on-click-modal="false"
     ref="onloadCon"
     class="SagyoHoukokuNyuryoku onloadCon"
     :show-close="false"
@@ -319,6 +317,9 @@
             <table class="table_button">
               <tr class="right_flow">
                 <td colspan="2">
+                  <p class="left_flow row tyuuizikou" style="margin-right: 290px;" v-show="改版チェック == true">
+                    ※契約改版中の為、入力出来ません
+                  </p>
                   <el-button class="right_flow row" @click="onClose_click()" tabindex="8">
                     閉じる</el-button
                   >
@@ -386,6 +387,7 @@
                           @click="openFileDialog()"
                           :loading="loading['btnUploadFile']"
                           tabindex="11"
+                          :disabled="touroku"
                           >参照</el-button
                         >
                       </div>
@@ -401,6 +403,7 @@
                     v-model="TS00402_tourokuJoken.新規添付種類"
                     placeholder="Select"
                     tabindex="12"
+                    :disabled="touroku"
                   >
                     <el-option
                       v-for="item in 種類名称"
@@ -458,7 +461,7 @@
             <table class="cls-tbl" cellspacing="0px">
               <!-- 月末請求申請欄（作業毎月毎に同じ内容が表示されます） -->
               <tr>
-                <td colspan="3">
+                <td colspan="6">
                   <span
                     style="font-size : x-large"
                     class="cls-span-sagyoyoteinyuryoku row"
@@ -476,7 +479,7 @@
                           class="is-readonly kingaku"
                           maxlength="12"
                           disabled="disabled"
-                          :width="'120px'"
+                          :width="'160px'"
                         >
                         </reafsinputtext>
                       </el-form-item>
@@ -489,7 +492,7 @@
                           class="is-readonly kingaku"
                           maxlength="12"
                           disabled="disabled"
-                          :width="'120px'"
+                          :width="'160px'"
                         >
                         </reafsinputtext>
                       </el-form-item>
@@ -530,7 +533,7 @@
                           :disabled="右側金額"
                           maxlength="12"
                           :required="true"
-                          :width="'120px'"
+                          :width="'160px'"
                           :class="{
                             pinkcolor_money_zippi: isErrPinkSagyotsuki_money_zippi
                           }"
@@ -588,7 +591,7 @@
                           index="22"
                           :disabled="disabledable_text_nomal_true"
                           maxlength="12"
-                          :width="'120px'"
+                          :width="'160px'"
                           :required="true"
                           :class="{
                             pinkcolor_money_sinsei: isErrPinkSagyotsuki_money_sinsei
@@ -607,7 +610,7 @@
                           index="22"
                           :disabled="右側金額"
                           maxlength="12"
-                          :width="'120px'"
+                          :width="'160px'"
                           :required="true"
                           :class="{
                             pinkcolor_money_sinsei: isErrPinkSagyotsuki_money_sinsei
@@ -665,7 +668,7 @@
                           class="is-readonly"
                           maxlength="12"
                           disabled="disabled"
-                          :width="'120px'"
+                          :width="'140px'"
                         >
                         </reafsinputtext>
                       </el-form-item>
@@ -678,7 +681,7 @@
                           class="is-readonly kingaku"
                           :disabled="disabledable_text_nomal_true"
                           maxlength="12"
-                          :width="'120px'"
+                          :width="'160px'"
                           :required="true"
                           :class="{
                             pinkcolor_money_sinsei: isErrPinkSagyotsuki_money_sinsei
@@ -722,6 +725,7 @@ export default {
     nengetsu,
     reafstable
   },
+
   ///////////////////////////////////////////////
   // TD00400→TS00401へデータ受け渡し
   // ※propsはプロパティ（property）の略で、親コンポーネントから子コンポーネントに値を渡す際に使用
@@ -755,8 +759,17 @@ export default {
     登録ボタン: {
       type: Boolean,
       default: false // 初期値falseだがTD00400がtrueに上書く
-    }
+    },
+    touroku: {
+      type: Boolean,
+      default: false // 初期値falseだがTD00400がtrueに上書く
+    },
+    改版チェック: {
+      type: Boolean,
+      default: false // 初期値falseだがTD00400がtrueに上書く
+    },
   },
+
   data() {
     return {
       ///////////////////////////////////////////////
@@ -870,7 +883,7 @@ export default {
       tblColumns_kingaku: [
         {
           title: "請求",
-          width: 10,
+          width: 8,
           key: "1",
           ellipsis: {
             showTitle: true
@@ -882,7 +895,7 @@ export default {
           key: "2",
           field: "sagyoutuki_kaime",
           type: "string",
-          width: 20,
+          width: 18,
           align: "left",
           ellipsis: {
             showTitle: true
@@ -894,7 +907,7 @@ export default {
           key: "2",
           field: "keiyakunengetu",
           type: "string",
-          width: 20,
+          width: 15,
           align: "center",
           ellipsis: {
             showTitle: true
@@ -905,7 +918,7 @@ export default {
           title: "請求金額（税抜き）",
           key: "2",
           type: "string",
-          width: 20,
+          width: 25,
           align: "left",
           ellipsis: {
             showTitle: true
@@ -918,7 +931,7 @@ export default {
               <div>
                 <reafsinputtext
                   width="100%"
-                  maxlength="12"
+                  maxlength="15"
                   value={row.seikyukingaku.toLocaleString()}
                   on-input={val => {
                     val = val.toLocaleString();
@@ -983,6 +996,7 @@ export default {
       排他フラグ: 1
     };
   },
+
   created() {},
   ///////////////////////////////////////////////
   // グリッド表示
@@ -995,6 +1009,7 @@ export default {
   //       .setAttribute("rowSpan", 8);
   //   });
   // },
+
   mounted() {
     console.log("TS00402");
 
@@ -1004,10 +1019,10 @@ export default {
       this.$refs.ref現地確認.focus();
     });
   },
-  updated() {
-    document.querySelector(".v-modal").style.zIndex = "3000";
-    document.querySelector(".SagyoHoukokuNyuryoku").style.zIndex = "3001";
-  },
+  // updated() {
+  //   document.querySelector(".v-modal").style.zIndex = "3000";
+  //   document.querySelector(".SagyoHoukokuNyuryoku").style.zIndex = "3001";
+  // },
 
   methods: {
     // window: (onload = function() {
@@ -1050,6 +1065,7 @@ export default {
         imgUploadName: ""
       };
     },
+
     pageBack(obj) {
       this.pagination.page = obj;
     },
@@ -1127,17 +1143,18 @@ export default {
         console.log(111);
       }
     },
+
     onClose_click() {
       if (this.change_time === 0) {
-        this.fnc_void_clearData(1);
+        this.fnc_void_clearData();
         this.change_time = 0;
         this.fnc_void_closeWindow();
 
-        if (this.TS00402_tourokuJoken.check_gamen == 1) {
-          this.TS00402_tourokuJoken.check_gamen = 0;
-          this.$router.push({ name: "TD00500" });
-        } else {
-        }
+        // if (this.TS00402_tourokuJoken.check_gamen == 1) {
+        //   this.TS00402_tourokuJoken.check_gamen = 0;
+        //   this.$router.push({ name: "TD00500" });
+        // } else {
+        // }
       } else {
         if (
           this.TS00402_tourokuJoken.作業実施日_from == "" ||
@@ -1179,14 +1196,14 @@ export default {
           this.TS00402_tourokuJoken.check作業合計請求税抜 ==
             this.TS00402_tourokuJoken.作業合計請求税抜
         ) {
-          this.fnc_void_clearData(1);
+          this.fnc_void_clearData();
           this.fnc_void_closeWindow();
 
-          if (this.TS00402_tourokuJoken.check_gamen == 1) {
-            this.TS00402_tourokuJoken.check_gamen = 0;
-            this.$router.push({ name: "TD00500" });
-          } else {
-          }
+          // if (this.TS00402_tourokuJoken.check_gamen == 1) {
+          //   this.TS00402_tourokuJoken.check_gamen = 0;
+          //   this.$router.push({ name: "TD00500" });
+          // } else {
+          // }
 
           return true;
         } else {
@@ -1194,6 +1211,7 @@ export default {
         }
       }
     },
+
     onblur() {
       if (
         (this.TS00402_tourokuJoken.作業実施日_from != "" ||
@@ -1211,6 +1229,7 @@ export default {
         this.TS00402_tourokuJoken.作業実施日_to = this.TS00402_tourokuJoken.作業実施日_from;
       }
     },
+
     ///////////////////////////////////////////////
     // 登録前処理
     ///////////////////////////////////////////////
@@ -1309,11 +1328,11 @@ export default {
     async fnc_obj_TourokumaeErrorChk(valTourokuJoken) {
       var kaisi = valTourokuJoken.作業実施日_from;
       var syuuryou = valTourokuJoken.作業実施日_to;
-      var tantoutel_bit = this.fnc_obj_getByteLength(
-        valTourokuJoken.担当者連絡先
-      );
+      var tantoutel_bit = this.fnc_obj_getByteLength(valTourokuJoken.担当者連絡先);
       var zippi_count = 0;
       var kariire = [];
+      var 実費 = valTourokuJoken.実費請求金額税抜.replace(/,/g, "");
+      var 申込税込 = valTourokuJoken.申請金額税込.replace(/,/g, "");
 
       kariire = this.TS00402_tourokuJoken.TS00402_grid;
 
@@ -1323,6 +1342,7 @@ export default {
         } else {
         }
       }
+
       //左側が活性化されている場合はチェック
       if (this.左側 == false) {
         if (
@@ -1355,11 +1375,34 @@ export default {
           this.fnc_void_pinkData(1); //背景色ピンク
           this.$nextTick(() => this.$refs.tantousya_tel.focus());
           return false;
+        }        else if (
+          //実費請求金額が空の場合
+          Number(実費) >= 1 &&
+          zippi_count == 0
+        ) {
+          this.fnc_void_showErrorMsg("E040707"); // 請求書月分を入力して下さい。
+          this.fnc_void_pinkData(3); //背景色ピンク
+          return false;
+        } else if(申込税込.length > 12){
+        this.fnc_void_showErrorMsg("E040205"); // 合計金額は、12桁以内になるように入力して下さい。
+          return false;
+              }else if (
+          //金額グリッドの額を変えている時の確認
+          valTourokuJoken.作業合計請求税抜 !=
+          valTourokuJoken.check作業合計請求税抜
+        ) {
+          let msg = (await this.fnc_rtn_getMsg("K040077")).data;
+          if (!(await this.confirm(msg, "完了報告入力"))) {
+            return false;
+          } else {
+            return true;
+          }
         }
+
       } else {
         if (
           //実費請求金額が空の場合
-          Number(valTourokuJoken.実費請求金額税抜) >= 1 &&
+          Number(実費) >= 1 &&
           zippi_count == 0
         ) {
           this.fnc_void_showErrorMsg("E040707"); // 請求書月分を入力して下さい。
@@ -1371,7 +1414,7 @@ export default {
           valTourokuJoken.check作業合計請求税抜
         ) {
           let msg = (await this.fnc_rtn_getMsg("K040077")).data;
-          if (!(await this.confirm(msg, "完了報告書"))) {
+          if (!(await this.confirm(msg, "完了報告入力"))) {
             return false;
           } else {
             return true;
@@ -1490,6 +1533,7 @@ export default {
       console.log(letChkConvertAfter);
       return letChkConvertAfter;
     },
+
     // 金額コンバート
     fnc_obj_KingakuConvert() {
       if (this.TS00402_tourokuJoken.申請金額税抜 == "") {
@@ -1504,28 +1548,24 @@ export default {
       if (this.TS00402_tourokuJoken.実費請求金額税抜 == "") {
         this.TS00402_tourokuJoken.実費請求金額税抜 = 0;
       }
+
       this.TS00402_tourokuJoken.touroku_sinseisagyo_zeinuki = ""; //申請作業金額
       this.TS00402_tourokuJoken.touroku_zippi_seikyuugaku = ""; //実費請求額
       this.TS00402_tourokuJoken.touroku_reigetu_seikyu = ""; //例月請求額
       this.TS00402_tourokuJoken.touroku_sinseisagyo_syouhizei = ""; //申請消費税
       this.TS00402_tourokuJoken.touroku_sinseisagyo_zeikomi = ""; //申請税込
 
-      this.TS00402_tourokuJoken.touroku_sinseisagyo_zeinuki = this.TS00402_tourokuJoken.申請金額税抜.replace(
-        /,/g,
-        ""
-      );
-      this.TS00402_tourokuJoken.touroku_zippi_seikyuugaku = this.TS00402_tourokuJoken.実費請求金額税抜.replace(
-        /,/g,
-        ""
-      ); //実費請求額
-      this.TS00402_tourokuJoken.touroku_sinseisagyo_syouhizei = this.TS00402_tourokuJoken.申請金額消費税.replace(
-        /,/g,
-        ""
-      ); //申請消費税
-      this.TS00402_tourokuJoken.touroku_sinseisagyo_zeikomi = this.TS00402_tourokuJoken.申請金額税込.replace(
-        /,/g,
-        ""
-      ); //申請税込
+      this.TS00402_tourokuJoken.touroku_sinseisagyo_zeinuki =
+        this.TS00402_tourokuJoken.申請金額税抜.replace(/,/g, "");
+
+      this.TS00402_tourokuJoken.touroku_zippi_seikyuugaku =
+        this.TS00402_tourokuJoken.実費請求金額税抜.replace(/,/g, ""); //実費請求額
+
+      this.TS00402_tourokuJoken.touroku_sinseisagyo_syouhizei = 
+        this.TS00402_tourokuJoken.申請金額消費税.replace(/,/g, ""); //申請消費税
+
+      this.TS00402_tourokuJoken.touroku_sinseisagyo_zeikomi =
+        this.TS00402_tourokuJoken.申請金額税込.replace(/,/g, ""); //申請税込
     },
 
     //実績開始日～実績終了日　日時の逆転チェック
@@ -1544,6 +1584,7 @@ export default {
       }
       return 0;
     },
+
     ///////////////////////////////////////////////
     // バイトチェック
     ///////////////////////////////////////////////
@@ -1551,6 +1592,7 @@ export default {
       str = str == null ? "" : str;
       return encodeURI(str).replace(/%../g, "*").length;
     },
+
     ///////////////////////////////////////////////
     //日付逆転チェック
     ///////////////////////////////////////////////
@@ -1617,9 +1659,12 @@ export default {
         });
     },
 
+    // 添付ファイル仮登録処理
     async upLoadImage(imgBase64) {
+      console.log("F093つくるよ！")
       const data = this.getDataF093(imgBase64);
       let res = {};
+      
       await this.http
         .post(
           "/api/Reafs_T/sagyo/fnc_InsertF093",
@@ -1629,15 +1674,33 @@ export default {
         .then(response => {
           res = response;
         });
+
       if (res.status) {
         this.zumenForm.添付NO = res.data;
       } else {
-        this.MsgErr({
-          title: "完了報告入力",
-          message: res.message
-        });
+        await this.http
+        .post(
+          "/api/Reafs_T/sagyo/fnc_S020_Insert_F093",
+          data,
+          "アクセスしています...."
+        )
+        .then(response => {
+          this.MsgErr({
+            title: "完了報告入力",
+            message: res.message
+          });
+
+          // F093作成失敗しているので、添付ファイル回りを初期化
+          this.zumenForm.添付NO = "";
+          this.zumenForm.帳票種類 = "";
+          this.zumenForm.その他帳票名 = "";
+          this.zumenForm.添付ファイル_パス = "ここにファイルをドロップ";
+          this.zumenForm.ファイル名 = "";
+        })
+        
       }
     },
+
     getDataF093(imgByte) {
       const zumenForm = this.zumenForm;
       const F093 = {
@@ -1647,6 +1710,7 @@ export default {
         添付元ファイル名: zumenForm.ファイル名,
         ファイルデータ: imgByte
       };
+
       return {
         F093_一時添付ファイル: F093,
         FLAG添付NO: zumenForm.添付NO
@@ -1699,6 +1763,7 @@ export default {
     // PDF取得
     ///////////////////////////////////////////////
     openFileDialog() {
+      console.log("えいえい！");
       const me = this;
       var input = document.createElement("input");
       input.type = "file";
@@ -1838,7 +1903,7 @@ export default {
         INSERT_PG: "TS00402",
         INSERT_HOST: "",
         INSERT_ID: "",
-        物件コード: ""
+        物件コード: "",
       };
       data.push({
         F090_ドキュメント管理ファイル: f090,
@@ -1850,12 +1915,13 @@ export default {
         契約履歴No: TS00402_tourokuJoken.rireki_no,
         契約年月: TS00402_tourokuJoken.keiyaku_nengetu,
         見積明細No: TS00402_tourokuJoken.meisai_no,
-        予定年月: TS00402_tourokuJoken.keiyaku_nengetu,
+        予定年月: TS00402_tourokuJoken.実施予定年月,
         契約年月明細No: TS00402_tourokuJoken.nengetu_meisai
       });
       return data;
     },
     async onRegister() {
+      console.log("F090つくるよ！");
       if (this.TS00402_tourokuJoken.新規添付種類 == "0") {
         this.zumenForm.帳票種類 = "221";
       } else if (this.TS00402_tourokuJoken.新規添付種類 == "1") {
@@ -1871,7 +1937,7 @@ export default {
       }
 
       let msg = (await this.fnc_rtn_getMsg("K000004")).data;
-      if (!(await this.confirm(msg, "完了報告書"))) {
+      if (!(await this.confirm(msg, "完了報告入力"))) {
         return false;
       }
       const data = this.getDataF090();
@@ -1908,8 +1974,24 @@ export default {
         this.zumenForm.ファイル名 = "";
         return true;
       } else {
-        this.showError(res.message);
-        return false;
+        console.log("test");
+        const F090 = this.getDataF090();
+        //this.showError(res.message);
+        await this.http
+        .post(
+          "/api/Reafs_T/sagyo/fnc_S020_Insert_F090",
+          F090,
+          "アクセスしています...."
+        )
+        .then(response => {
+          //res = response;
+          this.MsgErr({
+            title: "完了報告入力",
+            message: res.message
+          });
+          return false;
+        })
+        
       }
     },
     regisValidate() {
@@ -1931,7 +2013,7 @@ export default {
       return true;
     },
     // メール送信関数
-    fnc_void_sendMail(mode) {
+    async fnc_void_sendMail(mode) {
       let resultMail = "";
       let patternNo = 0;
       let jimusyoCode = "";
@@ -1939,6 +2021,7 @@ export default {
       let buCode = "";
       let kaCode = "";
       let kakariCode = "";
+      const url = []
 
       if (mode === 1) {
         // 通常登録時メール送信
@@ -1948,6 +2031,22 @@ export default {
         buCode = this.TS00402_tourokuJoken.sendMailBuCode;
         kaCode = this.TS00402_tourokuJoken.sendMailKaCode;
         kakariCode = this.TS00402_tourokuJoken.sendMailKakariCode;
+
+        let Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+        let linkUrl = Reafs_W_BaseURL + 'SagyoJoukyoIchiran'
+        let paramSet = {
+          パラメータ1: 2,
+          パラメータ2: this.TS00402_tourokuJoken.keiyaku_no,
+          パラメータ3: this.TS00402_tourokuJoken.rireki_no,
+          パラメータ4: this.TS00402_tourokuJoken.meisai_no,
+          パラメータ5: this.TS00402_tourokuJoken.keiyaku_nengetu,
+          パラメータ6: this.TS00402_tourokuJoken.nengetu_meisai,
+          PG: 'TS00402'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
       } else if (mode === 2) {
         // 添付ファイル登録時メール送信
         patternNo = 24;
@@ -1968,11 +2067,13 @@ export default {
         履歴NO: this.TS00402_tourokuJoken.rireki_no,
         明細NO: this.TS00402_tourokuJoken.meisai_no,
         契約年月: this.TS00402_tourokuJoken.keiyaku_nengetu,
+        契約年月明細NO: this.TS00402_tourokuJoken.nengetu_meisai,
         宛先事務所コード: [jimusyoCode],
         宛先営業所コード: [eigyosyoCode],
         宛先部コード: [buCode],
         宛先課コード: [kaCode],
-        宛先係コード: [kakariCode]
+        宛先係コード: [kakariCode],
+        url: url
       };
 
       resultMail = this.commonFunctionUI.CM00110SendMail(param);
@@ -2016,9 +2117,12 @@ export default {
         FileName: fileName
       };
       await this.http
-        .post("/api/Reafs_T/Common/DownloadFile", FileDownloadInfo, "", {
-          responseType: "blob"
-        })
+        .post(
+          "/api/Reafs_T/Common/DownloadFile",
+          FileDownloadInfo,
+          "",
+          {responseType: "blob"}
+        )
         .then(async blob => {
           // if (blob.size === 0) {
           //   this.fnc_void_showErrorMsg("E040464");
@@ -2148,6 +2252,7 @@ export default {
     fnc_rtn_getMsg(key) {
       return this.commonFunctionUI.getMsg(key);
     },
+
     ///////////////////////////////////////////////
     // エラーメッセージ出力
     ///////////////////////////////////////////////
@@ -2203,6 +2308,7 @@ export default {
         );
       });
     },
+
     //削除ボタン処理
     fnc_void_showsakuzyoMsg(MsgCode, row) {
       this.fnc_rtn_getMsg(MsgCode).then(response => {
@@ -2236,7 +2342,7 @@ export default {
           },
           () => {
             // OKが選択された場合
-            this.fnc_void_clearData(1);
+            this.fnc_void_clearData();
 
             this.fnc_void_closeWindow();
 
@@ -2254,6 +2360,7 @@ export default {
         );
       });
     },
+
     down2first(event) {
       if (event.keyCode === 9) {
         this.$nextTick(function() {
@@ -2348,7 +2455,7 @@ export default {
 }
 .row_y {
   margin: 0 5px;
-  width: 250px;
+  width: 300px;
 }
 .dairi_checkbox {
   width: 1px;
@@ -2465,3 +2572,10 @@ table {
   margin: 5px;
 }
 </style>
+<style scoped>
+
+.el-date-picker {
+  z-index: 9999 !important;
+}
+</style>
+

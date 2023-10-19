@@ -611,7 +611,7 @@ td.ve-table-body-td a {
    border-top: 1px solid #000 !important;
 }
 
-.ve-table .ve-table-container .ve-table-border-x th:not(.merge-header-top), .ve-table .ve-table-container .ve-table-border-x tr:not(:last-child) td:not([style*="height: 0px"]) {
+.ve-table .ve-table-container .ve-table-border-x th:not(.merge-header-top), .ve-table .ve-table-container .ve-table-border-x tr:not(:last-child):not(.ve-table-footer-tr) td:not([style*="height: 0px"]) {
    border-bottom: 1px solid #000 !important;
 }
 

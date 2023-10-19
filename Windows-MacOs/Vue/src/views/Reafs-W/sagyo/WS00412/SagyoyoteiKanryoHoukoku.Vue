@@ -38,6 +38,21 @@
             <tr>
               <td colspan="2">
                 <el-form>
+                  <el-form-item label="営業店" label-width="150px" class="row">
+                    <reafsinputtext
+                      :disabled="disabledable_text_nomal_true"
+                      maxlength="8"
+                      :width="'490px'"
+                      class="el-input-len-10 "
+                      v-model="WS00412_privateData.tblEigyoten"
+                    ></reafsinputtext>
+                  </el-form-item>
+                </el-form>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <el-form>
                   <el-form-item label="手配先業者" label-width="150px" class="row">
                     <reafsinputtext
                       :disabled="disabledable_text_nomal_true"
@@ -555,6 +570,23 @@ export default {
       //メール送信　10/25
       if (mail === true){
         console.log("メール送信");
+        const url = []
+        let Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+        let linkUrl = Reafs_T_BaseURL + 'SagyoJokyoIchiran'
+        let paramSet = {
+          パラメータ1: valSashimodoshiJoken.KeiyakuNo,
+          パラメータ2: valSashimodoshiJoken.RirekiNo,
+          パラメータ3: valSashimodoshiJoken.MeisaiNo,
+          パラメータ4: valSashimodoshiJoken.KeiyakuNengetsu,
+          パラメータ5: valSashimodoshiJoken.KeiyakuNengetsuMeisai,
+          パラメータ6: 4,
+          PG: 'WD00410'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+
         let param = {
                 msg_type: 0,
                 pg_id: 'WD00410',
@@ -565,9 +597,10 @@ export default {
                 履歴NO: valSashimodoshiJoken.RirekiNo,
                 明細NO: valSashimodoshiJoken.MeisaiNo,
                 契約年月: valSashimodoshiJoken.KeiyakuNengetsu,
+                契約年月明細NO: valSashimodoshiJoken.KeiyakuNengetsuMeisai,
                 業者コード: valSashimodoshiJoken.tblTehaiGyoshaCode,
                 業者コード枝番: valSashimodoshiJoken.tblTehaiGyoshaCodeEdaban,
-                担当者コード:[valSashimodoshiJoken.tblTehaiGyoshaCode]
+                担当者コード:[valSashimodoshiJoken.tblTehaiGyoshaCode],
                 // msg_type: 0,
                 // pg_id: 'WD00410',
                 // st_kbn: 2,
@@ -585,6 +618,7 @@ export default {
                 // 宛先課コード: ['599', '021'],
                 // 宛先係コード: ['9999', '9999'],
                 // 担当者コード:['1234567']
+                url: url
               }
             let resultMail
             resultMail = this.commonFunctionUI.CM00110SendMail(param)

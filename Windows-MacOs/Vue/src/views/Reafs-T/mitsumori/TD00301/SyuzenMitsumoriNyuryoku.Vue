@@ -140,7 +140,7 @@
             </el-col>
           </el-row>
           <!-- 5 -->
-          <el-row>.
+          <el-row>
             <el-col :span="10">
               <div v-if="pageData.緊急フラグ == '1' && pageData.受付フラグ == '0'">
                 <el-form-item label="見積有効期間" prop="見積有効期間">
@@ -299,12 +299,12 @@
             </el-col>
             <el-col :span="1">&nbsp;</el-col>
             <el-col :span="4" style="display: flex; justify-content: space-around;">
-              <el-button v-if="pageData.緊急フラグ == '1' && pageData.受付フラグ == '0'" class="color-orange"
+              <el-button v-if="pageData.緊急フラグ == '1' && pageData.受付フラグ == '0'" :class="isDisplayModeColor"
                 :disabled="isDisplayMode" @click="onSaveTemp(mode.依頼受付)" style="float: right">依頼受付</el-button>
-              <el-button v-else class="color-orange" :disabled="isDisplayMode" @click="onSaveTemp(mode.一時保存)" style="float: right">
+              <el-button v-else :class="isDisplayModeColor" :disabled="isDisplayMode" @click="onSaveTemp(mode.一時保存)" style="float: right">
                 一時保存
               </el-button>
-              <el-button class="color-orange" :disabled="isDisplayModeTeishutu" @click="onSubmission" style="float: right">提出
+              <el-button :class="isDisplayModeTeishutuColor" :disabled="isDisplayModeTeishutu" @click="onSubmission" style="float: right">提出
               </el-button>
             </el-col>
             <el-col :span="1">&nbsp;</el-col>
@@ -324,6 +324,7 @@ import reafstable from '@/components/table/Grid.vue'
 import eigyoten from '@/components/basic/EigyoTen.vue'
 import opensearch from '@/components/basic/openSearch.vue'
 import reafsinputnumber from '@/components/basic/ReafsControl/ReafsInputNumber.vue'
+import reafsinputnumber2 from '@/components/basic/ReafsControl/ReafsInputNumber2.vue'
 import screenPopup from '../../common/ScreenPopup/ScreenPopup.vue'
 import moment from 'moment'
 
@@ -334,6 +335,7 @@ export default {
     eigyoten,
     opensearch,
     reafsinputnumber,
+    reafsinputnumber2,
     screenPopup,
     moment
   },
@@ -589,9 +591,9 @@ export default {
           renderBodyCell: ({ row, column, rowIndex }) => {
             return (
               <div class="cell-body-custome">
-                <reafsinputnumber
+                <reafsinputnumber2
                   intLength={6}
-                  floatLength={0}
+                  floatLength={2}
                   value={row.数量}
                   ref={'ref数量' + rowIndex}
                   width="100%"
@@ -602,11 +604,11 @@ export default {
                   on-change={() => {
                     this.onMeisai数量Change(row, column, rowIndex)
                   }}
-                ></reafsinputnumber>
+                ></reafsinputnumber2>
               </div>
             )
           },
-          width: 85
+          width: 95
         },
         {
           key: '11',
@@ -794,33 +796,33 @@ export default {
       this.sumAllMeisai()
       this.sumForRitsu()
     },
-    $route(to, from) {
-      if(to.name == "TD00301"){
+    $route (to, from) {
+      if (to.name == 'TD00301') {
         this.params = {
-        工事依頼No: this.$route.params.工事依頼No,
-        工事依頼No枝番: this.$route.params.工事依頼No枝番,
-        業者コード: this.$route.params.業者コード,
-        業者コード枝番: this.$route.params.業者コード枝番,
-        見積書枝番: this.$route.params.見積書枝番
+          工事依頼No: this.$route.params.工事依頼No,
+          工事依頼No枝番: this.$route.params.工事依頼No枝番,
+          業者コード: this.$route.params.業者コード,
+          業者コード枝番: this.$route.params.業者コード枝番,
+          見積書枝番: this.$route.params.見積書枝番
         }
         if (this.params.見積書枝番) {
-        this.pageData.版数 = (
-          this.params.見積書枝番.substring(2) * 1
-        ).toLocaleString('en-US', {
-          minimumIntegerDigits: 2,
-          useGrouping: false
-        })
-      }
-      let userLogIn = this.$store.getters.getUserInfo()
-      this.userInfo.ユーザーＩＤ = userLogIn.userId
-      this.userInfo.会社コード = userLogIn.会社コード
+          this.pageData.版数 = (
+            this.params.見積書枝番.substring(2) * 1
+          ).toLocaleString('en-US', {
+            minimumIntegerDigits: 2,
+            useGrouping: false
+          })
+        }
+        let userLogIn = this.$store.getters.getUserInfo()
+        this.userInfo.ユーザーＩＤ = userLogIn.userId
+        this.userInfo.会社コード = userLogIn.会社コード
 
-      this.tableDataMeisai = []
-      for (let i = 0; i < 10; i++) {
-        this.tableDataMeisai.push(this.defaultDataMeisai())
-      }
-      this.GetStartInfo()
-      this.onSearch()
+        this.tableDataMeisai = []
+        for (let i = 0; i < 10; i++) {
+          this.tableDataMeisai.push(this.defaultDataMeisai())
+        }
+        this.GetStartInfo()
+        this.onSearch()
       }
     }
   },
@@ -858,8 +860,11 @@ export default {
     },
     ShashinTenpuSabuParams () {
       return {
-        添付種類: '901',
-        工事依頼No: this.params.工事依頼No
+        添付種類: '904',
+        工事依頼No: this.params.工事依頼No,
+        工事依頼No枝番: this.params.工事依頼No枝番,
+        業者コード: this.params.業者コード,
+        業者コード枝番: this.params.業者コード枝番
       }
     },
     recalMeisai () {
@@ -892,10 +897,16 @@ export default {
       ]
     },
     isDisplayMode () {
-      return this.pageData.提出フラグ == '1'
+      return this.pageData.提出フラグ == '1' || this.pageData.継続区分 == '1' || this.pageData.継続区分 == '2'
+    },
+    isDisplayModeColor () {
+      if(this.isDisplayMode){
+        return ""
+      }
+      return "color-orange"
     },
     isDisplayModeKoji () {
-      if (this.pageData.提出フラグ == '1') {
+      if (this.isDisplayMode) {
         return true
       } else if (this.oldData.工事件名 != '' && this.oldData.工事件名 != null) {
         return true
@@ -904,6 +915,12 @@ export default {
     },
     isDisplayModeTeishutu () {
       return this.pageData.緊急フラグ == '1' && this.pageData.受付フラグ == '0' || this.isDisplayMode
+    },
+    isDisplayModeTeishutuColor () {
+      if(this.isDisplayModeTeishutu){
+        return ""
+      }
+      return "color-orange"
     },
     mitsumori () {
       const no = this.pageData.工事依頼NO枝番
@@ -917,7 +934,7 @@ export default {
     }
   },
   created () {
-    //this.params = this.$route.params
+    // this.params = this.$route.params
     this.params = {
       工事依頼No: this.$route.params.工事依頼No,
       工事依頼No枝番: this.$route.params.工事依頼No枝番,
@@ -970,7 +987,14 @@ export default {
     isNotEmptyRow (row) {
       return row.作業内容 || row.数量 || row.単位 || row.単価 || row.金額_税抜 || row.税区 || row.税率
     },
-    async validateSaveTemp () {
+    async validateSaveTemp (mode) {
+      let count = 0
+      for (let i = 0; i < this.tableDataMeisai.length; i++) {
+        const gyoshu = this.tableDataMeisai[i]
+        if (gyoshu.分類 !== 'T' && gyoshu.分類 !== 'G' && this.isNotEmptyRow(gyoshu)) {
+          count++;
+        }
+      }
       if (this.pageData.版数 != this.oldData.版数) {
         this.getMsg('E000012').then((response) => {
           this.showError(response.data)
@@ -1000,7 +1024,7 @@ export default {
         this.$refs.ref見積時作業予定日_開始日.focus()
         return false
       }
-      if (!this.pageData.緊急フラグ == '1' && this.pageData.受付フラグ == '0'){
+      if (!(this.pageData.緊急フラグ == '1' && this.pageData.受付フラグ == '0')){
         if (!this.pageData.見積有効期間) {
           this.getMsg('E040685').then((response) => {
             this.showError(response.data)
@@ -1016,7 +1040,7 @@ export default {
         this.$refs.ref見積担当者.focus()
         return false
       }
-      if (!this.pageData.緊急フラグ == '1' && this.pageData.受付フラグ == '0'){
+      if (!this.pageData.緊急フラグ == '1' && this.pageData.受付フラグ == '0') {
         if (moment(this.pageData.見積有効期間).isValid() !== true) {
           this.getMsg('E040278').then((response) => {
             this.showError(response.data)
@@ -1041,13 +1065,24 @@ export default {
         return false
       }
       // ハノイ側修正2022/09/08 STEP2_T 課題管理表№13：見積入力(修繕) シートの「2022/09/01仕様変更分」 処理概要シート：＜提出ボタン押下＞のDB更新処理で緊急案件時の分岐処理を追加。END
-      
-      if (this.getNumber(this.pageData.見積金額.replaceAll('￥', '')) == 0) {
+      if(mode != 2){
+        if (this.getNumber(this.pageData.見積金額.replaceAll('￥', '')) == 0) {
         this.getMsg('E010309').then((response) => {
           this.showError(response.data)
         })
         this.$refs.ref見積金額.focus()
         return false
+        }
+      }else{
+        if(count != 0){
+          if (this.getNumber(this.pageData.見積金額.replaceAll('￥', '')) == 0) {
+          this.getMsg('E010309').then((response) => {
+            this.showError(response.data)
+          })
+          this.$refs.ref見積金額.focus()
+          return false
+          }
+        }
       }
       // table
       for (let i = 0; i < this.tableDataMeisai.length; i++) {
@@ -1085,15 +1120,15 @@ export default {
             this.$refs['ref数量' + i].focus()
             return false
           }
-          //20221118 del マイナスチェックを削除
-          /*if (this.getNumber(row.数量) < 0) {
+          // 20221118 del マイナスチェックを削除
+          /* if (this.getNumber(row.数量) < 0) {
             this.getMsg('E040239').then((response) => {
               this.showError(response.data)
             })
             this.$refs['ref数量' + i].focus()
             return false
-          }*/
-          //20221118 del
+          } */
+          // 20221118 del
           // 単位
           if (!row.単位) {
             this.getMsg('E040609').then((response) => {
@@ -1118,15 +1153,15 @@ export default {
             this.$refs['ref単価' + i].focus()
             return false
           }
-          //20221118 del マイナスチェックを削除
-          /*if (this.getNumber(row.単価) < 0) {
+          // 20221118 del マイナスチェックを削除
+          /* if (this.getNumber(row.単価) < 0) {
             this.getMsg('E040239').then((response) => {
               this.showError(response.data)
             })
             this.$refs['ref単価' + i].focus()
             return false
-          }*/
-          //20221118 del
+          } */
+          // 20221118 del
           // 金額(税抜)
           if (!row.金額_税抜) {
             this.getMsg('E040689').then((response) => {
@@ -1142,15 +1177,15 @@ export default {
             this.$refs['ref金額_税抜' + i].focus()
             return false
           }
-          //20221118 del マイナスチェックを削除
-          /*if (this.getNumber(row.金額_税抜) < 0) {
+          // 20221118 del マイナスチェックを削除
+          /* if (this.getNumber(row.金額_税抜) < 0) {
             this.getMsg('E040239').then((response) => {
               this.showError(response.data)
             })
             this.$refs['ref金額_税抜' + i].focus()
             return false
-          }*/
-          //20221118 del
+          } */
+          // 20221118 del
           // 税区
           if (!row.税区) {
             this.getMsg('E040688').then((response) => {
@@ -1188,9 +1223,9 @@ export default {
             this.$refs['ref税率' + i].focus()
             return false
           }
-          //20221222 add 税率の使用可否チェックを追加。
-          if(row.税区 == '1'){
-            const チェック税率 = await this.checkzeiritu(row.税率) 
+          // 20221222 add 税率の使用可否チェックを追加。
+          if (row.税区 == '1') {
+            const チェック税率 = await this.checkzeiritu(row.税率)
             if (チェック税率 == '') {
               this.getMsg('E040598').then((response) => {
                 this.showError(response.data)
@@ -1199,10 +1234,10 @@ export default {
               return false
             }
           }
-          //20221222 add 
+          // 20221222 add
         }
       }
-      //20221118 add 率別テーブルのマイナスチェックを追加。
+      // 20221118 add 率別テーブルのマイナスチェックを追加。
       if (this.getNumber(this.tableDataRitsu[0].合計金額_税込) < 0) {
         this.getMsg('E040775').then((response) => {
           this.showError(response.data)
@@ -1227,15 +1262,15 @@ export default {
         })
         return false
       }
-      //20221118 add  
+      // 20221118 add
       return true
     },
-    //20221222 add 税率の使用可否チェックを追加。
+    // 20221222 add 税率の使用可否チェックを追加。
     async checkzeiritu (zeiritu) {
       const checkzei = {
-          会計会社コード: this.pageData.会計会社コード,
-          税率: zeiritu,
-          判定日: this.pageData.見積有効期間
+        会計会社コード: this.pageData.会計会社コード,
+        税率: zeiritu,
+        判定日: this.pageData.見積有効期間
       }
       let res
       await this.http
@@ -1247,9 +1282,9 @@ export default {
         return res.data && res.data[0] ? res.data[0].税率 : ''
       }
     },
-    //20221222 add
+    // 20221222 add
     async onSubmission () {
-      if (!await this.validateSaveTemp()) {
+      if (!await this.validateSaveTemp(0)) {
         return false
       }
       let msg = (await this.getMsg('K040064')).data
@@ -1288,16 +1323,29 @@ export default {
         this.http
           .post('/api/Reafs_T/Mitsumori/TD00301/見積書作成', data, 'アクセスしています....')
           .then((result) => {
-            res2 = result;
-        })
-
-        for(let i = 0; i < res.data.mailData.length; i++){
-            let resultMail
-            resultMail = this.commonFunctionUI.CM00110SendMail(res.data.mailData[i])
+            res2 = result
+          })
+        let baseURL = this.commonFunctionUI.getBaseURL('W')
+        baseURL = baseURL + 'WD00520/SyuzenIraiSansyoShonin'
+        for (let i = 0; i < res.data.mailData.length; i++) {
+          if (res.data.mailData[i].mail_pattern_no == '73') {
+            let paramSet = {
+              パラメータ1: this.params.工事依頼No,
+              パラメータ2: '',
+              パラメータ3: '',
+              パラメータ4: '',
+              PG: 'TD00301'
+            }
+            const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+            let linkUrl = baseURL + '?guid=' + resParam.data.guid
+            linkUrl = encodeURI(linkUrl)
+            res.data.mailData[i].url = [linkUrl]
+          }
+          let resultMail = this.commonFunctionUI.CM00110SendMail(res.data.mailData[i])
         }
 
-        for(let i = 0; i < res.data.tellData.length; i++){
-            const resultTell = this.commonFunctionUI.twilio_Call(res.data.tellData[i])
+        for (let i = 0; i < res.data.tellData.length; i++) {
+          const resultTell = this.commonFunctionUI.twilio_Call(res.data.tellData[i])
         }
 
         // ハノイ側修正2022/08/24 STEP2_T 課題管理表№7：見積入力(修繕) シートの「2022/08/19仕様変更分」処理概要シート：＜提出ボタン押下＞のDB更新処理を修正...
@@ -1320,12 +1368,12 @@ export default {
       await this.base.saveFileDownload(base64Data, fileName, contentType)
     },
     async onSaveTemp (mode) {
-      if (!await this.validateSaveTemp()) {
+      if (!await this.validateSaveTemp(mode)) {
         return false
       }
-      
+
       let msg = (await this.getMsg('K040063')).data
-      if(mode == 2){
+      if (mode == 2) {
         msg = (await this.getMsg('K040080')).data
       }
       if (!await this.confirm(msg)) {
@@ -1360,11 +1408,26 @@ export default {
         })
 
       if (res.status) {
-        
-        if(mode == 2){
-          for(let i = 0; i < res.data.length; i++){
-            let resultMail
-            resultMail = this.commonFunctionUI.CM00110SendMail(res.data[i])
+        if (mode == 2) {
+          let baseURL = this.commonFunctionUI.getBaseURL('R')
+          baseURL = baseURL + 'mobile/KinkyuKougaku'
+          for (let i = 0; i < res.data.mailData.length; i++) {
+            if (res.data.mailData[i].mail_pattern_no == '42' && res.data.i高額申請処理 == 1) {
+              let paramSet = {
+                パラメータ1: this.params.工事依頼No,
+                パラメータ2: this.pageData.見積No ? this.pageData.見積No.substring(this.pageData.見積No.length - 2) : '',
+                パラメータ3: res.data.種類,
+                PG: 'TD00301'
+              }
+              const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+              let linkUrl = baseURL + '?guid=' + resParam.data.guid
+              linkUrl = encodeURI(linkUrl)
+              res.data.mailData[i].url = [linkUrl]
+            } else if (res.data.mailData[i].mail_pattern_no == '42') { // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230216追加」Start
+              res.data.mailData[i].url = ['']
+            }
+            // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230216追加」End
+            let resultMail = this.commonFunctionUI.CM00110SendMail(res.data.mailData[i])
           }
         }
 
@@ -1519,10 +1582,10 @@ export default {
         const row = this.defaultDataMeisai()
         Object.assign(row, e.backData)
         this.tableDataMeisai = e.backData
-        //this.tableDataMeisai = e.backData
-        /*for (let i = 0; i < 9; i++) {
+        // this.tableDataMeisai = e.backData
+        /* for (let i = 0; i < 9; i++) {
           this.tableDataMeisai.push(this.defaultDataMeisai())
-        }*/
+        } */
       }
     },
     BukkenDokyumentoSanshoSabuOnBackData () {
@@ -1534,6 +1597,8 @@ export default {
       if (row.分類 != 'T' && row.分類 != 'G') {
         row.作業内容 = ''
         row.金額_税抜 = ''
+      }else if(row.分類 == 'G'){
+        row.作業内容 = '小計'
       }
     },
     onMeisai数量Change (row, column, index) {
@@ -1664,19 +1729,19 @@ export default {
       const data = JSON.parse(JSON.stringify(this.tableDataMeisai))
       const group = this.groupByForRitsu(data, '税率')
       for (let i = 0; i < group.length && i < 4; i++) {
-        //this.tableDataRitsu[i].税率 = group[i].key
+        // this.tableDataRitsu[i].税率 = group[i].key
         this.tableDataRitsu[i].税率 = group[i].key || ''
-        if(group[i].key == '0'){
+        if (group[i].key == '0') {
           this.tableDataRitsu[i].税率 = '0'
         }
         const 合計金額税抜 = group[i].value.map((x) => x.金額_税抜)
           .reduce((a, b) => this.sum(a, b), 0)
-        //this.tableDataRitsu[i].合計金額_税抜 = this.base.formatCommaNumeric(合計金額税抜 + '')
+        // this.tableDataRitsu[i].合計金額_税抜 = this.base.formatCommaNumeric(合計金額税抜 + '')
         this.tableDataRitsu[i].合計金額_税抜 = this.base.formatCommaNumeric(合計金額税抜 || '')
-        //const 税額 = this.base.ToHalfAjust(合計金額税抜 * group[i].key / 100, 0)
+        // const 税額 = this.base.ToHalfAjust(合計金額税抜 * group[i].key / 100, 0)
         const 税額 = this.base.ToRoundDown(合計金額税抜 * group[i].key / 100, 0)
-        //this.tableDataRitsu[i].税額 = this.base.formatCommaNumeric(税額 + '')
-        //this.tableDataRitsu[i].合計金額_税込 = this.base.formatCommaNumeric(合計金額税抜 + 税額 + '')
+        // this.tableDataRitsu[i].税額 = this.base.formatCommaNumeric(税額 + '')
+        // this.tableDataRitsu[i].合計金額_税込 = this.base.formatCommaNumeric(合計金額税抜 + 税額 + '')
         this.tableDataRitsu[i].税額 = this.base.formatCommaNumeric(税額 || '')
         this.tableDataRitsu[i].合計金額_税込 = this.base.formatCommaNumeric(合計金額税抜 + 税額 || '')
       }
@@ -1930,7 +1995,7 @@ export default {
         工事依頼No枝番: this.params.工事依頼No枝番.substring(0, 1) + this.pageData.版数.substring(1),
         業者コード: this.params.業者コード,
         業者コード枝番: this.params.業者コード枝番,
-        見積書枝番 : this.params.見積書枝番
+        見積書枝番: this.params.見積書枝番
       }
       let result
       await this.http
@@ -1947,11 +2012,11 @@ export default {
       if (result.status) {
         const dataF040 = result.data.dataF040[0] || {}
         const 依頼情報 = result.data.依頼情報 || {}
-        if (!依頼情報.工事No) { 
-            this.getMsg('E000014').then((response) => {
-                this.showSuccess(response.data)
-            })
-          }
+        if (!依頼情報.工事No) {
+          this.getMsg('E000014').then((response) => {
+            this.showSuccess(response.data)
+          })
+        }
         let 明細データ = result.data.明細データ
         const 見積ヘッダ = result.data.見積ヘッダ[0] || {}
         const df = this.defaultPagedata()

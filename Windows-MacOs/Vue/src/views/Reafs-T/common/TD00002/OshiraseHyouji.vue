@@ -125,8 +125,7 @@
                 </el-input> -->
                 <label
                   class="el-form-item__label item_input_oshiraseHyoji_tenpu"
-                >
-                  {{ oshiraseHyoji.内容 }}
+                >{{ oshiraseHyoji.内容 }}
                 </label>
               </div>
             </el-form-item>
@@ -262,6 +261,8 @@ export default {
   color: black;
   background-color: white !important;
   overflow-wrap: break-word;
+  white-space: pre-wrap;
+  line-height: 1.5;
 }
 .item_label_oshiraseHyoji_tenpu {
   height: 389px;

@@ -10,7 +10,7 @@
         <el-header height="auto" class="home-el-header">
           <el-row>
             <el-col style="width: 31%;">
-              <el-form-item label="営業店" prop="営業店コード" class="is-readonly">
+              <el-form-item label="営業所" prop="営業店コード" class="is-readonly">
                 <div style="display: flex">
                   <reafsinputtext
                     v-model="syuzenForm.営業店コード"
@@ -507,16 +507,16 @@
                   </el-form-item>
                   <div style="padding-bottom: 20px">
                     <div class="commentContent">
-                      <label class="item_label">1　　{{ iraiForm.部位コメント1 }}</label>
+                      <label class="item_label" :title="iraiForm.部位コメント1">1　　{{ iraiForm.部位コメント1 }}</label>
                     </div>
                     <div>
-                      <label class="item_label">2　　{{ iraiForm.部位コメント2 }}</label>
+                      <label class="item_label" :title="iraiForm.部位コメント2">2　　{{ iraiForm.部位コメント2 }}</label>
                     </div>
                     <div>
-                      <label class="item_label">3　　{{ iraiForm.部位コメント3 }}</label>
+                      <label class="item_label" :title="iraiForm.部位コメント3">3　　{{ iraiForm.部位コメント3 }}</label>
                     </div>
                     <div>
-                      <label class="item_label">4　　{{ iraiForm.部位コメント4 }}</label>
+                      <label class="item_label" :title="iraiForm.部位コメント4">4　　{{ iraiForm.部位コメント4 }}</label>
                     </div>
                   </div>
                   <br />
@@ -558,6 +558,7 @@
                       v-model="iraiForm.中止保留事由"
                       :disabled="true"
                       :width="'100%'"
+                      :title="iraiForm.中止保留事由"
                       ref="ref中止保留事由"
                     >
                     </reafsinputtext>
@@ -1346,6 +1347,7 @@
                       <opensearch
                         required
                         v-model="hatchuForm.費用負担部門コード"
+                        :disabled="画面入力制御disabled.btn更新"
                         :appendlabelText="hatchuForm.費用負担部門名"
                         :append="'append'"
                         :maxlength="'8'"
@@ -1364,6 +1366,7 @@
                       tabindex="10"
                       required
                       v-model="hatchuForm.事業領域コード"
+                      :disabled="画面入力制御disabled.btn更新"
                       @change="selectHatchuSho_JigyoRyoiki"
                       ref="refHatchu事業領域"
                       style="width: 100%;"
@@ -1383,6 +1386,7 @@
                       tabindex="10"
                       required
                       v-model="hatchuForm.外内販コード"
+                      :disabled="画面入力制御disabled.btn更新"
                       @change="selectHatchuSho_SotoNai"
                       ref="refHatchu外内販区分"
                       style="width: 100%;"
@@ -1430,35 +1434,17 @@
                   <el-form-item label="費用按分" prop="費用按分" class="is-readonly">
                       <el-radio-group
                        v-model="hatchuForm.費用按分"
+                       @change="changeHiyo_AnbunHatchu"
                       >
-                        <el-radio :label="0" style="margin-right: 25px; padding-left:5px; align-self: center;">なし</el-radio>
-                        <el-radio :label="1" style="align-self: center;">あり</el-radio>
+                        <el-radio :disabled="isHiyoAnbun" label="0" style="margin-right: 25px; padding-left:5px; align-self: center;">なし</el-radio>
+                        <el-radio :disabled="isHiyoAnbun" label="1" style="align-self: center;">あり</el-radio>
                       </el-radio-group>
                   </el-form-item>
                 </el-col>
-                <el-col :span="5">
-                  <el-form-item label="按分設定" prop="按分設定" class="is-readonly">
-                    <div style="display: flex">
-                      <reafsinputtext
-                        maxlength="7"
-                        :title="hatchuForm.按分設定"
-                        v-model="hatchuForm.按分設定"
-                        :disabled="true"
-                        :width="'112px'"
-                        ref="ref按分設定"
-                        >
-                      </reafsinputtext>
-                      <el-button
-                        @click="showDialogHiyoFutanBumonSabu = true"
-                        style="height:30px; display:inline-flex; padding-top: 7px; margin-top: 0px; background: #d3d3d3; border-color: #b7b5b5;"
-                      >入力
-                      </el-button>
-                      <!-- <reafsmodalSearchHiyoFutanBumonSabu
-                        :dialogVisible.sync="showDialogHiyoFutanBumonSabu"
-                        @backData="dataBackHatchuAnbunSettei">
-                      </reafsmodalSearchHiyoFutanBumonSabu> -->
-                    </div>
-                  </el-form-item>
+                <el-col :span="5" style="margin: 7px 0 0 0;">
+                  <label style="color: red;">
+                    <span>{{ hatchuForm.msg費用按分 }}</span>
+                  </label>
                 </el-col>
               </el-row>
               <!-- ハノイ側修正2022/08/24　STEP2_W　課題管理表№55：設計書「修正履歴」シートの「2022/08/23仕様変更分」明細の各項目の横幅を変更可能としたい。  -->
@@ -1472,7 +1458,7 @@
                 :rowKeyFieldName="rowKey"
                 :resizeAble="true"
               ></reafstable>
-              <el-row style="padding-top: 10px;">
+              <el-row style="padding-top: 10px; display: flex;">
                 <el-col :span="9">
                   <el-form-item class="is-readonly is-area" prop="見積条件"
                   label-width="0px"
@@ -1545,18 +1531,30 @@
             <el-tab-pane label="作業結果／支払" name="sagyo">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item
-                    label="状態"
-                    prop="状態"
-                    class="is-readonly"
-                  >
-                    <reafsinputtext
-                      :title="sagyoForm.状態"
-                      v-model="sagyoForm.状態"
-                      maxlength="10"
-                      disabled
-                      :width="'255px'">
-                    </reafsinputtext>
+                  <el-form-item prop="状態" label-width="0px">
+                    <div style="display: flex">
+                      <label
+                        class="el-form-item__label item_label_col30"
+                        >状態</label
+                      >
+                      <el-select
+                        tabindex="11"
+                        v-model="sagyoForm.状態"
+                        :disabled="画面入力制御disabled.状態"
+                        @change="selectJotai"
+                        placeholder=""
+                        ref="ref状態"
+                        style="width: 255px;"
+                      >
+                        <el-option
+                          v-for="item in 状態value"
+                          :key="item.状態"
+                          :label="item.状態"
+                          :value="item.状態"
+                        >
+                        </el-option>
+                      </el-select>
+                    </div>
                   </el-form-item>
                 </el-col>
                 <el-col :span="7" style="padding-left: 7px;">
@@ -1568,6 +1566,21 @@
                     <reafsinputtext
                       :title="sagyoForm.業者状態"
                       v-model="sagyoForm.業者状態"
+                      maxlength="10"
+                      disabled
+                      :width="'255px;'">
+                    </reafsinputtext>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="7" style="padding-left: 7px;">
+                  <el-form-item
+                    label="部門確認"
+                    prop="部門確認"
+                    class="is-readonly"
+                  >
+                    <reafsinputtext
+                      :title="sagyoForm.部門確認"
+                      v-model="sagyoForm.部門確認"
                       maxlength="10"
                       disabled
                       :width="'255px;'">
@@ -1754,6 +1767,7 @@
                       <reafsinputtext
                         maxlength="8"
                         v-model="sagyoForm.費用負担部門コード"
+                        :disabled="!isBumonKakunin"
                         @blur="reafsmodalBack_searchHiyoFutanBumonSagyoForm"
                         :width="'100px'"
                         disabled="disabled"
@@ -1763,6 +1777,7 @@
                       <reafsinputtext
                         :title="sagyoForm.費用負担部門名"
                         v-model="sagyoForm.費用負担部門名"
+                        :disabled="!isBumonKakunin"
                         :width="'95%'"
                         class="is-readonly none-border-left"
                         disabled="disabled"
@@ -1777,6 +1792,7 @@
                       <opensearch
                         required
                         v-model="sagyoForm.費用負担部門コード"
+                        :disabled="!isBumonKakunin"
                         :appendlabelText="sagyoForm.費用負担部門名"
                         :append="'append'"
                         :maxlength="'8'"
@@ -1795,6 +1811,7 @@
                       <reafsinputtext
                         maxlength="8"
                         v-model="sagyoForm.事業領域コード"
+                        :disabled="!isBumonKakunin"
                         :width="'100px'"
                         disabled="disabled"
                         ref="ref事業領域"
@@ -1803,6 +1820,7 @@
                       <reafsinputtext
                         :title="sagyoForm.事業領域名"
                         v-model="sagyoForm.事業領域名"
+                        :disabled="!isBumonKakunin"
                         :width="'95%'"
                         class="is-readonly none-border-left"
                         disabled="disabled"
@@ -1815,6 +1833,7 @@
                       tabindex="10"
                       required
                       v-model="sagyoForm.事業領域"
+                      :disabled="!isBumonKakunin"
                       @change="selectSagyo_JigyoRyoiki"
                       ref="refSagyo事業領域"
                       style="width: 98%;"
@@ -1835,6 +1854,7 @@
                       <reafsinputtext
                         maxlength="5"
                         v-model="sagyoForm.外内販コード"
+                        :disabled="!isBumonKakunin"
                         :width="'90px'"
                         disabled="disabled"
                         ref="ref外内販区分"
@@ -1843,6 +1863,7 @@
                       <reafsinputtext
                         :title="sagyoForm.外内販名"
                         v-model="sagyoForm.外内販名"
+                        :disabled="!isBumonKakunin"
                         :width="'70%'"
                         class="is-readonly none-border-left"
                         disabled="disabled"
@@ -1855,6 +1876,7 @@
                       tabindex="10"
                       required
                       v-model="sagyoForm.外内販"
+                      :disabled="!isBumonKakunin"
                       @change="selectSagyo_SotoNai"
                       ref="refSagyo外内販"
                       style="width: 100%;"
@@ -1870,47 +1892,29 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row v-if="isShiharai">
+              <el-row>
                 <el-col :span="5">
                   <el-form-item label="費用按分" prop="費用按分" class="is-readonly">
                       <el-radio-group
                        v-model="sagyoForm.費用按分"
+                       @change="changeHiyo_AnbunSagyo"
                       >
-                        <el-radio :label="0" style="margin-right: 25px; padding-left:5px; align-self: center;">なし</el-radio>
-                        <el-radio :label="1" style="align-self: center;">あり</el-radio>
+                        <el-radio :disabled="!(isBumonKakunin && ((sagyoForm.状態 == '支払承認待ち' && sagyoForm.支払承認可能チェックCheck) || sagyoForm.状態 != '支払承認待ち'))" label="0" style="margin-right: 25px; padding-left:5px; align-self: center;">なし</el-radio>
+                        <el-radio :disabled="!(isBumonKakunin && ((sagyoForm.状態 == '支払承認待ち' && sagyoForm.支払承認可能チェックCheck) || sagyoForm.状態 != '支払承認待ち'))" label="1" style="align-self: center;">あり</el-radio>
                       </el-radio-group>
                   </el-form-item>
                 </el-col>
-                <el-col :span="9" style="padding-left: 10px;">
-                  <el-form-item label="按分設定" prop="按分設定" class="is-readonly">
-                    <div style="display: flex">
-                      <reafsinputtext
-                        maxlength="7"
-                        :title="sagyoForm.按分設定"
-                        v-model="sagyoForm.按分設定"
-                        :disabled="true"
-                        :width="'112px'"
-                        ref="ref按分設定"
-                        >
-                      </reafsinputtext>
-                      <el-button
-                        @click="showDialogHiyoFutanBumonSabu_Sagyo = true"
-                        style="height:30px; display:inline-flex; padding-top: 7px; margin-top: 0px; background: #d3d3d3; border-color: #b7b5b5;"
-                      >入力
-                      </el-button>
-                      <!-- <reafsmodalSearchHiyoFutanBumonSabu
-                        :dialogVisible.sync="showDialogHiyoFutanBumonSabu_Sagyo"
-                        @backData="dataBackSagyoAnbunSettei">
-                      </reafsmodalSearchHiyoFutanBumonSabu>  -->
-                    </div>
-                  </el-form-item>
+                <el-col :span="5" style="margin: 7px 0 0 0;">
+                  <label style="color: red;">
+                    <span>{{ sagyoForm.msg費用按分 }}</span>
+                  </label>
                 </el-col>
               </el-row>
               <reafstable
                 ref="tableSagyo税率別金額合計欄"
                 :tableData="sagyoForm.dt税率別金額合計欄"
-                :tableStyle="'width:339px;'"
-                :maxHeight="181"
+                :tableStyle="tableSagyo税率別金額合計欄Style"
+                :maxHeight="202"
                 :class="'dtSagyo'"
                 :columns="columnsZeiritsuBetsuKeiranSagyo"
                 :cellStyleOption="cellStyleOption税率別金額合計欄Sagyo"
@@ -2081,6 +2085,12 @@
                     </div>
                   </el-form-item>
                 </el-col>
+                <el-col v-if="isShiharai" :span="3" style="margin-top:-10px">
+                  <el-button
+                    :disabled="!(isBumonKakunin && sagyoForm.支払承認可能チェックCheck)"
+                    tabindex="13"
+                    @click="onBumonKakunin">部門確認</el-button>
+                </el-col>
               </el-row>
               <el-row>
                 <el-col :span="6">
@@ -2099,7 +2109,7 @@
                         <el-checkbox
                           tabindex="14"
                           v-model="sagyoForm.チェック1"
-                          :disabled="画面入力制御disabled.チェック1"
+                          :disabled="画面入力制御disabled.チェック1 || !isShiharai"
                           >
                         </el-checkbox>
                       </div>
@@ -2124,17 +2134,17 @@
                         <el-checkbox
                           tabindex="15"
                           v-model="sagyoForm.チェック2"
-                          :disabled="画面入力制御disabled.チェック2"
+                          :disabled="画面入力制御disabled.チェック2 || !isShiharai"
                           >
                         </el-checkbox>
                       </div>
                     </div>
                   </el-form-item>
                 </el-col>
-                <el-col v-if="dispBtnExistF005" :span="3" style="margin-top:-8px">
+                <el-col v-if="isTenpuSansho" :span="3" style="margin-top:-8px">
                   <el-button v-show="endableBtnKakuninToroku"
                     tabindex="16"
-                    @click="onKakuninToroku">確認登録</el-button>
+                    @click="onKakuninToroku">ﾁｪｯｸ登録</el-button>
                 </el-col>
               </el-row>
             </el-tab-pane>
@@ -2189,6 +2199,7 @@
                     :rows="2"
                     :disabled="画面入力制御disabled.否認_差戻事由"
                     v-model="否認_差戻事由"
+                    :title="否認_差戻事由"
                     ref="ref否認_差戻事由"
                   >
                   </el-input>
@@ -2220,6 +2231,12 @@
         </el-footer>
       </el-container>
     </el-form>
+    <modalHiyoAnbunShitei
+      :dialogVisible.sync="showHiyoAnbunShitei"
+      :HiyoAnbunShitei_key.sync="KeyDataToHiyoAnbunShitei"
+      @closePopupEvent="fnc_HiyoAnbunShiteiClose"
+      @UpdateSuccess="fnc_HiyoAnbunShiteiUpdateSuccess"
+    ></modalHiyoAnbunShitei>
   </div>
 </template>
 
@@ -2231,12 +2248,14 @@ import screenPopup from '../../common/ScreenPopup/ScreenPopup.vue'
 import reafsinputnumber from '@/components/basic/ReafsControl/ReafsInputNumber.vue'
 import opensearch from '@/components/basic/openSearch.vue'
 import reafsmodalSearchHiyoFutanBumonSabu from '@/views/Reafs-W/search/WS00520/Modal_SearchHiyoFutanBumonSabu.vue'
+import modalHiyoAnbunShitei from '@/components/modal/HiyoAnbunShitei.vue'
 
 var $select事業領域value
 var $select外内販value
 var $select発注書_請書value
 var $select取引先value
 var $select検収回数value
+var $select状態value
 
 export default {
   activated () {
@@ -2253,7 +2272,8 @@ export default {
     screenPopup,
     reafsinputnumber,
     opensearch,
-    reafsmodalSearchHiyoFutanBumonSabu
+    reafsmodalSearchHiyoFutanBumonSabu,
+    modalHiyoAnbunShitei
   },
   data () {
     return {
@@ -2286,7 +2306,8 @@ export default {
         工事依頼No: '',
         工事依頼No枝番: '',
         修繕区分小: '',
-        w稟議申請対象フラグ: ''
+        w稟議申請対象フラグ: '',
+        sgw費用按分FLG: ''
       },
       iraiForm: {
         工事区分: '',
@@ -2336,7 +2357,6 @@ export default {
         消費税額_合計: '',
         金額_税補正_合計: '',
         金額_税込_合計: '',
-        原価金額税抜: '',
         否認_差戻事由: '',
         修繕区分小: '',
         dt明細部: [],
@@ -2357,7 +2377,7 @@ export default {
         { field: '大中小区分',
           key: '3',
           title: '大中小区分',
-          width: '21%',
+          width: '18.5%',
           renderBodyCell: ({ row }) => {
             const text = row['大中小区分']
             return (
@@ -2396,7 +2416,7 @@ export default {
         { field: '数量',
           key: '6',
           title: '数量',
-          width: 46,
+          width: 65,
           renderBodyCell: ({ row, column, rowIndex }) => {
             return (
               <div style="display: block; text-align: right;">
@@ -2622,16 +2642,43 @@ export default {
         外内販コード: '',
         外内販名: '',
         dtHatchu: [],
-        費用按分: 0,
-        按分設定: '',
+        費用按分: '0',
         金額_税抜_合計: '',
         消費税額_合計: '',
         金額_税補正_合計: '',
         金額_税込_合計: '',
-        dt税率別金額合計欄: []
+        dt税率別金額合計欄: [],
+        msg費用按分: '',
+        w費用負担部門按分フラグ: 0,
+        dt按分入力済メッセージ: [],
+        isDisabledHiyoAnbun: false
       },
       rowKey税率別金額合計欄Hatchu: 'rowKey',
       columnsZeiritsuBetsuKeiranHatchu: [
+        { field: '業者コード',
+          key: '業者コード',
+          title: '',
+          width: 0,
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            return (
+              <div style="display: none;">
+                <span >{row.業者コード}</span>
+              </div>
+            )
+          }
+        },
+        { field: '業者コード枝番',
+          key: '業者コード枝番',
+          title: '',
+          width: 0,
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            return (
+              <div style="display: none;">
+                <span >{row.業者コード枝番}</span>
+              </div>
+            )
+          }
+        },
         { field: '取引先名',
           key: '1',
           title: '取引先名',
@@ -2697,6 +2744,33 @@ export default {
               </div>
             )
           }
+        },
+        { field: '',
+          key: '7',
+          title: '',
+          width: 110,
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            if (!row.率別売上金額税込) {
+              return (<div style="height: 24px;"/>)
+            } else {
+              return (
+                <div style="display: block; text-align: left;">
+                  <el-button
+                    style= "height: 24px; padding-top: 3px;"
+                    disabled={!(this.isDisplayHatchuAnbunNyuryoku)}
+                    on-click={() => {
+                      this.onAnbunNyuryoku(row, rowIndex, 'hatchu')
+                    }}
+                    size="medium"
+                    id={'refHatchuAnbunNyuryoku' + rowIndex}
+                  >
+                    按分入力
+                  </el-button>
+                  <span style={'margin-left: 5px;' + (row.按分入力済メッセージ === '未入力' ? ' color: red;' : ' font-weight: bold;')}>{ row.按分入力済メッセージ }</span>
+                </div>
+              )
+            }
+          }
         }
       ],
       cellStyleOption税率別金額合計欄Hatchu: {
@@ -2723,11 +2797,13 @@ export default {
       取引先コード: '',
       取引先コード枝番: '',
       取引先名: '',
+      状態value: [],
       取引先value: [],
       検収回数value: [],
       sagyoForm: {
         状態: '',
         業者状態: '',
+        部門確認: '',
         工事名称: '',
         作業担当者: '',
         担当者連絡先: '',
@@ -2764,13 +2840,21 @@ export default {
         sagyo検収回数: '',
         否認_差戻事由: '',
         種類: false,
-        費用按分: 0,
+        費用按分: '0',
         按分設定: '',
         税込発注金額_税込支払金額_合計: '',
         dt税率別金額合計欄: [],
-        発注サブNo: ''
+        負担区分: '',
+        発注サブNo: '',
+        msg費用按分: '',
+        w費用負担部門按分フラグ: 0,
+        dt按分入力済メッセージ: [],
+        no32Data: {},
+        発注サブNo_F052: '',
+        支払承認可能チェックCheck: false// ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」
       },
       rowKey税率別金額合計欄Sagyo: 'rowKey',
+      tableSagyo税率別金額合計欄Style: '',
       columnsZeiritsuBetsuKeiranSagyoOrg: [
         { field: '税率',
           key: '1',
@@ -2781,7 +2865,7 @@ export default {
         { field: '税込発注金額_税込支払金額',
           key: '2',
           title: '税込発注金額',
-          width: 65,
+          width: 70,
           renderBodyCell: ({ row, column, rowIndex }) => {
             return (
               <div style="display: block; text-align: right;">
@@ -2795,6 +2879,35 @@ export default {
           title: '支払予定日',
           width: 56,
           fixed: 'center'
+        },
+        { field: '',
+          key: '4',
+          title: '',
+          width: 105,
+          renderBodyCell: ({ row, column, rowIndex }) => {
+            if (!row.税込発注金額_税込支払金額) {
+              return (<div style="height: 24px;"/>)
+            } else {
+              return (
+                <div style="display: block; text-align: left;">
+                  <el-button
+                    style= "height: 24px; padding-top: 3px;"
+                    disabled={!(this.isDisplaySagyoAnbunNyuryoku &&
+                      (this.sagyoForm.状態 !== '工事完了確認待ち' && this.sagyoForm.状態 !== '工事完了差戻' && this.sagyoForm.状態 !== '工事完了確認済') &&
+                      ((this.sagyoForm.状態 == '支払承認待ち' && this.sagyoForm.支払承認可能チェックCheck) || this.sagyoForm.状態 != '支払承認待ち'))}
+                    on-click={() => {
+                      this.onAnbunNyuryoku(row, rowIndex, 'sagyo')
+                    }}
+                    size="medium"
+                    id={'refSagyoAnbunNyuryoku' + rowIndex}
+                  >
+                      按分入力
+                  </el-button>
+                  <span style={'margin-left: 5px;' + (row.按分入力済メッセージ === '未入力' ? ' color: red;' : ' font-weight: bold;')}>{ row.按分入力済メッセージ }</span>
+                </div>
+              )
+            }
+          }
         }
       ],
       cellStyleOption税率別金額合計欄Sagyo: {
@@ -2822,6 +2935,7 @@ export default {
         btn差戻: true,
         btn否認: true,
         btn承認: true,
+        状態: false,
         取引先: false,
         検収回数: false,
         否認_差戻事由: false,
@@ -2853,7 +2967,8 @@ export default {
         工事依頼No: '',
         発注サブNo: '',
         検収回数: '',
-        tabFocus: ''
+        tabFocus: '',
+        承認種類: ''
       },
       sessionPageDataBack: null,
       fw042_最終承認フラグ: '',
@@ -2871,10 +2986,32 @@ export default {
         工事依頼No: ''
       },
       showDialogIraiTenpuTouroku: false,
-      showDialogHiyoFutanBumonSabu: false,
       showDialogHiyoFutanBumonSabu_Sagyo: false,
       名称取得方法17: {},
-      kengen: false
+      kengen: false,
+      showHiyoAnbunShitei: false,
+      KeyDataToHiyoAnbunShitei: {
+        会社コード: '',
+        工事依頼No: '',
+        工事依頼No枝番: '',
+        取引先コード: '',
+        取引先名: '',
+        業者コード: '',
+        業者コード枝番: '',
+        税率: '',
+        率別売上金額税抜: '',
+        率別売上金額消費税: '',
+        率別売上金額税込: '',
+        費用負担部門コード: '',
+        検収回数: 0,
+        入力区分: '',
+        発注サブNO: 0,
+        費用按分: '',
+        未入力mode: '',
+        tabmode: ''
+      },
+      isDisplayHatchuAnbunNyuryoku: false,
+      isDisplaySagyoAnbunNyuryoku: false
     }
   },
   computed: {
@@ -2896,27 +3033,44 @@ export default {
     isShiharai () {
       return (this.sagyoForm.状態 !== '工事完了確認待ち' && this.sagyoForm.状態 !== '工事完了確認済' && this.sagyoForm.状態 !== '工事完了差戻')
     },
+    isBumonKakunin () {
+      return ((this.sagyoForm.状態 !== '工事完了確認待ち' && this.sagyoForm.状態 !== '工事完了差戻' && this.sagyoForm.状態 !== '工事完了確認済') && this.sagyoForm.部門確認 === '部門確認待ち')
+    },
+    isHiyoAnbun () {
+      return (this.画面入力制御disabled.btn更新 || this.hatchuForm.isDisabledHiyoAnbun)
+    },
     columnsZeiritsuBetsuKeiranSagyo () {
       if (!this.columnsZeiritsuBetsuKeiranSagyoOrg) {
         return []
       }
-      const cols = this.columnsZeiritsuBetsuKeiranSagyoOrg.filter(x => true)
-      const col2 = cols.find(x => x.key == '2')
-      if (this.dispBtnExistF005) {
-        col2.title = '税込支払金額'
+      // ハノイ側修正2022/1/11　STEP2_W　課題管理表№268：設計書「修正履歴」シートの「2022/1/6仕様変更分」「負担区分≠2の場合、税率・金額は非表示」 START
+      const cols = this.columnsZeiritsuBetsuKeiranSagyoOrg
+        .filter(x => this.sagyoForm.負担区分 != '2' ? x.field != '税率' && x.field != '税込発注金額_税込支払金額' : true)
+      const tblFullWidth = 510 // TODO
+      if (cols.find(x => x.field == '税率')) {
+        this.tableSagyo税率別金額合計欄Style = `width:${tblFullWidth}px;`
       } else {
-        col2.title = '税込発注金額'
+        this.tableSagyo税率別金額合計欄Style = `width:${tblFullWidth - (70 + 142)}px;`
+      }
+      // ハノイ側修正2022/1/11　STEP2_W　課題管理表№268：設計書「修正履歴」シートの「2022/1/6仕様変更分」「負担区分≠2の場合、税率・金額は非表示」 END
+      const col2 = cols.find(x => x.field == '税込発注金額_税込支払金額')
+      if (col2) {
+        if (this.dispBtnExistF005) {
+          col2.title = '税込支払金額'
+        } else {
+          col2.title = '税込発注金額'
+        }
       }
       return cols
     },
     colWidthTblZeiritsuBetsuKingakuGokeiran () {
       if (!this.hatchuForm.dt税率別金額合計欄) {
-        return 'width:770px;'
+        return 'width:920px;'
       }
       if (this.hatchuForm.dt税率別金額合計欄.length <= 4) {
-        return 'width:760px;'
+        return 'width:910px;'
       } else {
-        return 'width:770px;'
+        return 'width:920px;'
       }
     },
     footerData税率別金額合計欄Mitsu () {
@@ -2946,14 +3100,18 @@ export default {
       ]
     },
     footerData税率別金額合計欄Sagyo () {
-      return [
-        {
-          rowKey: 0,
-          税率: '合計',
-          税込発注金額_税込支払金額: this.sagyoForm.税込発注金額_税込支払金額_合計,
-          支払予定日: ''
-        }
-      ]
+      if (this.columnsZeiritsuBetsuKeiranSagyo && this.columnsZeiritsuBetsuKeiranSagyo.find(x => x.field == '税率')) {
+        return [
+          {
+            rowKey: 0,
+            税率: '合計',
+            税込発注金額_税込支払金額: this.sagyoForm.税込発注金額_税込支払金額_合計,
+            支払予定日: ''
+          }
+        ]
+      } else {
+        return []
+      }
     }
   },
   inject: ['setPageTitle'],
@@ -2963,6 +3121,7 @@ export default {
     $select事業領域value = this
     $select外内販value = this
     $select発注書_請書value = this
+    $select状態value = this
     $select取引先value = this
     $select検収回数value = this
   },
@@ -2974,10 +3133,11 @@ export default {
     initOnMounted () {
       // ハノイ側修正2022/07/28　STEP2_W　課題管理表№14：設計書「修正履歴」シートの「2022/07/14仕様変更分」「№15,16,18修正  №27追加」Start
       this.queryParams = {
-        工事依頼No: this.$route.query.工事依頼No,
-        発注サブNo: this.$route.query.発注サブNo,
-        検収回数: this.$route.query.検収回数,
-        tabFocus: this.$route.query.tabFocus
+        工事依頼No: this.$route.params.工事依頼No,
+        発注サブNo: this.$route.params.発注サブNo,
+        検収回数: this.$route.params.検収回数,
+        tabFocus: this.$route.params.tabFocus,
+        承認種類: this.$route.params.承認種類
       }
 
       if (this.queryParams.工事依頼No && this.queryParams.tabFocus === 'sagyo') {
@@ -3013,6 +3173,8 @@ export default {
       this.onSearch()
 
       // ハノイ側修正2022/07/28　STEP2_W　課題管理表№14：設計書「修正履歴」シートの「2022/07/14仕様変更分」「№15,16,18修正  №27追加」END
+      this.getPageTitleByMenu() // ハノイ側修正2023/03/14　課題管理表№350：「2023/03/10依頼分」「画面タイトルが正しく表示されないケースがある。」
+      this.$store.commit('setpageTitle', this.menuOptions.SubMenuName) // ハノイ側修正2023/03/14　課題管理表№350：「2023/03/10依頼分」「画面タイトルが正しく表示されないケースがある。」
       this.setPageTitle(this.menuOptions.SubMenuName)
     },
     init () {
@@ -3243,12 +3405,50 @@ export default {
                 this.否認_差戻事由 = response.data.data.否認_差戻事由
                 $select事業領域value.事業領域value = response.data.data.data名称取得方法No35
                 $select外内販value.外内販value = response.data.data.data名称取得方法No36
+                this.hatchuForm.w費用負担部門按分フラグ = response.data.data.w費用負担部門按分フラグ
+                this.hatchuForm.isDisabledHiyoAnbun = response.data.data.iEnableHiyoAnbun != '1'
                 Object.assign(this.hatchuFormInit, this.hatchuForm)
               } else {
                 this.resetHatchuForm()
                 hasData = false// ハノイ側修正2022/11/09　STEP2_W　課題管理表№165：設計書「修正履歴」シートの「2022/10/14仕様変更分」「見積承認後の再表示が実行された後の表示がおかしい。」
               }
             })
+          if (this.hatchuForm.w費用負担部門按分フラグ === 2) {
+            this.isDisplayHatchuAnbunNyuryoku = false
+            this.hatchuForm.費用按分 = '0'
+            this.hatchuForm.msg費用按分 = ''
+          } else {
+            this.isDisplayHatchuAnbunNyuryoku = true
+            this.hatchuForm.費用按分 = '1'
+
+            await this.getDataAnbunNyuryokuSumiMesseji('hatchu')
+            this.hatchuForm.dt税率別金額合計欄.map((item, index) => {
+              if (this.hatchuForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+                if (this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額 === '') {
+                  item['按分入力済メッセージ'] = '未入力'
+                } else if (this.getNumber(this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['率別売上金額税込'])) {
+                  item['按分入力済メッセージ'] = '入力済'
+                } else {
+                  item['按分入力済メッセージ'] = '出来高入力済'
+                }
+              } else {
+                item['按分入力済メッセージ'] = ''
+              }
+            })
+
+            let isExist未入力 = true
+            for (let i = 0; i < this.hatchuForm.dt税率別金額合計欄.length; i++) {
+              if (this.hatchuForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+                isExist未入力 = false
+                break
+              }
+            }
+            if (!isExist未入力) {
+              this.hatchuForm.msg費用按分 = '部門按分未入力があります。'
+            } else {
+              this.hatchuForm.msg費用按分 = ''
+            }
+          }
           // ハノイ側修正2022/11/09　STEP2_W　課題管理表№165：設計書「修正履歴」シートの「2022/10/14仕様変更分」「見積承認後の再表示が実行された後の表示がおかしい。」START
           if (hasData) {
             await this.fnc_btn制御()
@@ -3334,6 +3534,70 @@ export default {
       // ハノイ側修正2022/11/09　STEP2_W　課題管理表№165：設計書「修正履歴」シートの「2022/10/14仕様変更分」「見積承認後の再表示が実行された後の表示がおかしい。」END
       // ハノイ側修正2022/09/23　STEP2_W　課題管理表№119：設計書「修正履歴」シートの「2022/09/20仕様変更分」「参照権限チェック追加」End
     },
+    async getDataAnbunNyuryokuSumiMesseji (tab) {
+      const data = {
+        会社コード: this.searchData.会社コード,
+        工事依頼No: this.syuzenForm.工事依頼No,
+        工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+        tabmode: tab,
+        dt税率別金額合計欄: this.getData税率別金額合計欄(tab)
+      }
+      let res
+      await this.http
+        .post('/api/Reafs_W/Shonin/WD00520/按分入力済メッセージ', data, 'アクセスしています....')
+        .then((response) => {
+          res = response
+        }).catch((ex) => {
+        }).finally(() => {
+        })
+
+      if (res.status) {
+        if (tab === 'hatchu') {
+          this.hatchuForm.dt按分入力済メッセージ = res.data.dt按分入力済メッセージ
+        } else if (tab === 'sagyo') {
+          this.sagyoForm.dt按分入力済メッセージ = res.data.dt按分入力済メッセージ
+        }
+      }
+    },
+    getData税率別金額合計欄 (tab) {
+      const arrData = []
+      if (tab === 'hatchu') {
+        for (let i = 0; i < this.hatchuForm.dt税率別金額合計欄.length; i++) {
+          const row = this.hatchuForm.dt税率別金額合計欄[i]
+          const data = {
+            業者コード: row.業者コード,
+            業者コード枝番: row.業者コード枝番,
+            税率: row.税率
+          }
+          arrData.push(data)
+        }
+      } else if (tab === 'sagyo') {
+        let 業者コード = ''
+        let 業者コード枝番 = ''
+        if (this.syuzenForm.修繕区分小 === '05') {
+          業者コード = this.sagyoForm.no32Data.業者コード
+          業者コード枝番 = this.sagyoForm.no32Data.業者コード枝番
+        } else {
+          業者コード = this.sagyo取引先.split('_')[0]
+          業者コード枝番 = this.sagyo取引先.split('_')[1]
+        }
+        for (let i = 0; i < this.sagyoForm.dt税率別金額合計欄.length; i++) {
+          const row = this.sagyoForm.dt税率別金額合計欄[i]
+          const data = {
+            業者コード,
+            業者コード枝番,
+            税率: row.税率,
+            検収回数: this.sagyo検収回数
+          }
+          arrData.push(data)
+        }
+      }
+      return arrData
+    },
+    getNumber (string) {
+      if (!string) return 0
+      return (string + '' || '0').replaceAll(',', '') * 1
+    },
     async getDataIrai () {
       this.画面入力制御disabled.否認_差戻事由 = true
       this.is発注申請Tab = false
@@ -3362,6 +3626,7 @@ export default {
           this.activeName = 'irai'
           this.oldSelectedTab = 'irai'
           this.getPageTitleByMenu()
+          this.$store.commit('setpageTitle', this.menuOptions.SubMenuName) // ハノイ側修正2023/03/14　課題管理表№350：「2023/03/10依頼分」「画面タイトルが正しく表示されないケースがある。」
           this.setPageTitle(this.menuOptions.SubMenuName)
           return Promise.resolve(true)
         }
@@ -3383,27 +3648,38 @@ export default {
                     Object.assign(this.iraiForm, response.data)
                     this.否認_差戻事由 = response.data.否認_差戻事由
                     if (this.iraiForm.部位コメント.length > 0) {
-                      if (this.iraiForm.部位コメント.length == 1) {
-                        this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
-                        this.iraiForm.部位コメント2 = ''
-                        this.iraiForm.部位コメント3 = ''
-                        this.iraiForm.部位コメント4 = ''
-                      } else if (this.iraiForm.部位コメント.length == 2) {
-                        this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
-                        this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
-                        this.iraiForm.部位コメント3 = ''
-                        this.iraiForm.部位コメント4 = ''
-                      } else if (this.iraiForm.部位コメント.length == 3) {
-                        this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
-                        this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
-                        this.iraiForm.部位コメント3 = this.iraiForm.部位コメント[2].部位コメント
-                        this.iraiForm.部位コメント4 = ''
-                      } else if (this.iraiForm.部位コメント.length == 4) {
-                        this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
-                        this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
-                        this.iraiForm.部位コメント3 = this.iraiForm.部位コメント[2].部位コメント
-                        this.iraiForm.部位コメント4 = this.iraiForm.部位コメント[3].部位コメント
+                      for (let item of this.iraiForm.部位コメント) {
+                        if (item.ファイルNo === 1) {
+                          this.iraiForm.部位コメント1 = item.部位コメント
+                        } else if (item.ファイルNo === 2) {
+                          this.iraiForm.部位コメント2 = item.部位コメント
+                        } else if (item.ファイルNo === 3) {
+                          this.iraiForm.部位コメント3 = item.部位コメント
+                        } else if (item.ファイルNo === 4) {
+                          this.iraiForm.部位コメント4 = item.部位コメント
+                        }
                       }
+                      /*  if (this.iraiForm.部位コメント.length == 1) {
+                          this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
+                          this.iraiForm.部位コメント2 = ''
+                          this.iraiForm.部位コメント3 = ''
+                          this.iraiForm.部位コメント4 = ''
+                          } else if (this.iraiForm.部位コメント.length == 2) {
+                          this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
+                          this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
+                          this.iraiForm.部位コメント3 = ''
+                          this.iraiForm.部位コメント4 = ''
+                          } else if (this.iraiForm.部位コメント.length == 3) {
+                          this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
+                          this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
+                          this.iraiForm.部位コメント3 = this.iraiForm.部位コメント[2].部位コメント
+                          this.iraiForm.部位コメント4 = ''
+                          } else if (this.iraiForm.部位コメント.length == 4) {
+                          this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
+                          this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
+                          this.iraiForm.部位コメント3 = this.iraiForm.部位コメント[2].部位コメント
+                          this.iraiForm.部位コメント4 = this.iraiForm.部位コメント[3].部位コメント
+                      }  */
                     } else {
                       this.iraiForm.部位コメント1 = ''
                       this.iraiForm.部位コメント2 = ''
@@ -3523,6 +3799,8 @@ export default {
                   this.否認_差戻事由 = response.data.data.否認_差戻事由
                   $select事業領域value.事業領域value = response.data.data.data名称取得方法No35
                   $select外内販value.外内販value = response.data.data.data名称取得方法No36
+                  this.hatchuForm.w費用負担部門按分フラグ = response.data.data.w費用負担部門按分フラグ
+                  this.hatchuForm.isDisabledHiyoAnbun = response.data.data.iEnableHiyoAnbun != '1'
                   Object.assign(this.hatchuFormInit, this.hatchuForm)
                   this.画面入力制御disabled.否認_差戻事由 = false
                   next = true
@@ -3531,6 +3809,14 @@ export default {
                   this.resetHatchuForm()
                 }
               })
+            if (this.hatchuForm.w費用負担部門按分フラグ === 2) {
+              this.isDisplayHatchuAnbunNyuryoku = false
+              this.hatchuForm.費用按分 = '0'
+              this.hatchuForm.msg費用按分 = ''
+            } else {
+              this.isDisplayHatchuAnbunNyuryoku = true
+              this.hatchuForm.費用按分 = '1'
+            }
           } else {
             // ハノイ側修正2022/09/30　STEP2_W　課題管理表№131：設計書「修正履歴」シートの「2022/09/30仕様変更分」「タブ切替できない時はフッター部ボタンが切り替えてしまいます。」Start
             this.is発注申請Tab = true
@@ -3538,6 +3824,36 @@ export default {
             this.否認_差戻事由 = this.hatchuForm.否認_差戻事由
             this.画面入力制御disabled.否認_差戻事由 = false
             next = true
+          }
+
+          if (this.hatchuForm.費用按分 == '1') {
+            await this.getDataAnbunNyuryokuSumiMesseji('hatchu')
+            this.hatchuForm.dt税率別金額合計欄.map((item, index) => {
+              if (this.hatchuForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+                if (this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額 === '') {
+                  item['按分入力済メッセージ'] = '未入力'
+                } else if (this.getNumber(this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['率別売上金額税込'])) {
+                  item['按分入力済メッセージ'] = '入力済'
+                } else {
+                  item['按分入力済メッセージ'] = '出来高入力済'
+                }
+              } else {
+                item['按分入力済メッセージ'] = ''
+              }
+            })
+
+            let isExist未入力 = true
+            for (let i = 0; i < this.hatchuForm.dt税率別金額合計欄.length; i++) {
+              if (this.hatchuForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+                isExist未入力 = false
+                break
+              }
+            }
+            if (!isExist未入力) {
+              this.hatchuForm.msg費用按分 = '部門按分未入力があります。'
+            } else {
+              this.hatchuForm.msg費用按分 = ''
+            }
           }
         } else if (activeName === 'sagyo') {
           this.is発注申請Tab = false
@@ -3641,6 +3957,7 @@ export default {
           this.activeName = activeName
           this.oldSelectedTab = oldActiveName
           this.getPageTitleByMenu()
+          this.$store.commit('setpageTitle', this.menuOptions.SubMenuName) // ハノイ側修正2023/03/14　課題管理表№350：「2023/03/10依頼分」「画面タイトルが正しく表示されないケースがある。」
           this.setPageTitle(this.menuOptions.SubMenuName)
           await this.fnc_btn制御()
           resolve(true)
@@ -3658,7 +3975,18 @@ export default {
               Object.assign(this.iraiForm, response.data)
               this.否認_差戻事由 = response.data.否認_差戻事由
               if (this.iraiForm.部位コメント.length > 0) {
-                if (this.iraiForm.部位コメント.length == 1) {
+                for (let item of this.iraiForm.部位コメント) {
+                  if (item.ファイルNo === 1) {
+                    this.iraiForm.部位コメント1 = item.部位コメント
+                  } else if (item.ファイルNo === 2) {
+                    this.iraiForm.部位コメント2 = item.部位コメント
+                  } else if (item.ファイルNo === 3) {
+                    this.iraiForm.部位コメント3 = item.部位コメント
+                  } else if (item.ファイルNo === 4) {
+                    this.iraiForm.部位コメント4 = item.部位コメント
+                  }
+                }
+                /*  if (this.iraiForm.部位コメント.length == 1) {
                   this.iraiForm.部位コメント1 = this.iraiForm.部位コメント[0].部位コメント
                   this.iraiForm.部位コメント2 = ''
                   this.iraiForm.部位コメント3 = ''
@@ -3678,7 +4006,7 @@ export default {
                   this.iraiForm.部位コメント2 = this.iraiForm.部位コメント[1].部位コメント
                   this.iraiForm.部位コメント3 = this.iraiForm.部位コメント[2].部位コメント
                   this.iraiForm.部位コメント4 = this.iraiForm.部位コメント[3].部位コメント
-                }
+                }  */
               } else {
                 this.iraiForm.部位コメント1 = ''
                 this.iraiForm.部位コメント2 = ''
@@ -3713,12 +4041,86 @@ export default {
           , 'アクセスしています....')
         .then((response) => {
           if (response.data !== null) {
+            this.否認_差戻事由 = '' // ハノイ側修正2023/06/19　課題管理表№354：「2023/06/16依頼分」「1. タブ切り替えた時に「否認・差戻事由」内容が消えます。2.「検収回数」を変更した時に「否認・差戻事由」内容は再表示していません。」
             res = true
-            this.否認_差戻事由 = response.data.dataRet.否認_差戻事由
             this.sagyoForm.税込発注金額_税込支払金額_合計 = response.data.税込発注金額_税込支払金額_合計
             this.sagyoForm.dt税率別金額合計欄 = response.data.dt税率別金額合計欄
             Object.assign(this.sagyoForm, response.data.dataRet)
-            this.sagyoForm.状態 = response.data.状態
+            $select状態value.状態value = response.data.状態
+            if (this.queryParams.承認種類) {
+              if (response.data.状態.length === 0) {
+                this.sagyoForm.状態 = ''
+                this.画面入力制御disabled.状態 = true
+              } else {
+                if (this.queryParams.承認種類 === '工事完了確認') {
+                  const 工事完了確認待ち = $select状態value.状態value.find(x => x.状態 == '工事完了確認待ち')
+                  if (工事完了確認待ち) {
+                    this.sagyoForm.状態 = '工事完了確認待ち'
+                    this.否認_差戻事由 = 工事完了確認待ち.否認差戻事由
+                    this.fw042_version = 工事完了確認待ち.fw042_version
+                  }
+                  const 工事完了確認済 = $select状態value.状態value.find(x => x.状態 == '工事完了確認済')
+                  if (工事完了確認済) {
+                    this.sagyoForm.状態 = '工事完了確認済'
+                    this.否認_差戻事由 = 工事完了確認済.否認差戻事由
+                    this.fw042_version = 工事完了確認済.fw042_version
+                  }
+                  const 工事完了差戻 = $select状態value.状態value.find(x => x.状態 == '工事完了差戻')
+                  if (工事完了差戻) {
+                    this.sagyoForm.状態 = '工事完了差戻'
+                    this.否認_差戻事由 = 工事完了差戻.否認差戻事由
+                    this.fw042_version = 工事完了差戻.fw042_version
+                  }
+                } else if (this.queryParams.承認種類 === '支払承認') {
+                  const 支払承認待ち = $select状態value.状態value.find(x => x.状態 == '支払承認待ち')
+                  if (支払承認待ち) {
+                    this.sagyoForm.状態 = '支払承認待ち'
+                    this.否認_差戻事由 = 支払承認待ち.否認差戻事由
+                    this.fw042_version = 支払承認待ち.fw042_version
+                  }
+                  const 支払承認済 = $select状態value.状態value.find(x => x.状態 == '支払承認済')
+                  if (支払承認済) {
+                    this.sagyoForm.状態 = '支払承認済'
+                    this.否認_差戻事由 = 支払承認済.否認差戻事由
+                    this.fw042_version = 支払承認済.fw042_version
+                  }
+                  const 支払差戻 = $select状態value.状態value.find(x => x.状態 == '支払差戻')
+                  if (支払差戻) {
+                    this.sagyoForm.状態 = '支払差戻'
+                    this.否認_差戻事由 = 支払差戻.否認差戻事由
+                    this.fw042_version = 支払差戻.fw042_version
+                  }
+                  const 支払否認 = $select状態value.状態value.find(x => x.状態 == '支払否認')
+                  if (支払否認) {
+                    this.sagyoForm.状態 = '支払否認'
+                    this.否認_差戻事由 = 支払否認.否認差戻事由
+                    this.fw042_version = 支払否認.fw042_version
+                  }
+                }
+                if (response.data.状態.length === 1) {
+                  this.画面入力制御disabled.状態 = true
+                } else {
+                  this.画面入力制御disabled.状態 = false
+                }
+              }
+            } else {
+              if (response.data.状態.length === 0) {
+                this.sagyoForm.状態 = ''
+                this.否認_差戻事由 = ''
+                this.画面入力制御disabled.状態 = true
+              } else if (response.data.状態.length === 1) {
+                this.sagyoForm.状態 = response.data.状態[0].状態
+                this.否認_差戻事由 = response.data.状態[0].否認差戻事由
+                this.fw042_version = response.data.状態[0].fw042_version
+                this.画面入力制御disabled.状態 = true
+              } else {
+                this.sagyoForm.状態 = response.data.状態[0].状態
+                this.否認_差戻事由 = response.data.状態[0].否認差戻事由
+                this.fw042_version = response.data.状態[0].fw042_version
+                this.画面入力制御disabled.状態 = false
+              }
+            }
+            this.sagyoForm.否認_差戻事由 = this.否認_差戻事由 // ハノイ側修正2023/06/19　課題管理表№354：「2023/06/16依頼分」「1. タブ切り替えた時に「否認・差戻事由」内容が消えます。2.「検収回数」を変更した時に「否認・差戻事由」内容は再表示していません。」
             // if (response.data.チェック1 === '1') {
             //   this.sagyoForm.チェック1 = true
             // } else {
@@ -3730,8 +4132,25 @@ export default {
             // } else {
             //   this.sagyoForm.チェック2 = false
             // }
+            // ハノイ側修正2023/08/09　STEP2_W　課題管理表№385：設計書「修正履歴」シートの「2023/08/09仕様変更分」「業者状態の表示条件を修正」Start
             if (response.data.dataRet.existF005 === '' || response.data.dataRet.existF005 === null) {
               this.sagyoForm.業者状態 = '検収待ち'
+            } else {
+              if (response.data.dataRet.修繕区分小 == '05') {
+                this.sagyoForm.業者状態 = '請求合意済'
+              } else {
+                if (response.data.dataRet.請求合意区分 === ' ') {
+                  this.sagyoForm.業者状態 = '請求合意不要'
+                } else if (response.data.dataRet.請求合意区分 === '1') {
+                  this.sagyoForm.業者状態 = '請求合意済'
+                } else if (response.data.dataRet.請求合意区分 === '0') {
+                  this.sagyoForm.業者状態 = '請求合意待ち'
+                }
+              }
+            }
+            // ハノイ側修正2023/08/09　STEP2_W　課題管理表№385：設計書「修正履歴」シートの「2023/08/09仕様変更分」「業者状態の表示条件を修正」End
+            if (response.data.dataRet.existF005 === '' || response.data.dataRet.existF005 === null) {
+              this.sagyoForm.部門確認 = '部門確認前'
               this.dispBtnExistF005 = false
             }
             if (this.sagyoForm.チェック1 === true && this.sagyoForm.チェック2 === true) {
@@ -3739,25 +4158,27 @@ export default {
             } else {
               this.endableBtnKakuninToroku = false
             }
-            if (response.data.dataRet.請求合意区分 === ' ') {
-              this.sagyoForm.業者状態 = '請求合意不要'
-            } else if (response.data.dataRet.請求合意区分 === '1') {
-              this.sagyoForm.業者状態 = '請求合意済'
-            }
             if (response.data.dataRet.請求合意区分 === '0') {
-              this.sagyoForm.業者状態 = '請求合意待ち'
               this.dispBtnBy請求合意区分F005 = false
             } else {
               this.dispBtnBy請求合意区分F005 = true
+            }
+            if (response.data.dataRet.部門確認フラグ === 0) {
+              this.sagyoForm.部門確認 = '部門確認待ち'
+            } else if (response.data.dataRet.部門確認フラグ === 1) {
+              this.sagyoForm.部門確認 = '部門確認済'
+            }
+            if (response.data.data名称取得方法No32 !== undefined) {
+              this.sagyoForm.no32Data = response.data.data名称取得方法No32
             }
             if (response.data.data名称取得方法No33.length > 0) {
               this.sagyoForm.費用負担部門コード = response.data.data名称取得方法No33[0].計上部門コード
               this.sagyoForm.費用負担部門名 = response.data.data名称取得方法No33[0].費用負担部門
               this.sagyoForm.事業領域コード = response.data.data名称取得方法No33[0].事業領域
-              this.sagyoForm.事業領域 = response.data.data名称取得方法No33[0].事業領域
+              this.sagyoForm.事業領域 = response.data.data名称取得方法No33[0].事業領域 ? response.data.data名称取得方法No33[0].事業領域 : '0' // ハノイ側修正2023/03/23　STEP2_W　課題管理表№315：設計書「修正履歴」シートの「2022/08/29仕様変更分」「画面表示時の読込がない場合、初期値は選択なしの「ー」固定。」
               this.sagyoForm.事業領域名 = response.data.data名称取得方法No33[0].事業領域名
               this.sagyoForm.外内販コード = response.data.data名称取得方法No33[0].外内販
-              this.sagyoForm.外内販 = response.data.data名称取得方法No33[0].外内販
+              this.sagyoForm.外内販 = response.data.data名称取得方法No33[0].外内販 ? response.data.data名称取得方法No33[0].外内販 : '0' // ハノイ側修正2023/03/23　STEP2_W　課題管理表№315：設計書「修正履歴」シートの「2022/08/29仕様変更分」「画面表示時の読込がない場合、初期値は選択なしの「ー」固定。」
               this.sagyoForm.外内販名 = response.data.data名称取得方法No33[0].外内販区分
             } else {
               this.sagyoForm.費用負担部門コード = ''
@@ -3770,11 +4191,11 @@ export default {
               this.sagyoForm.外内販名 = ''
             }
             this.f001_version = response.data.f001_version
-            this.fw042_version = response.data.fw042_version
             this.sagyoForm.sagyo取引先 = this.sagyo取引先
             this.sagyoForm.sagyo検収回数 = this.sagyo検収回数
             $select事業領域value.事業領域value = response.data.data名称取得方法No35
             $select外内販value.外内販value = response.data.data名称取得方法No36
+            this.sagyoForm.w費用負担部門按分フラグ = response.data.dataRet.W費用負担部門按分フラグ
             Object.assign(this.sagyoFormInit, this.sagyoForm)
           } else {
             res = false
@@ -3786,6 +4207,45 @@ export default {
             this.endableBtnKakuninToroku = false
           }
         })
+
+      if (this.sagyoForm.w費用負担部門按分フラグ === 2) {
+        this.isDisplaySagyoAnbunNyuryoku = false
+        this.sagyoForm.費用按分 = '0'
+        this.sagyoForm.msg費用按分 = ''
+      } else {
+        this.isDisplaySagyoAnbunNyuryoku = true
+        this.sagyoForm.費用按分 = '1'
+
+        await this.getDataAnbunNyuryokuSumiMesseji('sagyo')
+        this.sagyoForm.dt税率別金額合計欄.map((item, index) => {
+          if (this.sagyoForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+            if (this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額 === '' ||
+            this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) !== this.getNumber(item['税込発注金額_税込支払金額'])) { // ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+              item['按分入力済メッセージ'] = '未入力'
+            } else if (this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['税込発注金額_税込支払金額'])) {
+              item['按分入力済メッセージ'] = '入力済'
+            } else {
+              // item['按分入力済メッセージ'] = '出来高入力済'// ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+            }
+          } else {
+            item['按分入力済メッセージ'] = ''
+          }
+        })
+
+        let isExist未入力 = true
+        for (let i = 0; i < this.sagyoForm.dt税率別金額合計欄.length; i++) {
+          if (this.sagyoForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+            isExist未入力 = false
+            break
+          }
+        }
+        if (!isExist未入力) {
+          this.sagyoForm.msg費用按分 = '部門按分未入力があります。'
+        } else {
+          this.sagyoForm.msg費用按分 = ''
+        }
+      }
+
       return res
     },
     async selectHatchuSho_Ukesho (val) {
@@ -3828,6 +4288,20 @@ export default {
           }
         }
       }
+    },
+    async selectJotai (val) {
+      let 否認_差戻事由 = ''
+      let fw042_version = ''
+      let itemSelect = $select状態value.状態value.find((item) => {
+        return item.状態 === val
+      })
+      if (itemSelect) {
+        否認_差戻事由 = itemSelect.否認差戻事由
+        fw042_version = itemSelect.fw042_version
+      }
+      this.否認_差戻事由 = 否認_差戻事由
+      this.fw042_version = fw042_version
+      await this.fnc_btn制御()
     },
     async selectTorihikisaki (val) {
       const 取引先 = val.split('_')
@@ -3944,13 +4418,30 @@ export default {
       }
       return true
     },
+    async fnc_不備チェック () { // ハノイ側修正2022/08/01　STEP2_W　課題管理表№376：設計書「修正履歴」シートの「2023/07/26仕様変更分」「支払承認時のボタン押下不可条件に不備のチェックを追加」
+      return new Promise((resolve) => {
+        this.http
+          .post('/api/Reafs_W/Shonin/WD00520/不備チェック',
+            { 会社コード: this.searchData.会社コード,
+              工事依頼No: this.syuzenForm.工事依頼No,
+              工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+              検収回数: this.sagyo検収回数,
+              業者コード: this.sagyo取引先.split('_')[0],
+              業者コード枝番: this.sagyo取引先.split('_')[1]
+              // 修繕区分小: this.syuzenForm.修繕区分小 // ハノイ側修正2022/08/09　STEP2_W　課題管理表№384：設計書「修正履歴」シートの「2023/08/08仕様変更分」「不備チェックの条件除外処理を削除」
+            })
+          .then((response) => {
+            resolve(response.data)
+          })
+      })
+    },
     async fnc_承認ルートチェック (btnName) {
       return new Promise((resolve) => {
         let 表示金額 = 0
         let 検収回数 = 0
         let 状態 = ''
         if (this.activeName === 'mitsu') {
-          表示金額 = this.mitsuForm.原価金額税抜
+          表示金額 = this.mitsuForm.金額_税抜_合計
         } else if (this.activeName === 'hatchu') {
           表示金額 = this.hatchuForm.金額_税抜_合計 // ハノイ側修正2022/10/19　STEP2_W　課題管理表№179：設計書「修正履歴」シートの「2022/10/18仕様変更分」「発注の申請データ作成時に表示金額としてセットされる値がおかしい。」
         } else if (this.activeName === 'sagyo') {
@@ -4018,8 +4509,13 @@ export default {
         F001_受注マスタ: {
           会社コード: this.searchData.会社コード,
           工事依頼No: this.syuzenForm.工事依頼No,
+          // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「UPD①条件を否認ボタン全てに変更、UPD④・⑤条件及び更新項目編集内容修正」START
+          稟議起案番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議起案番号,
+          稟議可決番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議可決番号,
+          // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「UPD①条件を否認ボタン全てに変更、UPD④・⑤条件及び更新項目編集内容修正」END
           修繕区分小: this.hatchuForm.修繕区分小,
-          依頼営業店稟議申請許可フラグ: this.hatchuForm.依頼営業店稟議申請許可
+          依頼営業店稟議申請許可フラグ: this.hatchuForm.依頼営業店稟議申請許可,
+          W費用負担部門按分フラグ: this.hatchuForm.費用按分 == '0' ? '2' : '0' // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「UPD①条件を否認ボタン全てに変更、UPD④・⑤条件及び更新項目編集内容修正」
         }
       }
       await this.http
@@ -4062,6 +4558,14 @@ export default {
             this.showError(res.data)
           })
           this.$refs.refHatchu外内販区分.focus()
+          return false
+        }
+        if (this.hatchuForm.msg費用按分 !== '') {
+          this.getMsg('E040777').then((response) => {
+            this.showError(response.data, {callback: () => {
+              document.getElementById('refHatchuAnbunNyuryoku0').focus()
+            }})
+          })
           return false
         }
       } else if (tab === 'sagyo' && this.isShiharai) {
@@ -4140,6 +4644,44 @@ export default {
         e.target.parentNode
         return false
       }
+      // ハノイ側修正2023/04/07　STEP2_W　課題管理表№321：設計書「修正履歴」シートの「2023/04/06仕様変更分」「事前発注稟議申請時の申請額チェック追加」Start
+      const data = {
+        DisplayTab: this.activeName,
+        会社コード: this.searchData.会社コード,
+        工事依頼No: this.syuzenForm.工事依頼No,
+        計上部門コード: this.hatchuForm.費用負担部門コード,
+        事業領域: this.hatchuForm.事業領域コード,
+        外内販: this.hatchuForm.外内販コード,
+        否認_差戻事由: this.否認_差戻事由,
+        表示金額: this.hatchuForm.金額_税抜_合計, // ハノイ側修正2022/10/19　STEP2_W　課題管理表№179：設計書「修正履歴」シートの「2022/10/18仕様変更分」「発注の申請データ作成時に表示金額としてセットされる値がおかしい。」
+        工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+        営業店名: this.syuzenForm.営業店名, // ハノイ側修正2022/09/16　課題管理表№98：設計書「修正履歴」シートの「2022/09/07仕様変更分」「各パラメータセット内容追記・修正」
+        依頼者名: this.iraiForm.依頼者名, // ハノイ側修正2022/09/16　課題管理表№98：設計書「修正履歴」シートの「2022/09/07仕様変更分」「各パラメータセット内容追記・修正」
+        F001_受注マスタ: {
+          会社コード: this.searchData.会社コード,
+          工事依頼No: this.syuzenForm.工事依頼No,
+          稟議起案番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議起案番号,
+          稟議可決番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議可決番号,
+          修繕区分小: this.hatchuForm.修繕区分小,
+          // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「UPD①条件を否認ボタン全てに変更、UPD④・⑤条件及び更新項目編集内容修正」START
+          依頼営業店稟議申請許可フラグ: this.hatchuForm.依頼営業店稟議申請許可,
+          W費用負担部門按分フラグ: this.hatchuForm.費用按分 == '0' ? '2' : '0'
+          // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「UPD①条件を否認ボタン全てに変更、UPD④・⑤条件及び更新項目編集内容修正」END
+        },
+        原価金額税抜: this.hatchuForm.金額_税抜_合計
+      }
+      await this.http
+        .post('/api/Reafs_W/Shonin/WD00520/申請額チェック', data)
+        .then((response) => {
+          result = response.status
+          msgErr = response.message
+          this.loading = false
+        })
+      if (!result) {
+        this.showError(msgErr)
+        return false
+      }
+      // ハノイ側修正2023/04/07　STEP2_W　課題管理表№321：設計書「修正履歴」シートの「2023/04/06仕様変更分」「事前発注稟議申請時の申請額チェック追加」End
       if (this.activeName === 'hatchu') {
         let msgConfirm = (await this.getMsg('K040078')).data// ハノイ側修正2022/11/03　課題管理表№203：設計書「修正履歴」シートの「2022/11/02仕様変更分」「稟議申請ボタン押下時のメッセージ変更」
         if (!await this.confirm(msgConfirm)) {
@@ -4159,28 +4701,6 @@ export default {
           .filter((value, index, self) => self.indexOf(value) === index).join('・')
       }
       // ハノイ側修正2022/10/18　STEP2_W　課題管理表№178：設計書「修正履歴」シートの「2022/10/17仕様変更分」「稟議起案番号や稟議可決番号を入力済みなのに、発注稟議申請処理が実行されてしまう。」End
-
-      const data = {
-        DisplayTab: this.activeName,
-        会社コード: this.searchData.会社コード,
-        工事依頼No: this.syuzenForm.工事依頼No,
-        計上部門コード: this.hatchuForm.費用負担部門コード,
-        事業領域: this.hatchuForm.事業領域コード,
-        外内販: this.hatchuForm.外内販コード,
-        否認_差戻事由: this.否認_差戻事由,
-        表示金額: this.hatchuForm.金額_税抜_合計, // ハノイ側修正2022/10/19　STEP2_W　課題管理表№179：設計書「修正履歴」シートの「2022/10/18仕様変更分」「発注の申請データ作成時に表示金額としてセットされる値がおかしい。」
-        工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
-        営業店名: this.syuzenForm.営業店名, // ハノイ側修正2022/09/16　課題管理表№98：設計書「修正履歴」シートの「2022/09/07仕様変更分」「各パラメータセット内容追記・修正」
-        依頼者名: this.iraiForm.依頼者名, // ハノイ側修正2022/09/16　課題管理表№98：設計書「修正履歴」シートの「2022/09/07仕様変更分」「各パラメータセット内容追記・修正」
-        F001_受注マスタ: {
-          会社コード: this.searchData.会社コード,
-          工事依頼No: this.syuzenForm.工事依頼No,
-          稟議起案番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議起案番号,
-          稟議可決番号: this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議可決番号,
-          修繕区分小: this.hatchuForm.修繕区分小
-          // 依頼営業店稟議申請許可フラグ: this.hatchuForm.依頼営業店稟議申請許可
-        }
-      }
       await this.http
         .post('/api/Reafs_W/Shonin/WD00520/稟議申請ボタン', data, 'アクセスしています....')
         .then((response) => {
@@ -4319,7 +4839,8 @@ export default {
         検収回数: 検収回数,
         lstサブNo_回数: this.検収回数value.map(x => `'${x.サブNo_回数}'`).join(','),
         取引先コード,
-        取引先コード枝番 // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+        取引先コード枝番, // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+        状態: this.sagyoForm.状態
       }
       await this.http
         .post('/api/Reafs_W/Shonin/WD00520/差戻ボタン', data, 'アクセスしています....')
@@ -4333,7 +4854,7 @@ export default {
         let msgM040004 = (await this.getMsg('M040004')).data
         let msgM040014 = (await this.getMsg('M040014')).data
         if (await this.showSuccess(msgM040004 + this.syuzenForm.工事依頼No + msgM040014)) {
-          await this.call_sendMail('差戻', resData.f001, resData.状態, resData.lstF042, resData.lstF004)// ハノイ側修正2022/10/26　STEP2_W　課題管理表№190：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」
+          await this.call_sendMail('差戻', resData.f001, resData.状態, resData.lstF042, resData.lstF004, 取引先コード, 取引先コード枝番)// ハノイ側修正2022/10/26　STEP2_W　課題管理表№190：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」
           await this.onSearch()
         }
       } else {
@@ -4368,7 +4889,16 @@ export default {
         }
       }
       if (this.activeName === 'sagyo') {
-        if (this.sagyoForm.状態 === '支払承認待ち') {
+        // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「工事完了確認否認メッセージチェック」START
+        if (this.sagyoForm.状態 === '工事完了確認待ち') {
+          let msgConfirm = (await this.getMsg('K040084')).data
+          if (!await this.confirm(msgConfirm)) {
+            this.loading = false
+            return false
+          }
+        }
+        // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「工事完了確認否認メッセージチェック」END
+        else if (this.sagyoForm.状態 === '支払承認待ち') {
           let msgConfirm = (await this.getMsg('K040066')).data
           if (!await this.confirm(msgConfirm)) {
             this.loading = false
@@ -4393,7 +4923,8 @@ export default {
         中止保留事由: this.iraiForm.中止保留事由,
         検収回数: 検収回数,
         取引先コード,
-        取引先コード枝番 // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+        取引先コード枝番, // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+        状態: this.sagyoForm.状態
       }
       await this.http
         .post('/api/Reafs_W/Shonin/WD00520/否認ボタン', data, 'アクセスしています....')
@@ -4473,7 +5004,7 @@ export default {
         修繕区分小: this.syuzenForm.修繕区分小,
         否認_差戻事由: this.否認_差戻事由,
         検収回数: 検収回数,
-        原価金額_税抜: this.mitsuForm.原価金額税抜,
+        原価金額_税抜: this.mitsuForm.金額_税抜_合計,
         表示金額: this.hatchuForm.金額_税抜_合計, // ハノイ側修正2022/10/19　STEP2_W　課題管理表№179：設計書「修正履歴」シートの「2022/10/18仕様変更分」「発注の申請データ作成時に表示金額としてセットされる値がおかしい。」
         税込支払金額: this.sagyoForm.税込支払金額,
         計上部門コード: this.activeName === 'sagyo' ? this.sagyoForm.費用負担部門コード : this.hatchuForm.費用負担部門コード,
@@ -4485,8 +5016,10 @@ export default {
         取引先コード枝番, // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
         F005_発注支払マスタ: this.getDataF005(),
         チェック1: this.sagyoForm.チェック1,
-        チェック2: this.sagyoForm.チェック2
+        チェック2: this.sagyoForm.チェック2,
         // 取引先コード枝番 // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+        sgw費用按分FLG: this.syuzenForm.sgw費用按分FLG,
+        状態: this.sagyoForm.状態
       }
       await this.http
         .post('/api/Reafs_W/Shonin/WD00520/承認ボタン', data, 'アクセスしています....')
@@ -4513,7 +5046,7 @@ export default {
               this.ExportReport発注書() // ハノイ側修正2022/12/29　STEP2_W　課題管理表№261：設計書「修正履歴」シートの「2022/12/27仕様変更分」「発注申請タブ：承認ボタン押下時の発注書自動作成処理は、サーバ側での独立処理とし、承認処理とは別で処理されるようにする。」
             }
           }
-          this.call_sendMail('承認', resData.f001, resData.状態, resData.lstF042, resData.lstF004) // ハノイ側修正2022/10/26　STEP2_W　課題管理表№190：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」
+          this.call_sendMail('承認', resData.f001, resData.状態, resData.lstF042, resData.lstF004, 取引先コード, 取引先コード枝番, resData.lstFT040) // ハノイ側修正2022/10/26　STEP2_W　課題管理表№190：設計書「修正履歴」シートの「2022/10/21仕様変更分」「◆メール送信について追加」
           this.onSearch()
         }
       } else {
@@ -4521,7 +5054,7 @@ export default {
         return false
       }
     },
-    async call_sendMail (btnName, f001, 状態, lstF042, listF004) {
+    async call_sendMail (btnName, f001, 状態, lstF042, listF004, 取引先コード, 取引先コード枝番, lstFT040) {
       if (listF004) {
         listF004 = listF004.reduce((prev, el) => {
           if (prev.some(o => o.取引先コード == el.取引先コード && o.取引先コード枝番 == el.取引先コード枝番)) { return prev }
@@ -4532,143 +5065,197 @@ export default {
         listF004 = [{}]
       }
       let res
+      // ハノイ側修正2023/02/15　STEP2_W　課題管理表№286：設計書「修正履歴」シートの「2023/02/15仕様変更分」「メール送信機能呼び出し時の、引数「本文印字用業者コード」と引数「本文印字用業者コード枝番」の設定を追加。」Start
       // 13
       if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && (f001.負担区分 == '1' || f001.負担区分 == '3')) {
-        const 取引先 = this.sagyo取引先.split('_')
-        res = await this.sendMail(13, f001.工事依頼No, f001.工事依頼No枝番, 取引先[0], 取引先[1], null)
+        res = await this.sendMail(13, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 14
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && (f001.負担区分 == '1' || f001.負担区分 == '3') && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(14, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(14, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
         // 22
       } else if (btnName == '差戻' && (this.activeName == 'mitsu' || this.activeName == 'gaiyoSho') &&
         (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && f001.負担区分 == '2') {
         const 申請者 = lstF042 ? (lstF042.find(x => x.種類 == 20) || {}).申請者 : ''
-        res = await this.sendMail(22, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者)
+        res = await this.sendMail(22, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者, '', '', '')
         return res
         // 23
       } else if (btnName == '差戻' && this.activeName == 'hatchu' &&
         (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && f001.負担区分 == '2') {
         const 申請者 = lstF042 ? (lstF042.find(x => x.種類 == 20) || {}).申請者 : ''
-        res = await this.sendMail(23, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者)
+        res = await this.sendMail(23, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者, '', '', '')
         return res
         // 24
       } else if (btnName == '承認' && this.activeName == 'hatchu' &&
         (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
         for (let i = 0; i < listF004.length; i++) {
-          res = await this.sendMail(24, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」Start
+          let lstFT040Filter = lstFT040 ? lstFT040.filter(
+            x => x.工事依頼No == f001.工事依頼No && x.工事依頼No枝番 == f001.工事依頼No枝番 &&
+              x.業者コード == listF004[i].取引先コード && x.業者コード枝番 == listF004[i].取引先コード枝番) : []
+          if (!lstFT040Filter) {
+            lstFT040Filter = []
+          }
+          let 工事件名 = lstFT040Filter[0] && lstFT040Filter[0].工事件名 != '' ? lstFT040Filter[0].工事件名 : f001.工事件名
+          res = await this.sendMail(24, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null, '', '', 工事件名)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」End
         }
         return res
         // 27
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && f001.負担区分 == '2') {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(27, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(27, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 28
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       (f001.修繕区分小 == '01' || f001.修繕区分小 == '04') && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(28, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(28, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
       // 47
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '02' && (f001.負担区分 == '1' || f001.負担区分 == '3')) {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(47, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(47, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 48
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '02' && (f001.負担区分 == '1' || f001.負担区分 == '3') && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(48, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(48, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
         // 54
       } else if (btnName == '承認' && this.activeName == 'hatchu' &&
         f001.修繕区分小 == '02' && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
         for (let i = 0; i < listF004.length; i++) {
-          res = await this.sendMail(54, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」Start
+          let lstFT040Filter = lstFT040 ? lstFT040.filter(
+            x => x.工事依頼No == f001.工事依頼No && x.工事依頼No枝番 == f001.工事依頼No枝番 &&
+              x.業者コード == listF004[i].取引先コード && x.業者コード枝番 == listF004[i].取引先コード枝番) : []
+          if (!lstFT040Filter) {
+            lstFT040Filter = []
+          }
+          let 工事件名 = lstFT040Filter[0] && lstFT040Filter[0].工事件名 != '' ? lstFT040Filter[0].工事件名 : f001.工事件名
+          res = await this.sendMail(54, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null, '', '', 工事件名)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」End
         }
         return res
         // 56
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '02' && f001.負担区分 == '2') {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(56, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(56, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 57
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '02' && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(57, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(57, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番)
         return res
         // 69
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '03' && (f001.負担区分 == '1' || f001.負担区分 == '3')) {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(69, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(69, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 70
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '03' && (f001.負担区分 == '1' || f001.負担区分 == '3') && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(70, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(70, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
         // 75
       } else if (btnName == '承認' && this.activeName == 'hatchu' &&
         f001.修繕区分小 == '03' && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
         for (let i = 0; i < listF004.length; i++) {
-          res = await this.sendMail(75, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」Start
+          let lstFT040Filter = lstFT040 ? lstFT040.filter(
+            x => x.工事依頼No == f001.工事依頼No && x.工事依頼No枝番 == f001.工事依頼No枝番 &&
+              x.業者コード == listF004[i].取引先コード && x.業者コード枝番 == listF004[i].取引先コード枝番) : []
+          if (!lstFT040Filter) {
+            lstFT040Filter = []
+          }
+          let 工事件名 = lstFT040Filter[0] && lstFT040Filter[0].工事件名 != '' ? lstFT040Filter[0].工事件名 : f001.工事件名
+          res = await this.sendMail(75, f001.工事依頼No, f001.工事依頼No枝番, listF004[i].取引先コード, listF004[i].取引先コード枝番, null, '', '', 工事件名)
+          // ハノイ側修正2023/02/17　STEP2_W　課題管理表№275：設計書「275_230215追加」End
         }
         return res
         // 77
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '03' && f001.負担区分 == '2') {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(77, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(77, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 78
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '03' && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(78, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(78, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
         // 89
       } else if (btnName == '差戻' && (this.activeName == 'mitsu' || this.activeName == 'gaiyoSho') &&
         f001.修繕区分小 == '05' && f001.負担区分 == '2') {
         const 申請者 = lstF042 ? (lstF042.find(x => x.種類 == 30) || {}).申請者 : ''
-        res = await this.sendMail(89, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者)
+        res = await this.sendMail(89, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者, '', '', '')
         return res
         // 90
       } else if (btnName == '差戻' && this.activeName == 'hatchu' &&
         f001.修繕区分小 == '05' && f001.負担区分 == '2') {
         const 申請者 = lstF042 ? (lstF042.find(x => x.種類 == 30) || {}).申請者 : ''
-        res = await this.sendMail(90, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者)
+        res = await this.sendMail(90, f001.工事依頼No, f001.工事依頼No枝番, '', '', 申請者, '', '', '')
         return res
         // 94
       } else if (btnName == '差戻' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '05' && f001.負担区分 == '2') {
-        const 取引先 = this.sagyo取引先.split('_')
-        const 取引先コード = 取引先[0]
-        const 取引先コード枝番 = 取引先[1]
-        res = await this.sendMail(94, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null)
+        res = await this.sendMail(94, f001.工事依頼No, f001.工事依頼No枝番, 取引先コード, 取引先コード枝番, null, '', '', '')
         return res
         // 95
       } else if (btnName == '承認' && this.activeName == 'sagyo' && 状態 == '工事完了確認待ち' &&
       f001.修繕区分小 == '05' && f001.負担区分 == '2' && this.fw042_最終承認フラグ == '1') {
-        res = await this.sendMail(95, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者)
+        res = await this.sendMail(95, f001.工事依頼No, f001.工事依頼No枝番, '', '', f001.工事監理者 || f001.受付担当者, 取引先コード, 取引先コード枝番, '')
         return res
       }
+      // ハノイ側修正2023/02/15　STEP2_W　課題管理表№286：設計書「修正履歴」シートの「2023/02/15仕様変更分」「メール送信機能呼び出し時の、引数「本文印字用業者コード」と引数「本文印字用業者コード枝番」の設定を追加。」End
     },
-    async sendMail (mailPatternNo, 工事依頼No, 工事依頼No枝番, 業者コード, 業者コード枝番, 担当者コード) {
+    async sendMail (mailPatternNo, 工事依頼No, 工事依頼No枝番, 業者コード, 業者コード枝番, 担当者コード, 本文印字用業者コード, 本文印字用業者コード枝番, 工事件名) { // ハノイ側修正2023/02/15　STEP2_W　課題管理表№286：設計書「修正履歴」シートの「2023/02/15仕様変更分」「メール送信機能呼び出し時の、引数「本文印字用業者コード」と引数「本文印字用業者コード枝番」の設定を追加。」
+      const url = []
+      if ([13, 23, 24, 27, 47, 54, 56, 69, 75, 77, 90, 94].includes(mailPatternNo)) {
+        let Reafs_W_BaseURL = ''
+        let Reafs_T_BaseURL = ''
+        let linkUrl = ''
+        let paramSet = {}
+        if (mailPatternNo == 13 || mailPatternNo == 27 || mailPatternNo == 47 || mailPatternNo == 56 ||
+            mailPatternNo == 69 || mailPatternNo == 77 || mailPatternNo == 94) {
+          Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+          linkUrl = Reafs_T_BaseURL + 'SagyoHokokuNyuryoku'
+          paramSet = {
+            パラメータ1: 工事依頼No,
+            パラメータ2: 工事依頼No枝番,
+            パラメータ3: 業者コード,
+            パラメータ4: 業者コード枝番,
+            パラメータ5: this.sagyoForm.発注サブNo_F052,
+            パラメータ6: this.sagyo検収回数,
+            PG: 'WD00520'
+          }
+        } else if (mailPatternNo == 23 || mailPatternNo == 90) {
+          Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+          linkUrl = Reafs_W_BaseURL + 'WD00520/SyuzenIraiSansyoShonin'
+          paramSet = {
+            パラメータ1: 工事依頼No,
+            パラメータ2: '',
+            パラメータ3: '',
+            パラメータ4: 'hatchu',
+            PG: 'WD00520'
+          }
+        } else if (mailPatternNo == 24 || mailPatternNo == 54 || mailPatternNo == 75) {
+          Reafs_T_BaseURL = this.commonFunctionUI.getBaseURL('T')
+          linkUrl = Reafs_T_BaseURL + 'KojiIchiran'
+          paramSet = {
+            パラメータ1: '5',
+            パラメータ2: 工事件名,
+            PG: 'WD00520'
+          }
+        }
+
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+      }
       const param = {
         msg_type: 0,
         mail_to: '',
@@ -4686,9 +5273,13 @@ export default {
         宛先係コード: [],
         業者コード,
         業者コード枝番,
-        担当者コード: 担当者コード ? [担当者コード] : []
+        担当者コード: 担当者コード ? [担当者コード] : [],
+        // ハノイ側修正2023/02/15　STEP2_W　課題管理表№286：設計書「修正履歴」シートの「2023/02/15仕様変更分」「メール送信機能呼び出し時の、引数「本文印字用業者コード」と引数「本文印字用業者コード枝番」の設定を追加。」Start
+        本文印字用業者コード: 本文印字用業者コード,
+        本文印字用業者コード枝番: 本文印字用業者コード枝番,
+        // ハノイ側修正2023/02/15　STEP2_W　課題管理表№286：設計書「修正履歴」シートの「2023/02/15仕様変更分」「メール送信機能呼び出し時の、引数「本文印字用業者コード」と引数「本文印字用業者コード枝番」の設定を追加。」End
+        url: url
       }
-      console.log(param)
       const res = await this.commonFunctionUI.CM00110SendMail(param)
       return res
     },
@@ -4700,6 +5291,166 @@ export default {
       this.paramsHatchuShoUkesho.取引先コード枝番 = this.取引先コード枝番
       this.paramsHatchuShoUkesho.取引先名 = this.取引先名
       this.showDialogHatchuShoUkesho = true
+    },
+    onAnbunNyuryoku (row, rowIndex, tab) {
+      let 検収回数 = 0
+      let 入力区分 = ''
+      let 発注サブNO = 0
+      this.KeyDataToHiyoAnbunShitei.会社コード = this.searchData.会社コード
+      this.KeyDataToHiyoAnbunShitei.工事依頼No = this.syuzenForm.工事依頼No
+      this.KeyDataToHiyoAnbunShitei.工事依頼No枝番 = this.syuzenForm.工事依頼No枝番
+      this.KeyDataToHiyoAnbunShitei.修繕区分小 = this.syuzenForm.修繕区分小
+      if (tab === 'hatchu') {
+        this.KeyDataToHiyoAnbunShitei.取引先コード = row.業者コード + '-' + row.業者コード枝番
+        this.KeyDataToHiyoAnbunShitei.取引先名 = row.取引先名
+        this.KeyDataToHiyoAnbunShitei.業者コード = row.業者コード
+        this.KeyDataToHiyoAnbunShitei.業者コード枝番 = row.業者コード枝番
+        this.KeyDataToHiyoAnbunShitei.税率 = row.税率
+        this.KeyDataToHiyoAnbunShitei.率別売上金額税抜 = row.率別売上金額税抜
+        this.KeyDataToHiyoAnbunShitei.率別売上金額消費税 = row.率別売上金額消費税
+        this.KeyDataToHiyoAnbunShitei.率別売上金額税込 = row.率別売上金額税込
+        this.KeyDataToHiyoAnbunShitei.費用負担部門コード = this.hatchuForm.費用負担部門コード
+        this.KeyDataToHiyoAnbunShitei.未入力mode = this.hatchuForm.dt税率別金額合計欄[rowIndex].按分入力済メッセージ
+        this.KeyDataToHiyoAnbunShitei.発注サブNO = 発注サブNO
+      } else if (tab === 'sagyo') {
+        if (this.syuzenForm.修繕区分小 === '05') {
+          this.KeyDataToHiyoAnbunShitei.取引先コード = this.sagyoForm.no32Data.業者コード + '-' + this.sagyoForm.no32Data.業者コード枝番
+          this.KeyDataToHiyoAnbunShitei.取引先名 = this.sagyoForm.no32Data.業者名
+          this.KeyDataToHiyoAnbunShitei.業者コード = this.sagyoForm.no32Data.業者コード
+          this.KeyDataToHiyoAnbunShitei.業者コード枝番 = this.sagyoForm.no32Data.業者コード枝番
+        } else {
+          this.KeyDataToHiyoAnbunShitei.取引先コード = this.sagyo取引先.split('_')[0] + '-' + this.sagyo取引先.split('_')[1]
+          let 取引先名 = ''
+          let itemSelect = $select取引先value.取引先value.find((item) => {
+            return item.取引先 === this.sagyo取引先
+          })
+          if (itemSelect) {
+            取引先名 = itemSelect.取引先名
+          }
+          this.KeyDataToHiyoAnbunShitei.取引先名 = 取引先名
+          this.KeyDataToHiyoAnbunShitei.業者コード = this.sagyo取引先.split('_')[0]
+          this.KeyDataToHiyoAnbunShitei.業者コード枝番 = this.sagyo取引先.split('_')[1]
+        }
+        this.KeyDataToHiyoAnbunShitei.税率 = row.税率
+        this.KeyDataToHiyoAnbunShitei.率別売上金額税抜 = row.税抜発注金額_税抜支払金額
+        this.KeyDataToHiyoAnbunShitei.率別売上金額消費税 = row.消費税発注金額_消費税支払金額
+        this.KeyDataToHiyoAnbunShitei.率別売上金額税込 = row.税込発注金額_税込支払金額
+        this.KeyDataToHiyoAnbunShitei.費用負担部門コード = this.sagyoForm.費用負担部門コード
+        this.KeyDataToHiyoAnbunShitei.未入力mode = this.sagyoForm.dt税率別金額合計欄[rowIndex].按分入力済メッセージ
+        if (this.syuzenForm.修繕区分小 !== '05') {
+          発注サブNO = row.発注サブNo
+        }
+        this.KeyDataToHiyoAnbunShitei.発注サブNO = 発注サブNO
+        this.KeyDataToHiyoAnbunShitei.費用按分 = this.sagyoForm.費用按分
+      }
+
+      if (this.activeName === 'hatchu') {
+        検収回数 = '0'
+        入力区分 = '1'
+      } else if (this.activeName === 'sagyo') {
+        検収回数 = this.sagyo検収回数
+        入力区分 = '2'
+      }
+
+      this.KeyDataToHiyoAnbunShitei.検収回数 = 検収回数
+      this.KeyDataToHiyoAnbunShitei.入力区分 = 入力区分
+      this.KeyDataToHiyoAnbunShitei.tabmode = tab
+      this.showHiyoAnbunShitei = true
+    },
+    fnc_HiyoAnbunShiteiClose (e) {
+    },
+    async fnc_HiyoAnbunShiteiUpdateSuccess (e) {
+      if (this.activeName === 'hatchu') {
+        await this.getDataAnbunNyuryokuSumiMesseji('hatchu')
+        this.hatchuForm.dt税率別金額合計欄.map((item, index) => {
+          if (this.hatchuForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+            if (this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額 === '') {
+              item['按分入力済メッセージ'] = '未入力'
+            } else if (this.getNumber(this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['率別売上金額税込'])) {
+              item['按分入力済メッセージ'] = '入力済'
+            } else {
+              item['按分入力済メッセージ'] = '出来高入力済'
+            }
+          } else {
+            item['按分入力済メッセージ'] = ''
+          }
+        })
+        let isExist未入力 = true
+        for (let i = 0; i < this.hatchuForm.dt税率別金額合計欄.length; i++) {
+          if (this.hatchuForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+            isExist未入力 = false
+            break
+          }
+        }
+        if (!isExist未入力) {
+          this.hatchuForm.msg費用按分 = '部門按分未入力があります。'
+        } else {
+          this.hatchuForm.msg費用按分 = ''
+        }
+      } else if (this.activeName === 'sagyo') {
+        await this.getVersion('sagyo')
+        await this.getDataAnbunNyuryokuSumiMesseji('sagyo')
+        this.sagyoForm.dt税率別金額合計欄.map((item, index) => {
+          if (this.sagyoForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+            if (this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額 === '' ||
+            this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) !== this.getNumber(item['税込発注金額_税込支払金額'])) { // ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+              item['按分入力済メッセージ'] = '未入力'
+            } else if (this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['税込発注金額_税込支払金額'])) {
+              item['按分入力済メッセージ'] = '入力済'
+            } else {
+              // item['按分入力済メッセージ'] = '出来高入力済'// ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+            }
+          } else {
+            item['按分入力済メッセージ'] = ''
+          }
+        })
+
+        let isExist未入力 = true
+        for (let i = 0; i < this.sagyoForm.dt税率別金額合計欄.length; i++) {
+          if (this.sagyoForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+            isExist未入力 = false
+            break
+          }
+        }
+        if (!isExist未入力) {
+          this.sagyoForm.msg費用按分 = '部門按分未入力があります。'
+        } else {
+          this.sagyoForm.msg費用按分 = ''
+        }
+      }
+    },
+    async getVersion (tabName) {
+      let 種類 = ''
+      let 検収回数 = ''
+      const para検収回数 = this.sagyo検収回数
+      switch (tabName) {
+        case 'gaiyoSho':
+          種類 = '32'
+          break
+        case 'mitsu':
+          種類 = '32'
+          break
+        case 'hatchu':
+          種類 = '41'
+          break
+        case 'sagyo':
+          if (this.sagyoForm.状態 === '支払承認待ち') {
+            種類 = '61'
+          }
+          if (this.sagyoForm.状態 === '工事完了確認待ち') {
+            種類 = '52'
+          }
+          検収回数 = para検収回数
+          break
+      }
+      this.http
+        .get('/api/Reafs_W/Shonin/WD00520/fnc_getVersion',
+          { 会社コード: this.searchData.会社コード, 依頼No: this.syuzenForm.工事依頼No, 種類, 検収回数 })
+        .then((response) => {
+          if (response.data !== null) {
+            this.f001_version = response.data.f001_version
+          }
+        })
     },
     async onBack () {
       this.$store.commit('setKeepAliveFlag', 0)
@@ -5103,20 +5854,47 @@ export default {
             }
           })
         await this.http.get('api/Reafs_W/Shonin/WD00520/稟議差戻チェック',
-          {会社コード: this.searchData.会社コード, 工事依頼No: this.syuzenForm.工事依頼No, 修繕区分小: this.syuzenForm.修繕区分小},
+          {会社コード: this.searchData.会社コード, 工事依頼No: this.syuzenForm.工事依頼No, 修繕区分小: this.syuzenForm.修繕区分小, 負担区分: this.hatchuForm.負担区分},
           'アクセスしています....')
           .then((response) => {
             let bhasData = false
+            let bCondition1 = false
+            let bCondition2 = false
+            let bCondition3 = false
+            let bCondition4 = false
+            let bCondition5 = false
             if (Object.getPrototypeOf(response.data) == Object.prototype) {
               bhasData = Object.keys(response.data).length > 0
             } else {
               bhasData = response.data.length > 0
             }
             if (bhasData == true) {
-              if ((response.data.稟議差戻チェック1.length > 0 || response.data.稟議差戻チェック2.length > 0) &&
-                  response.data.稟議差戻チェック3.length > 0 && this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議可決番号 === '') {
+              // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「「工事完了確認待ち」時の差戻ボタン押下条件追加」START
+              if (response.data.稟議差戻チェック1.length > 0 || response.data.稟議差戻チェック2.length > 0) {
+                bCondition1 = true
+              }
+              if (response.data.稟議差戻チェック3.length === 0) {
+                bCondition2 = true
+              }
+              if (response.data.稟議差戻チェック4.length > 0) {
+                bCondition3 = true
+              }
+              if ((this.syuzenForm.修繕区分小 === '02' || this.syuzenForm.修繕区分小 === '03') && this.hatchuForm.負担区分 === '2') {
+                if (response.data.稟議差戻チェック5.length === 0) {
+                  bCondition4 = true
+                }
+              } else {
+                bCondition4 = true
+              }
+
+              if (this.hatchuForm.ｸﾞﾙｰﾌﾟ稟議可決番号 === '') {
+                bCondition5 = true
+              }
+
+              if ((bCondition1 || bCondition2) && bCondition3 && bCondition4 && bCondition5) {
                 bolBtn差戻 = false
               }
+              // ハノイ側修正2023/02/15　STEP2_W　課題管理表№285：設計書「修正履歴」シートの「2023/02/14仕様変更分」「「工事完了確認待ち」時の差戻ボタン押下条件追加」END
             }
           })
         let bol発注申請取下チェック = false
@@ -5147,6 +5925,7 @@ export default {
         }
       }
       if (this.activeName === 'sagyo') {
+        await this.支払承認可能チェック(this.sagyo検収回数)// ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」
         bolBtn帳票一覧 = false
         if (this.sagyoForm.状態 === '工事完了確認待ち') {
           const 検収回数 = this.sagyo検収回数
@@ -5173,31 +5952,75 @@ export default {
                 bolBtn承認 = false
               }
             })
+          // ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」 Start
+          if (this.sagyoForm.支払承認可能チェックCheck) {
+            bolBtn差戻 = true
+          }
+          // await this.http.get('api/Reafs_W/Shonin/WD00520/支払承認可能チェック',
+          //   {会社コード: this.searchData.会社コード,
+          //     工事依頼No: this.syuzenForm.工事依頼No,
+          //     工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+          //     検収回数: 検収回数,
+          //     取引先コード: this.sagyo取引先.split('_')[0], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          //     取引先コード枝番: this.sagyo取引先.split('_')[1], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          //     修繕区分小: this.syuzenForm.修繕区分小},
+          //   'アクセスしています....')
+          //   .then((response) => {
+          //     let bhasData = false
+          //     if (Object.getPrototypeOf(response.data) == Object.prototype) {
+          //       bhasData = Object.keys(response.data).length > 0
+          //     } else {
+          //       bhasData = response.data.length > 0
+          //     }
+          //     if (bhasData === true) {
+          //       bolBtn差戻 = true
+          //     }
+          //   })
+          // ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」 End
         }
         if (this.sagyoForm.状態 === '支払承認待ち') {
-          const 検収回数 = this.sagyo検収回数
-          await this.http.get('api/Reafs_W/Shonin/WD00520/支払承認可能チェック',
-            {会社コード: this.searchData.会社コード,
-              工事依頼No: this.syuzenForm.工事依頼No,
-              工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
-              検収回数: 検収回数,
-              取引先コード: this.sagyo取引先.split('_')[0], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
-              取引先コード枝番: this.sagyo取引先.split('_')[1], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
-              修繕区分小: this.syuzenForm.修繕区分小},
-            'アクセスしています....')
-            .then((response) => {
-              let bhasData = false
-              if (Object.getPrototypeOf(response.data) == Object.prototype) {
-                bhasData = Object.keys(response.data).length > 0
-              } else {
-                bhasData = response.data.length > 0
-              }
-              if (bhasData === true) {
-                bolBtn差戻 = false
-                bolBtn否認 = false
-                bolBtn承認 = false
-              }
-            })
+          // ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」Start
+          if (this.sagyoForm.支払承認可能チェックCheck) {
+            bolBtn差戻 = false
+            bolBtn否認 = false
+            if (this.sagyoForm.部門確認 === '部門確認済') {
+              bolBtn承認 = false
+            }
+          }
+          // await this.http.get('api/Reafs_W/Shonin/WD00520/支払承認可能チェック',
+          //   {会社コード: this.searchData.会社コード,
+          //     工事依頼No: this.syuzenForm.工事依頼No,
+          //     工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+          //     検収回数: 検収回数,
+          //     取引先コード: this.sagyo取引先.split('_')[0], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          //     取引先コード枝番: this.sagyo取引先.split('_')[1], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          //     修繕区分小: this.syuzenForm.修繕区分小},
+          //   'アクセスしています....')
+          //   .then((response) => {
+          //     let bhasData = false
+          //     if (Object.getPrototypeOf(response.data) == Object.prototype) {
+          //       bhasData = Object.keys(response.data).length > 0
+          //     } else {
+          //       bhasData = response.data.length > 0
+          //     }
+          //     if (bhasData === true) {
+          //       bolBtn差戻 = false
+          //       bolBtn否認 = false
+          //       if (this.sagyoForm.部門確認 === '部門確認済') {
+          //         bolBtn承認 = false
+          //       }
+          //     }
+          //   })
+          // ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」 End
+          if (this.syuzenForm.修繕区分小 !== '05' && !this.dispBtnBy請求合意区分F005) { // ハノイ側修正2023/03/07　STEP2_W　課題管理表№306：設計書「修正履歴」シートの「2023/03/07仕様変更分」「支払承認時のボタン押下不可条件に条件追加」
+            bolBtn承認 = true
+          }
+
+          // ハノイ側修正2022/08/01　STEP2_W　課題管理表№376：設計書「修正履歴」シートの「2023/07/26仕様変更分」「支払承認時のボタン押下不可条件に不備のチェックを追加」Start
+          if (this.syuzenForm.修繕区分小 !== '05' && !await this.fnc_不備チェック()) { // ハノイ側修正2022/08/09　STEP2_W　課題管理表№384：設計書「修正履歴」シートの「2023/08/08仕様変更分」「F001_受注マスタ.修繕区分小='05'の場合は不備チェック不要とするよう修正。」
+            bolBtn承認 = true
+          }
+          // ハノイ側修正2022/08/01　STEP2_W　課題管理表№376：設計書「修正履歴」シートの「2023/07/26仕様変更分」「支払承認時のボタン押下不可条件に不備のチェックを追加」End
         }
       }
       this.画面入力制御disabled.btn発注書請書 = bolBtn発注書請書
@@ -5206,11 +6029,6 @@ export default {
       this.画面入力制御disabled.btn取下 = bolBtn取下
       this.画面入力制御disabled.btn差戻 = bolBtn差戻
       this.画面入力制御disabled.btn否認 = bolBtn否認
-
-      if (!this.dispBtnBy請求合意区分F005) {
-        bolBtn承認 = true
-      }
-
       this.画面入力制御disabled.btn承認 = bolBtn承認
 
       if (bolBtn稟議申請 === false || bolBtn取下 === false || bolBtn差戻 === false || bolBtn否認 === false || bolBtn承認 === false) {
@@ -5218,6 +6036,27 @@ export default {
       } else {
         this.画面入力制御disabled.btn更新 = true
       }
+    },
+    async 支払承認可能チェック (検収回数) { // ハノイ側修正2023/2/23　STEP2_W　課題管理表№297：設計書「修正履歴」シートの「2023/2/22仕様変更分」「作業結果／支払タブ内の費用按分、按分入力ボタン、部門確認ボタン押下条件に支払承認可能チェックを追加」
+      let bhasData = false
+      await this.http.get('api/Reafs_W/Shonin/WD00520/支払承認可能チェック',
+        {会社コード: this.searchData.会社コード,
+          工事依頼No: this.syuzenForm.工事依頼No,
+          工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+          検収回数: 検収回数,
+          取引先コード: this.sagyo取引先.split('_')[0], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          取引先コード枝番: this.sagyo取引先.split('_')[1], // ハノイ側修正2022/09/29　課題管理表№128：設計書「修正履歴」シートの「2022/09/28仕様変更分」「工事完了確認可能チェック、支払承認可能チェック条件修正」
+          修繕区分小: this.syuzenForm.修繕区分小},
+        'アクセスしています....')
+        .then((response) => {
+          if (Object.getPrototypeOf(response.data) == Object.prototype) {
+            bhasData = Object.keys(response.data).length > 0
+          } else {
+            bhasData = response.data.length > 0
+          }
+        })
+      this.sagyoForm.支払承認可能チェックCheck = bhasData
+      return bhasData
     },
     async checkWeb合意 () {
       let checkWeb合意 = false
@@ -5324,6 +6163,29 @@ export default {
         btn更新: true,
         発注書_請書: false
       }
+      this.showHiyoAnbunShitei = false
+      this.KeyDataToHiyoAnbunShitei = {
+        会社コード: '',
+        工事依頼No: '',
+        工事依頼No枝番: '',
+        取引先コード: '',
+        取引先名: '',
+        業者コード: '',
+        業者コード枝番: '',
+        税率: '',
+        率別売上金額税抜: '',
+        率別売上金額消費税: '',
+        率別売上金額税込: '',
+        費用負担部門コード: '',
+        検収回数: 0,
+        入力区分: '',
+        発注サブNO: 0,
+        費用按分: '',
+        未入力mode: '',
+        tabmode: ''
+      }
+      this.isDisplayHatchuAnbunNyuryoku = false
+      this.isDisplaySagyoAnbunNyuryoku = false
     },
     resetSyuzenForm  () {
       this.syuzenForm = {
@@ -5340,7 +6202,8 @@ export default {
         工事依頼No: '',
         工事依頼No枝番: '',
         修繕区分小: '',
-        w稟議申請対象フラグ: ''
+        w稟議申請対象フラグ: '',
+        sgw費用按分FLG: ''
       }
     },
     resetIraiForm () {
@@ -5410,11 +6273,12 @@ export default {
       this.mitsuForm.金額_税込3 = ''
       this.mitsuForm.金額_税込4 = ''
       this.mitsuForm.金額_税込_合計 = ''
-      this.mitsuForm.原価金額税抜 = ''
       this.mitsuForm.dt明細部 = []
       this.mitsuFormInit = {}
-      this.否認_差戻事由 = ''
-      // this.mitsuForm.否認_差戻事由 = ''
+      // ハノイ側修正2023/06/19　課題管理表№354：「2023/06/16依頼分」「1. タブ切り替えた時に「否認・差戻事由」内容が消えます。2.「検収回数」を変更した時に「否認・差戻事由」内容は再表示していません。」START
+      // this.否認_差戻事由 = ''
+      this.mitsuForm.否認_差戻事由 = ''
+      // ハノイ側修正2023/06/19　課題管理表№354：「2023/06/16依頼分」「1. タブ切り替えた時に「否認・差戻事由」内容が消えます。2.「検収回数」を変更した時に「否認・差戻事由」内容は再表示していません。」END
       this.mitsuForm.修繕区分小 = ''
       this.mitsuForm.dt税率別金額合計欄 = []
     },
@@ -5473,6 +6337,11 @@ export default {
       $select外内販value.外内販value = []
       this.hatchuForm.修繕区分小 = ''
       this.hatchuForm.dt税率別金額合計欄 = []
+      this.hatchuForm.msg費用按分 = ''
+      this.hatchuForm.w費用負担部門按分フラグ = 0
+      this.hatchuForm.dt按分入力済メッセージ = []
+      this.hatchuForm.費用按分 = '0'
+      this.hatchuForm.isDisabledHiyoAnbun = false
     },
     resetSagyoForm () {
       this.sagyoFormInit = {}
@@ -5515,6 +6384,14 @@ export default {
       this.sagyoForm.dt税率別金額合計欄 = []
       this.sagyoForm.発注サブNo = ''
       this.sagyoForm.業者状態 = ''
+      this.sagyoForm.負担区分 = ''
+      this.sagyoForm.部門確認 = ''
+      this.sagyoForm.msg費用按分 = ''
+      this.sagyoForm.w費用負担部門按分フラグ = 0
+      this.sagyoForm.dt按分入力済メッセージ = []
+      this.sagyoForm.費用按分 = '0'
+      this.sagyoForm.no32Data = {}
+      this.sagyoForm.発注サブNo_F052 = ''
     },
     getDataF005 () {
       const 検収回数 = this.sagyo検収回数
@@ -5522,7 +6399,9 @@ export default {
         会社コード: this.userInfo.会社コード,
         工事依頼No: this.syuzenForm.工事依頼No,
         検収回数: 検収回数,
-        発注サブNo: this.sagyoForm.発注サブNo
+        発注サブNo: this.sagyoForm.発注サブNo,
+        取引先コード: this.sagyo取引先.split('_')[0],
+        取引先コード枝番: this.sagyo取引先.split('_')[1]
       }
     },
     async onKakuninToroku () {
@@ -5541,14 +6420,18 @@ export default {
         工事依頼No: this.syuzenForm.工事依頼No,
         工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
         修繕区分小: this.syuzenForm.修繕区分小,
+	      // ハノイ側修正2023/05/04　STEP2_W　課題管理表№335：設計書「修正履歴」シートの「2023/05/02仕様変更分」「計上部門コード、事業領域、内外販区分更新元追記」Start
         計上部門コード: this.sagyoForm.費用負担部門コード,
         事業領域: this.sagyoForm.事業領域,
         外内販: this.sagyoForm.外内販,
+        // ハノイ側修正2023/05/04　STEP2_W　課題管理表№335：設計書「修正履歴」シートの「2023/05/02仕様変更分」「計上部門コード、事業領域、内外販区分更新元追記」End
         検収回数: 検収回数,
         F005_発注支払マスタ: this.getDataF005(),
         チェック1: this.sagyoForm.チェック1,
         チェック2: this.sagyoForm.チェック2,
-        取引先コード
+        取引先コード,
+        費用按分: this.sagyoForm.費用按分,
+        状態: this.sagyoForm.状態
       }
       await this.http
         .post('/api/Reafs_W/Shonin/WD00520/確認登録ボタン', data, 'アクセスしています....')
@@ -5557,9 +6440,71 @@ export default {
           msgErr = response.message
         })
       if (result) {
+        await this.getVersion('sagyo')
         await this.showSuccess(msgErr)
       } else {
         this.showError(msgErr)
+      }
+    },
+    validateBumonKakunin () {
+      if (this.sagyoForm.msg費用按分) {
+        this.getMsg('E040777').then((response) => {
+          this.showError(response.data, {callback: () => {
+            document.getElementById('refSagyoAnbunNyuryoku0').focus()
+          }})
+        })
+        return false
+      }
+      return true
+    },
+    async onBumonKakunin () {
+      if (this.sagyoForm.状態 === '支払承認待ち') {
+        if (!await this.validateBumonKakunin()) {
+          return false
+        }
+
+        let msg = (await this.getMsg('K040083')).data
+        if (!await this.confirm(msg)) {
+          return false
+        }
+
+        let result = ''
+        let msgErr = ''
+        const data = {
+          会社コード: this.searchData.会社コード,
+          工事依頼No: this.syuzenForm.工事依頼No,
+          工事依頼No枝番: this.syuzenForm.工事依頼No枝番,
+          修繕区分小: this.syuzenForm.修繕区分小,
+          // ハノイ側修正2023/05/04　STEP2_W　課題管理表№335：設計書「修正履歴」シートの「2023/05/02仕様変更分」「計上部門コード、事業領域、内外販区分更新元追記」START
+          計上部門コード: this.sagyoForm.費用負担部門コード,
+          事業領域: this.sagyoForm.事業領域,
+          外内販: this.sagyoForm.外内販,
+          // ハノイ側修正2023/05/04　STEP2_W　課題管理表№335：設計書「修正履歴」シートの「2023/05/02仕様変更分」「計上部門コード、事業領域、内外販区分更新元追記」END
+          検収回数: this.sagyo検収回数,
+          取引先コード: this.sagyo取引先.split('_')[0],
+          取引先コード枝番: this.sagyo取引先.split('_')[1],
+          費用按分: this.sagyoForm.費用按分,
+          DisplayTab: this.activeName,
+          チェック1: this.sagyoForm.チェック1,
+          チェック2: this.sagyoForm.チェック2,
+          F005_発注支払マスタ: this.getDataF005(),
+          状態: this.sagyoForm.状態
+        }
+        await this.http
+          .post('/api/Reafs_W/Shonin/WD00520/BumonKakunin', data, 'アクセスしています....')
+          .then((response) => {
+            result = response.status
+            msgErr = response.message
+          })
+        if (result) {
+          const msg004 = (await this.getMsg('M040004')).data
+          const msg021 = (await this.getMsg('M040021')).data
+          if (await this.showSuccess(msg004 + this.syuzenForm.工事依頼No + msg021)) {
+            this.onSearch()
+          }
+        } else {
+          this.showError(msgErr)
+        }
       }
     },
     async onTenpuSansho () {
@@ -5628,6 +6573,83 @@ export default {
     },
     selectSagyo_SotoNai (val) {
       this.sagyoForm.外内販コード = val
+    },
+    async changeHiyo_AnbunHatchu (val) {
+      if (val === '1') {
+        this.isDisplayHatchuAnbunNyuryoku = true
+        await this.getDataAnbunNyuryokuSumiMesseji('hatchu')
+        this.hatchuForm.dt税率別金額合計欄.map((item, index) => {
+          if (this.hatchuForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+            if (this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額 === '') {
+              item['按分入力済メッセージ'] = '未入力'
+            } else if (this.getNumber(this.hatchuForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['率別売上金額税込'])) {
+              item['按分入力済メッセージ'] = '入力済'
+            } else {
+              item['按分入力済メッセージ'] = '出来高入力済'
+            }
+          } else {
+            item['按分入力済メッセージ'] = ''
+          }
+        })
+
+        let isExist未入力 = true
+        for (let i = 0; i < this.hatchuForm.dt税率別金額合計欄.length; i++) {
+          if (this.hatchuForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+            isExist未入力 = false
+            break
+          }
+        }
+        if (!isExist未入力) {
+          this.hatchuForm.msg費用按分 = '部門按分未入力があります。'
+        } else {
+          this.hatchuForm.msg費用按分 = ''
+        }
+      } else {
+        this.isDisplayHatchuAnbunNyuryoku = false
+        this.hatchuForm.dt税率別金額合計欄.map((item, index) => {
+          item['按分入力済メッセージ'] = ''
+        })
+        this.hatchuForm.msg費用按分 = ''
+      }
+    },
+    async changeHiyo_AnbunSagyo (val) {
+      if (val === '1') {
+        this.isDisplaySagyoAnbunNyuryoku = true
+        await this.getDataAnbunNyuryokuSumiMesseji('sagyo')
+        this.sagyoForm.dt税率別金額合計欄.map((item, index) => {
+          if (this.sagyoForm.dt按分入力済メッセージ[index].rowEmpty === '1') {
+            if (this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額 === '' ||
+            this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) !== this.getNumber(item['税込発注金額_税込支払金額'])) { // ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+              item['按分入力済メッセージ'] = '未入力'
+            } else if (this.getNumber(this.sagyoForm.dt按分入力済メッセージ[index].税込按分金額) === this.getNumber(item['税込発注金額_税込支払金額'])) {
+              item['按分入力済メッセージ'] = '入力済'
+            } else {
+              // item['按分入力済メッセージ'] = '出来高入力済'// ハノイ側修正2023/01/16　STEP2_W　課題管理表№271：設計書「修正履歴」シートの「2022/01/11仕様変更分」「按分入力ボタン押下条件追記	」
+            }
+          } else {
+            item['按分入力済メッセージ'] = ''
+          }
+        })
+
+        let isExist未入力 = true
+        for (let i = 0; i < this.sagyoForm.dt税率別金額合計欄.length; i++) {
+          if (this.sagyoForm.dt税率別金額合計欄[i].按分入力済メッセージ === '未入力') {
+            isExist未入力 = false
+            break
+          }
+        }
+        if (!isExist未入力) {
+          this.sagyoForm.msg費用按分 = '部門按分未入力があります。'
+        } else {
+          this.sagyoForm.msg費用按分 = ''
+        }
+      } else {
+        this.isDisplaySagyoAnbunNyuryoku = false
+        this.sagyoForm.dt税率別金額合計欄.map((item, index) => {
+          item['按分入力済メッセージ'] = ''
+        })
+        this.sagyoForm.msg費用按分 = ''
+      }
     },
     showError (message, option = null, title = this.menuOptions.SubMenuName) {
       var self = this
@@ -6242,6 +7264,7 @@ export default {
 .SyuzenIraiSansyoShonin .dtHatchu .ve-table .ve-table-container {
   height: 375px !important;
   min-height: 152px;
+  max-height: 202px !important;
 }
 .SyuzenIraiSansyoShonin .dtSagyo .ve-table .ve-table-container {
   /* min-height: 65px !important; */
@@ -6344,5 +7367,12 @@ export default {
 }
 .SyuzenIraiSansyoShonin .ve-table .ve-table-container table.ve-table-content tfoot.ve-table-footer tr.ve-table-footer-tr {
   height: 31px !important;
+}
+.item_label {
+  max-width: 333px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

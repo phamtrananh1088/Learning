@@ -151,6 +151,8 @@
             <el-col :span="8">
               <el-form-item label="工事区分" prop="工事区分">
                 <el-select
+                  required
+                  popper-class = "el-popper-required"
                   tabindex="10"
                   v-model="iraiForm.工事区分"
                   :disabled="画面入力制御disabled.工事区分"
@@ -500,6 +502,7 @@
                   v-model="iraiForm.中止保留事由"
                   :disabled="画面入力制御disabled.中止保留事由"
                   :width="'100%'"
+                  :title="iraiForm.中止保留事由"
                   ref="ref中止保留事由"
                 >
                 </reafsinputtext>
@@ -513,6 +516,7 @@
                   v-model="iraiForm.変更コメント"
                   :disabled="画面入力制御disabled.変更コメント"
                   :width="'450px'"
+                  :title="iraiForm.変更コメント"
                 ></reafsinputtext>
               </el-form-item>
             </el-col>
@@ -524,6 +528,7 @@
                   v-model="iraiForm.否認差戻事由"
                   :disabled="画面入力制御disabled.否認差戻事由"
                   :width="'450px'"
+                  :title="iraiForm.否認差戻事由"
                   ref="ref否認_差戻事由"
                 ></reafsinputtext>
               </el-form-item>
@@ -974,6 +979,15 @@ export default {
         申請者課コード: '',
         申請者係コード: ''
       },
+      shoninLoot: {
+        承認事務所コード2: '',
+        承認営業所コード2: '',
+        承認部コード2: '',
+        承認課コード2: '',
+        承認係コード2: '',
+        承認役職コード2: '',
+        承認役職コード上限2: '',
+      },
     }
   },
   watch: {
@@ -1011,11 +1025,11 @@ export default {
   methods: {
     initialize() {
       this.paramsKojiIraiSho = {
-        依頼No: this.$route.query.依頼No,
-        page: this.$route.query.page
+        依頼No: this.$route.params.依頼No,
+        page: this.$route.params.page
       }
-      if (this.$route.params && this.$route.query.依頼No) {
-        this.searchForm.iraiNo = this.$route.query.依頼No
+      if (this.$route.params && this.$route.params.依頼No) {
+        this.searchForm.iraiNo = this.$route.params.依頼No
         this.onSearch()
       }
     },
@@ -1286,6 +1300,8 @@ export default {
           //承認ファイル
           this.shoninfile = response.data.申請承認ファイル;
 
+          this.shoninLoot = response.data.承認ルート;
+
           this.oldData = JSON.parse(JSON.stringify(response.data))
           response.data.対象箇所 = response.data.不具合場所
           response.data.中止保留区分 = response.data.継続区分
@@ -1348,6 +1364,7 @@ export default {
     },
     // 戻すデータ
     reafsmodalBackEigyoten (obj) {
+      console.log(obj);
       this.iraiForm.営業店 = obj.営業店
       this.iraiForm.営業店名 = obj.営業店名
 
@@ -2149,6 +2166,18 @@ export default {
           this.showSuccess(msg004 + res.data.依頼No + (await this.getMsg(smesSucess)).data)
         }
 
+        const url = []
+        let Reafs_W_BaseURL = this.commonFunctionUI.getBaseURL('W')
+        let linkUrl = Reafs_W_BaseURL + 'IraiNyuryoku'
+        let paramSet = {
+          パラメータ1: this.searchForm.iraiNo,
+          PG: 'WD00311'
+        }
+        const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+        linkUrl = linkUrl + '?guid=' + resParam.data.guid
+        linkUrl = encodeURI(linkUrl)
+        url.push(linkUrl)
+
         if (mode === this.mode.依頼差戻){
           let param = {
                 msg_type: 0,
@@ -2161,10 +2190,15 @@ export default {
                 宛先部コード: [this.shoninfile.申請者部コード],
                 宛先課コード: [this.shoninfile.申請者課コード],
                 宛先係コード: [this.shoninfile.申請者係コード],
-                担当者コード:[this.shoninfile.申請者]
+                担当者コード:[this.shoninfile.申請者],
+                url: url
               }
-            let resultMail
-            resultMail = this.commonFunctionUI.CM00110SendMail(param)
+            if ('000' <= this.shoninfile.申請者事務所コード && this.shoninfile.申請者事務所コード <= '199')
+            {
+              // 急便の事務所コードの場合のみメールを送信する
+              let resultMail
+              resultMail = this.commonFunctionUI.CM00110SendMail(param)
+            }
         }else if (mode === this.mode.依頼承認){
           console.log("メール送信");
           console.log(this.searchForm.iraiNo);
@@ -2174,47 +2208,107 @@ export default {
             this.print()
             const SGR担当部署Selected = this.SGR担当部署value.find(x => x.名称コード === this.iraiForm.SGR担当部署)
          
-            let param = {
-                  msg_type: 0,
-                  pg_id: 'WD00311',
-                  st_kbn: 2,
-                  mail_pattern_no: 3,
-                  工事依頼NO: this.searchForm.iraiNo,
-                  宛先事務所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.事務所コード) : ''],
-                  宛先営業所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.営業所コード) : ''],
-                  宛先部コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.部コード) : ''],
-                  宛先課コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.課コード) : ''],
-                  宛先係コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.係コード) : '']
-                }
-              let resultMail
-              resultMail = this.commonFunctionUI.CM00110SendMail(param)
-            console.log("メール送信2");
-            let param2 = {
-                  msg_type: 0,
-                  pg_id: 'WD00311',
-                  st_kbn: 2,
-                  mail_pattern_no: 4,
-                  工事依頼NO: this.searchForm.iraiNo,
-                  宛先事務所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.事務所コード) : ''],
-                  宛先営業所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.営業所コード) : ''],
-                  宛先部コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.部コード) : ''],
-                  宛先課コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.課コード) : ''],
-                  宛先係コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.係コード) : '']
-                }
+            let param = 
+              {
+                msg_type: 0,
+                pg_id: 'WD00311',
+                st_kbn: 2,
+                mail_pattern_no: 3,
+                工事依頼NO: this.searchForm.iraiNo,
+                宛先事務所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.事務所コード) : ''],
+                宛先営業所コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.営業所コード) : ''],
+                宛先部コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.部コード) : ''],
+                宛先課コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.課コード) : ''],
+                宛先係コード: [SGR担当部署Selected ? this.ddlValue(SGR担当部署Selected.係コード) : '']
+              }
+            let resultMail
+            resultMail = this.commonFunctionUI.CM00110SendMail(param)
+
+            console.log("メール送信2_メールパターンNo.4" + this.iraiForm.依頼者事務所コード);
+            let param2 = 
+              {
+                msg_type: 0,
+                pg_id: 'WD00311',
+                st_kbn: 2,
+                mail_pattern_no: 4,
+                工事依頼NO: this.searchForm.iraiNo,
+                宛先事務所コード: [this.iraiForm.依頼者事務所コード],
+                宛先営業所コード: [this.iraiForm.依頼者営業所コード],
+                宛先部コード: [this.iraiForm.依頼者部コード],
+                宛先課コード: [this.iraiForm.依頼者課コード],
+                宛先係コード: [this.iraiForm.依頼者係コード],
+                url: url
+              }
+            
+            if ('000' <= this.iraiForm.依頼者事務所コード && this.iraiForm.依頼者事務所コード <= '199')
+            {
+              // 急便の事務所コードの場合のみメールを送信する
               let resultMail2
               resultMail2 = this.commonFunctionUI.CM00110SendMail(param2)
-              console.log("メール送信完了");
+            }              
+            
+            console.log("メール送信完了");
+          }
+          else
+          {
+            // 2023/06/21 add
+            // 一次承認時にもメールを飛ばすよう仕様が変わった
+            console.log("一次承認メール送信");
+
+            // URL作成
+            const Reafs_W_BaseURL2 = this.commonFunctionUI.getBaseURL('W')
+            const url2 = []
+            let linkUrl2 = ''
+
+            linkUrl2 = Reafs_W_BaseURL2 + 'TeikiIraiSansyoShonin'
+            let paramSet = {
+              パラメータ1: this.searchForm.iraiNo,
+              PG: 'WD00311'
+            }
+            const resParam = await this.commonFunctionUI.setQueryParameter(paramSet)
+            linkUrl2 = linkUrl2 + '?guid=' + resParam.data.guid
+            linkUrl2 = encodeURI(linkUrl2)
+            url2.push(linkUrl2)
+            console.log("URL:" + url2);
+
+            let param = 
+              {
+                msg_type: 0,
+                pg_id: 'WD00311',
+                st_kbn: 2,
+                mail_pattern_no: 25,
+                工事依頼NO: this.searchForm.iraiNo,
+                宛先事務所コード: [this.shoninLoot.承認事務所コード2],
+                宛先営業所コード: [this.shoninLoot.承認営業所コード2],
+                宛先部コード: [this.shoninLoot.承認部コード2],
+                宛先課コード: [this.shoninLoot.承認課コード2],
+                宛先係コード: [this.shoninLoot.承認係コード2],
+                役職コードFrom: this.shoninLoot.承認役職コード2,
+                役職コードTo: this.shoninLoot.承認役職コード上限2,
+                url: url2
+              }
+            
+            if ('000' <= this.shoninLoot.承認事務所コード2 && this.shoninLoot.承認事務所コード2 <= '199')
+            {
+              // 急便の事務所コードの場合のみメールを送信する
+              let resultMail
+              resultMail = this.commonFunctionUI.CM00110SendMail(param)
+            }
           }
           
         }
 
         this.onSearch()
         this.hideLoading()
+
         return true
+
       } else {
         this.hideLoading()
         this.showError(res.message)
+
         return false
+
       }
     },
 

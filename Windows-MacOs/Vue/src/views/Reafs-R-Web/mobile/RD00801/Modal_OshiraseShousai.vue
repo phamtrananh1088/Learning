@@ -67,7 +67,9 @@ export default {
     onDownLoadFile(obj) {
       let $thisValue = this;
       let fileFullPath = {
-        FilePath: this.rowData.TENPU_PATH,
+        // 2023/03/01 ダウンロードファイル名修正
+        //FilePath: this.rowData.TENPU_PATH,
+        FilePath: this.rowData.TENPU_PATH.replace(this.rowData.TENPU_FILENAME,""),
         FileName: this.rowData.TENPU,
       };
        
@@ -90,7 +92,9 @@ export default {
           // document.body.appendChild(link);
           // link.click();
 
-          await this.base.saveFileDownload(blob, $thisValue.rowData.TENPU_FILENAME)
+          // 2023/03/01 ダウンロードファイル名修正
+          // await this.base.saveFileDownload(blob, $thisValue.rowData.TENPU_FILENAME)
+          await this.base.saveFileDownload(blob, $thisValue.rowData.TENPU)
 
           // document.body.removeChild(link);
           // $thisValue.joukyouList = response.data;

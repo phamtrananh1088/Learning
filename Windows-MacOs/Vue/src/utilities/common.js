@@ -836,10 +836,9 @@ let base = {
   //              TaxKbn			: 消費税計算区分
   // Return:       税抜きの金額を返します。
   // 税区分マスタ(M024)追加に伴い仕様変更 2013/08/27 Oshinomi
-  Get_ZeiNuki (Value, TaxRitsu, TaxKbn)
   //, Get_ZeiNuki(Ymd, Value, TaxRitsu, KaiteiTaxRitsu, KaiteiYmd, TaxKbn)
-  {
-    CalTaxRitsu = 0
+  Get_ZeiNuki (Value, TaxRitsu, TaxKbn) {
+    let CalTaxRitsu = 0
     // 税率改定日を超えている日付か同じ日付の場合は改定後税率を使う
     CalTaxRitsu = (TaxRitsu * 1) / 100 + 1
     // 税抜き金額を求めるときは、消費税率区分は切捨て->切上げ、切上げ->切捨てとする。
@@ -852,7 +851,7 @@ let base = {
     }
 
     // 税込み金額を計算
-    RetValue = this.CalcShoSuuKbn_M(CalTaxKbn, Value / CalTaxRitsu, 0)
+    let RetValue = this.CalcShoSuuKbn_M(CalTaxKbn, Value / CalTaxRitsu, 0)
 
     // 税込み金額を返す
     return RetValue
@@ -875,7 +874,7 @@ let base = {
       value = value * -1
     }
 
-    return this.parseInt(value)
+    return parseInt(value)
   },
 
   // Date:		2007/12/19

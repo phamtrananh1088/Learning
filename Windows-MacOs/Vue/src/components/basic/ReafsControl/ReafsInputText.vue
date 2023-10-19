@@ -10,6 +10,11 @@
       @blur="handleBlur"
       v-on="$listeners"
       v-bind="$attrs"
+      :maxlength="cusMaxlength"
+      :type="type"
+      :rows="rows"
+      :title="type == 'textarea' ? '' : undefined"
+      @keypress.native="onKeypress($event)"
       >
     </el-input>
     <slot name="append"></slot>
@@ -31,6 +36,14 @@ export default {
       type: Boolean,
       default: false
     },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    rows: {
+      type: Number,
+      default: 0
+    },
     rules: Object,
     tabindex: String
   },
@@ -41,6 +54,17 @@ export default {
       }
       const millis = Date.now() - this.clickTime
       return millis < 260
+    },
+    // ハノイ側修正2023/05/10　課題管理表№337：「改行コードをWindows用のコードに変換した上で文字数チェックを行う入力コントロール開発依頼」
+    cusMaxlength () {
+      if (this.$attrs.value &&
+      this.type == 'textarea' &&
+      (this.$attrs.value.match(/\n/g) || []).length > 0) {
+        const maxLen = this.$attrs.maxlength - (this.$attrs.value.match(/\n/g) || []).length
+        return maxLen
+      } else {
+        return Number(this.$attrs.maxlength)
+      }
     }
   },
   data () {
@@ -59,6 +83,20 @@ export default {
   methods: {
     setPreventDbClick () {
       this.preventDbClick = true
+    },
+    onKeypress (evt) {
+      var theEvent = evt || window.event
+
+      const idx = theEvent.target.selectionStart
+      const idxEnd = theEvent.target.selectionEnd
+      let valueAfterAdd = theEvent.target.value
+      if (idx != idxEnd) {
+        valueAfterAdd = valueAfterAdd.substring(0, idx) + valueAfterAdd.substring(idxEnd, valueAfterAdd.length)
+      }
+      valueAfterAdd = valueAfterAdd.slice(0, idx) + valueAfterAdd.slice(idx + Math.abs(0))
+      if (theEvent.keyCode == 13 && valueAfterAdd.length >= this.cusMaxlength - 1) {
+        if (theEvent.preventDefault) theEvent.preventDefault()
+      };
     },
     onclick (event) {
       if (this.clickTime === '') {
@@ -103,7 +141,7 @@ export default {
       } else {
         var m = this.$attrs.value || ''
         let v = ''
-        let maxlength = Number(this.$attrs.maxlength)
+        let maxlength = Number(this.cusMaxlength)
         if (isNaN(maxlength)) {
           maxlength = 0
         }
@@ -113,6 +151,16 @@ export default {
             this.$emit('update:modelValue', v)
           }
         }
+      }
+
+      if (this.type == 'textarea' &&
+      (this.$attrs.value.match(/\r/g) || []).length <= 0) {
+        let maxlength = Number(this.$attrs.maxlength)
+        var val = (this.$attrs.value || '').replace(/\n/g, '\r\n')
+        if (val.length > maxlength) {
+          val = val.substring(0, maxlength)
+        }
+        this.$emit('update:replaceValue', val)
       }
     },
     focus () {
@@ -136,11 +184,20 @@ export default {
     background: lightgoldenrodyellow;
   }
 
+  .reafs-input-required >>> .el-textarea__inner {
+    border-radius: 1px;
+    background: lightgoldenrodyellow;
+  }
+
   .el-button{
     padding-top: 6px;
     padding-bottom: 6px;
     margin-left: -4px;
     border-start-start-radius: 1px;
     border-end-start-radius: 1px;
+  }
+
+  .is-error .reafs-input-required >>> .el-textarea__inner {
+    border-color: #F56C6C !important;
   }
 </style>

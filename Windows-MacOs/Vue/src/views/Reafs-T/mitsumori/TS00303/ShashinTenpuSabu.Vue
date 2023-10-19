@@ -10,6 +10,189 @@
       <el-container class="home-el-container">
         <el-main class="home-el-main">
           <div
+            v-for="(data, index) in IraiSyasin"
+            :key="index"
+            class="img-row border"
+          >
+            <el-row class="img-header border-bot">
+              <el-col :span="21" style="align-items: center;display: flex;">
+                依頼写真No.{{ data.ファイルNo ? +data.ファイルNo : index + 1 }}
+              </el-col>
+              <el-col
+                class="img-content-col"
+                :span="3"
+                style="max-height: 26px"
+              >
+                <el-button
+                  class="btnDL"
+                  @click="onDownload901(index)"
+                  :loading="loading['refDl' + index]"
+                  >DL</el-button
+                >
+              </el-col>
+            </el-row>
+            <el-row class="img-content">
+              <el-col class="img-content-col" :span="16">
+                  <el-row
+                    class="img-show border-bot border-right"
+                    ref="refImgContainer"
+                  >
+                    <img
+                      v-if="data.linkImage"
+                      :src="data.linkImage"
+                      :ref="'refImg' + index"
+                    />
+                  </el-row>
+                <el-row
+                  class="img-content-footer border-right"
+                  style="display: flex; align-items: center; align-items: stretch; padding: 0"
+                >
+                  <el-col :span="24" class="img-label">{{
+                    data.imgUploadName
+                  }}</el-col>
+                  <el-col style="width: fit-content; padding: 1px"
+                    ><el-button
+                      @click="openFileDialog(index)"
+                      :loading="loading['btnUploadFile' + index]"
+                      :disabled="true"
+                      style="margin-left: 2px;"
+                      :ref="'btnUploadFile' + index"
+                      >参照</el-button
+                    ></el-col
+                  >
+                  <el-col style="width: fit-content; padding: 1px"
+                    ><el-button
+                      @click="onDelete(index)"
+                      :loading="loading['btnDelete' + index]"
+                      :disabled="true"
+                      style="margin-left: 2px;"
+                      >削除</el-button
+                    ></el-col
+                  >
+                </el-row>
+              </el-col>
+              <el-col class="img-content-text" :span="8">
+                <el-row style="height: 100%;">
+                  <el-col
+                    class="img-content-text-col"
+                    :span="24"
+                    style="height: 100%;"
+                  >
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content label-content"
+                        style="padding-left: 5px;"
+                      >
+                        部位
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content"
+                        style="padding: 0 2px"
+                      >
+                        <el-input
+                          :disabled="true"
+                          class="txtPartComment"
+                          maxlength="30"
+                          type="textarea"
+                          resize="none"
+                          :rows="2"
+                          v-model="data.部位コメント"
+                          ref="ref部位コメント"
+                        />
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content label-content"
+                        style="padding-left: 5px;"
+                      >
+                        状況等
+                      </el-col>
+                    </el-row>
+                    <!--<el-row
+                      class="row-situation"
+                      style="height: calc(100% - 132px);"
+                    >-->
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content"
+                        style="height: 100%;padding: 0 2px"
+                      >
+                        <el-input
+                          :disabled="true"
+                          maxlength="100"
+                          type="textarea"
+                          resize="none"
+                          v-model="data.状況コメント"
+                          ref="ref状況コメント"
+                          class="txtSituation"
+                        />
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content label-content"
+                        style="padding-left: 5px;"
+                      >
+                        撮影日時
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content"
+                        style="padding: 0 2px"
+                      >
+                        <el-input
+                          :disabled="true"
+                          class="txtPartCommentSatsuen"
+                          maxlength="20"
+                          type="textarea"
+                          resize="none"
+                          v-model="data.撮影日時"
+                          ref="ref撮影日時"
+                        />
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content label-content"
+                        style="padding-left: 5px;"
+                      >
+                        撮影場所
+                      </el-col>
+                    </el-row>
+                    <el-row class="img-content-text-row">
+                      <el-col
+                        :span="24"
+                        class="grid-content"
+                        style="padding: 0 2px"
+                      >
+                        <el-input
+                          :disabled="true"
+                          class="txtPartCommentSatsuen"
+                          maxlength="20"
+                          type="textarea"
+                          resize="none"
+                          v-model="data.撮影場所"
+                          ref="ref撮影場所"
+                        />
+                      </el-col>
+                    </el-row>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </div>
+          <div
             v-for="(data, index) in pageData"
             :key="index"
             class="img-row border"
@@ -55,7 +238,7 @@
                     ><el-button
                       @click="openFileDialog(index)"
                       :loading="loading['btnUploadFile' + index]"
-                      :disabled="data.削除不可フラグ=='1'"
+                      :disabled="data.削除不可フラグ=='1' || isDisplayMode904"
                       style="margin-left: 2px;"
                       :ref="'btnUploadFile' + index"
                       >参照</el-button
@@ -65,7 +248,7 @@
                     ><el-button
                       @click="onDelete(index)"
                       :loading="loading['btnDelete' + index]"
-                      :disabled="data.削除不可フラグ=='1'"
+                      :disabled="data.削除不可フラグ=='1'|| isDisplayMode904"
                       style="margin-left: 2px;"
                       >削除</el-button
                     ></el-col
@@ -102,6 +285,7 @@
                           :rows="2"
                           v-model="data.部位コメント"
                           ref="ref部位コメント"
+                          :disabled="data.削除不可フラグ=='1' || isDisplayMode904"
                         />
                       </el-col>
                     </el-row>
@@ -131,6 +315,7 @@
                           v-model="data.状況コメント"
                           ref="ref状況コメント"
                           class="txtSituation"
+                          :disabled="data.削除不可フラグ=='1' || isDisplayMode904"
                         />
                       </el-col>
                     </el-row>
@@ -156,6 +341,7 @@
                           resize="none"
                           v-model="data.撮影日時"
                           ref="ref撮影日時"
+                          :disabled="data.削除不可フラグ=='1' || isDisplayMode904"
                         />
                       </el-col>
                     </el-row>
@@ -181,6 +367,7 @@
                           resize="none"
                           v-model="data.撮影場所"
                           ref="ref撮影場所"
+                          :disabled="data.削除不可フラグ=='1' || isDisplayMode904"
                         />
                       </el-col>
                     </el-row>
@@ -191,8 +378,9 @@
           </div>
         </el-main>
         <el-footer class="home-el-footer" height="auto">
+          <div style="color: red;">他システムの写真・画像は変更できません。</div>
           <div style="margin-left: auto;">
-            <el-button @click="onRegister()" :loading="loading.btnRegister"
+            <el-button @click="onRegister()" :loading="loading.btnRegister" :disabled="isDisplayMode901"
               >更新</el-button
             >
           </div>
@@ -217,6 +405,7 @@ export default {
   data () {
     return {
       pageData: [],
+      IraiSyasin: [],
       pageData901: [
         this.dataDefault(),
         this.dataDefault(),
@@ -425,13 +614,424 @@ export default {
         this.dataDefault(),
         this.dataDefault()
       ],
+      pageData904: [
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault()
+      ],
+      pageData905: [
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault(),
+        this.dataDefault()
+      ],
       queryParams: {
         添付種類: '',
-        工事依頼No: ''
+        工事依頼No: '',
+        工事依頼No枝番: '',
+        業者コード: '',
+        業者コード枝番: ''
       },
       userInfo: {
         ユーザーＩＤ: '',
         会社コード: ''
+      },
+      checkflag: {
+        継続区分: '',
+        登録済フラグ: ''
       },
       rules: {},
       MSC_5MB_LengthByte: 5245329,
@@ -461,6 +1061,12 @@ export default {
   computed: {
     isUpdate () {
       return true
+    },
+    isDisplayMode904 () {
+      return this.checkflag.継続区分 == '1' || this.checkflag.継続区分 == '2' || this.checkflag.登録済フラグ == 1
+    },
+    isDisplayMode901 () {
+      return this.queryParams.添付種類 == '901' || this.isDisplayMode904
     }
   },
   inject: ['hideLeftMenu', 'showLogoutButton','setBtnBackShow'],
@@ -472,16 +1078,27 @@ export default {
   mounted () {
     this.queryParams = {
       添付種類: this.$route.query.添付種類,
-      工事依頼No: this.$route.query.工事依頼No
+      工事依頼No: this.$route.query.工事依頼No,
+      工事依頼No枝番: this.$route.query.工事依頼No枝番,
+      業者コード: this.$route.query.業者コード,
+      業者コード枝番: this.$route.query.業者コード枝番
     }
+
+    if(this.queryParams.添付種類 == '904'){
+      this.teisyutuCheck();
+      this.getPageData901();
+    }else if(this.queryParams.添付種類 == '905'){
+      this.teisyutuCheck();
+    }
+
     this.getPageData()
     // document.getElementById('btnLogout').onclick = function (e) {
     //   e.preventDefault()
     //   alert(1)
     // }
-    if(this.$route.query.添付種類 == '901'){
+    if(this.queryParams.添付種類 == '904' || this.queryParams.添付種類 == '901'){
       this.setPageTitle('現状写真　添付登録');
-    }else if(this.$route.query.添付種類 == '902'){
+    }else if(this.queryParams.添付種類 == '905'){
       this.setPageTitle('完了写真　添付登録');
     }
     if(window == window.parent){
@@ -516,12 +1133,32 @@ export default {
         imgUploadName: ''
       }
     },
+    async teisyutuCheck () {
+      let result = {}
+      await this.http
+        .get('/api/Reafs_T/ShashinTenpuSabu/TeisyutuJyoukyou', {
+          会社コード: this.userInfo.会社コード,
+          添付種類: this.queryParams.添付種類,
+          工事依頼No: this.queryParams.工事依頼No,
+          工事依頼No枝番: this.queryParams.工事依頼No枝番,
+          業者コード: this.queryParams.業者コード,
+          業者コード枝番: this.queryParams.業者コード枝番
+        })
+        .then(res => {
+          result = res
+        })
+        if (result.status) {
+          this.checkflag = result.data
+        }
+    },
     async getPageData () {
       let result = {}
       await this.http
         .get('/api/Reafs_T/ShashinTenpuSabu/GetPageData', {
           工事依頼No: this.queryParams.工事依頼No,
-          添付種類: this.queryParams.添付種類
+          添付種類: this.queryParams.添付種類,
+          業者コード: this.queryParams.業者コード,
+          業者コード枝番: this.queryParams.業者コード枝番
         })
         .then(res => {
           result = res
@@ -532,7 +1169,7 @@ export default {
           x.添付NO = ''
           x.imgUploadName = ''
         })
-        if (this.$route.query.添付種類 == '901') {
+        if (this.queryParams.添付種類 == '901') {
           this.pageData901.map((x, i) => {
             const data = result.data.f091Data.find(x => x.ファイルNo === (i + 1))
             if (data) {
@@ -540,18 +1177,58 @@ export default {
             }
             return x
           })
-          this.pageData = this.pageData901
+          this.IraiSyasin = this.pageData901
         }
-        if (this.$route.query.添付種類 == '902') {
-          this.pageData902.map((x, i) => {
+
+        if (this.queryParams.添付種類 == '904') {
+          this.pageData904.map((x, i) => {
             const data = result.data.f091Data.find(x => x.ファイルNo === (i + 1))
             if (data) {
               Object.assign(x, data)
             }
             return x
           })
-          this.pageData = this.pageData902
+          this.pageData = this.pageData904
         }
+        if (this.queryParams.添付種類 == '905') {
+          this.pageData905.map((x, i) => {
+            const data = result.data.f091Data.find(x => x.ファイルNo === (i + 1))
+            if (data) {
+              Object.assign(x, data)
+            }
+            return x
+          })
+          this.pageData = this.pageData905
+        }
+      }
+    },
+    async getPageData901 () {
+      let result = {}
+      await this.http
+        .get('/api/Reafs_T/ShashinTenpuSabu/GetPageData', {
+          工事依頼No: this.queryParams.工事依頼No,
+          添付種類: '901',
+          業者コード: this.queryParams.業者コード,
+          業者コード枝番: this.queryParams.業者コード枝番
+        })
+        .then(res => {
+          result = res
+        })
+      if ((result.status && result.data && result.data.f091Data)) {
+        result.data.f091Data.map((x) => {
+          x.linkImage = this.http.ipAddress + x.linkImage
+          x.添付NO = ''
+          x.imgUploadName = ''
+        })  
+
+        this.pageData901.map((x, i) => {
+          const data = result.data.f091Data.find(x => x.ファイルNo === (i + 1))
+          if (data) {
+            Object.assign(x, data)
+          }
+          return x
+        })
+        this.IraiSyasin = this.pageData901
       }
     },
     async onDownload (index) {
@@ -596,6 +1273,53 @@ export default {
           // await fileStream.write(blob)
           // await fileStream.close()
 
+          await this.base.saveFileDownload(blob, fileName)
+
+          this.getMsg('M040020').then(response => {
+            this.showSuccess(response.data)
+          })
+        })
+        .catch(ex => console.log(ex))
+        .finally(() => {
+          this.loading['refDl' + index] = false
+        })
+        .catch(ex => console.log(ex))
+    },
+    async onDownload901 (index) {
+      this.loading['refDl' + index] = true
+      const fileName =
+        this.IraiSyasin[index].添付元ファイル名 ||
+        this.IraiSyasin[index].ファイル名
+
+      if (fileName == '' || fileName.toString().trim().length == 0) {
+        this.loading['refDl' + index] = false
+        return
+      }
+
+      if (this.IraiSyasin[index].添付NO !== '') {
+        let imgdata = this.IraiSyasin[index].linkImage
+        if (imgdata) {
+          let imgtype = imgdata.split(';')[0].split(':')[1]
+          let imgbase64 = imgdata.split(',')[1]
+          await this.base.saveFileDownload(imgbase64, fileName, imgtype)
+          this.getMsg('M040020').then(response => {
+            this.showSuccess(response.data)
+          })
+        }
+        this.loading['refDl' + index] = false
+        return
+      }
+
+      const FileDownloadInfo = {
+        FilePath: this.IraiSyasin[index].ダウンロードパス,
+        FileName: fileName
+      }
+
+      await this.http
+        .post('/api/Reafs_T/Common/DownloadFile', FileDownloadInfo, '', {
+          responseType: 'blob'
+        })
+        .then(async blob => {
           await this.base.saveFileDownload(blob, fileName)
 
           this.getMsg('M040020').then(response => {
@@ -655,9 +1379,9 @@ export default {
           me.loading['btnUploadFile' + index] = false
           return
         }
-        // ファイルアップロードサイズの制限を300MBに変更
-        // if (file.size > this.MSC_5MB_LengthByte) {
-        if (file.size > this.MSC_300MB_LengthByte) {
+        // ファイルアップロードサイズの制限を5MBに変更
+        // if (file.size > this.MSC_300MB_LengthByte) {
+        if (file.size > this.MSC_5MB_LengthByte) { // ハノイ側修正2023/07/21　課題管理表№49：「2023/07/21依頼分」「添付可能なファイルサイズ上限を5MBに修正。」
           e.preventDefault()
           this.getMsg('E040470').then(response => {
             this.showError(response.data)
@@ -760,7 +1484,7 @@ export default {
         return false
       }
 
-      if(this.queryParams.添付種類 == '902'){
+      if(this.queryParams.添付種類 == '905'){
         const linkNotNull = this.pageData.filter(
           x => x.linkImage
         )
@@ -831,6 +1555,9 @@ export default {
       if (res.status) {
         this.showSuccess(res.message)
         this.getPageData()
+        if (this.queryParams.添付種類 == '904') {
+          this.getPageData901()
+        }
         this.loading.btnRegister = false
         return true
       } else {
@@ -865,12 +1592,14 @@ export default {
           ファイルパス2: imgBoxData.ファイルパス2,
           物理ファイル名2: imgBoxData.物理ファイル名2,
           削除不可フラグ: 0,
-          概要書使用フラグ: 0,
-          完了報告書使用フラグ: (this.queryParams.添付種類 == '902' ? 1 : 0),
+          概要書使用フラグ: (this.queryParams.添付種類 == '904' ? 1 : 0),
+          完了報告書使用フラグ: (this.queryParams.添付種類 == '905' ? 1 : 0),
           部位コメント: imgBoxData.部位コメント,
           状況コメント: imgBoxData.状況コメント,
           撮影日時: imgBoxData.撮影日時,
-          撮影場所: imgBoxData.撮影場所
+          撮影場所: imgBoxData.撮影場所,
+          取引先コード: this.queryParams.業者コード,
+          取引先コード枝番: this.queryParams.業者コード枝番
         }
         data.push({
           F091_画像管理ファイル: f091,

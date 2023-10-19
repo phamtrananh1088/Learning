@@ -447,7 +447,9 @@ export default {
       状態value: [
         {名称コード: '1', 名称コード_名称: '未完成'},
         {名称コード: '2', 名称コード_名称: '完成'},
-        {名称コード: '3', 名称コード_名称: '支払'}
+        {名称コード: '3', 名称コード_名称: '支払'},
+        {名称コード: '4', 名称コード_名称: '保留'},
+        {名称コード: '5', 名称コード_名称: '中止'}
       ],
       応諾value: [
         {名称コード: '', 名称コード_名称: '全て'},
@@ -776,12 +778,15 @@ export default {
               width: 140,
               renderBodyCell: ({ row, column, rowIndex }) => {
                 const cellData作業予定開始日 = row['作業予定開始日']
+                const cellData完了報告 = row['完了報告']
+                const cellData継続区分= row['継続区分']
                 return (
                   <div title="" style="display: block">
                     <el-date-picker
                       required
                       size="small"
                       value={cellData作業予定開始日}
+                      disabled={cellData完了報告 == '済' || cellData継続区分 == '1' || cellData継続区分 == '2'}
                       on-input={(val) => {
                         row['作業予定開始日'] = val
                         this.cellDataChange(row, column, val)
@@ -810,12 +815,15 @@ export default {
               width: 140,
               renderBodyCell: ({ row, column, rowIndex }) => {
                 const cellData作業予定終了日 = row['作業予定終了日']
+                const cellData完了報告 = row['完了報告']
+                const cellData継続区分= row['継続区分']
                 return (
                   <div title="" style="display: block">
                     <el-date-picker
                       required
                       size="small"
                       value={cellData作業予定終了日}
+                      disabled={cellData完了報告 == '済' || cellData継続区分 == '1' || cellData継続区分 == '2'}
                       on-input={(val) => {
                         row['作業予定終了日'] = val
                         this.cellDataChange(row, column, val)
@@ -1003,6 +1011,16 @@ export default {
               sClass += ' nolink'
             }
           }
+          let check発注確定フラグ = row['発注確定フラグ']
+          let check継続区分 = row['継続区分']
+          if (column.key == '指示') {
+            if(check発注確定フラグ === 1 && check継続区分 !== '1' && check継続区分 !== '2'){
+              sClass = 'enable-checkbox'
+            }else{
+              sClass = 'disable-checkbox'
+            }
+          }
+
           return sClass
         }
       },
@@ -1027,7 +1045,8 @@ export default {
 
   created () {
     this.queryParams = {
-      StartupMode: this.$route.params.StartupMode
+      StartupMode: this.$route.params.StartupMode,
+      工事名称: this.$route.params.工事名称
     }
     this.init(true)
   },
@@ -1038,7 +1057,8 @@ export default {
     $route(to, from) {
       if (to.name == "TD00100") {
         this.queryParams = {
-          StartupMode: this.$route.params.StartupMode
+          StartupMode: this.$route.params.StartupMode,
+          工事名称: this.$route.params.工事名称
         }
         //20221028　rep 作業完了報告画面から戻って来た時、条件を維持したまま再検索を行うように修正。
         //this.init(true)
@@ -1085,6 +1105,7 @@ export default {
           this.kojiIchiranForm.状態 = '1'
           this.kojiIchiranForm.応諾 = '0'
           this.kojiIchiranForm.作業報告 = ''
+          this.kojiIchiranForm.工事名称 = this.queryParams.工事名称
         }
         this.onSearch()
       }else{
@@ -1132,7 +1153,7 @@ export default {
       this.kojiIchiranForm.物件コード = obj.txtCd
       this.kojiIchiranForm.物件名 = obj.lblNm
     },
-    onMeisaiKomoku_RowClickEvent (rowData, column) {
+    async onMeisaiKomoku_RowClickEvent (rowData, column) {
       if (column.field !== '完了報告') {
 
       } else {
@@ -1142,6 +1163,21 @@ export default {
             //window.location.href = `/Reafs_T/SagyoHokokuNyuryoku?業者コード=${this.userInfo.業者コード}&業者コード枝番=${this.userInfo.業者コード枝番}&工事依頼No=${rowData.工事依頼No.replace('-', '')}&工事依頼No枝番=${rowData.工事依頼No枝番}`
             //window.location.href = `/Reafs_T/SagyoHokokuNyuryoku?業者コード=${rowData.業者コード}&業者コード枝番=${rowData.業者コード枝番}&工事依頼No=${rowData.工事依頼No.replace('-', '')}&工事依頼No枝番=${rowData.工事依頼No枝番}`
             //window.location.href = `/Reafs_T/SagyoHokokuNyuryoku?業者コード=${rowData.業者コード}&業者コード枝番=${rowData.業者コード枝番}&工事依頼No=${rowData.工事依頼No.replace('-', '')}&工事依頼No枝番=${rowData.工事依頼No枝番}&発注サブNo=${rowData.発注サブNo}&検収回数=${rowData.検収回数}`
+            if(rowData.完了報告 == '未') {
+              let checkExist = false
+              await this.http
+                .get('/api/Reafs_T/Koji/TD00100/CheckF052Exist', { 会社コード: rowData.会社コード , 工事依頼No: rowData.工事依頼No.replace('-', ''), 発注サブNo: rowData.発注サブNo, 検収回数: rowData.検収回数}, 'アクセスしています...')
+                .then((response) => {
+                  checkExist = response.data.isF052Exist
+                })
+              if (checkExist == false) {
+                this.getMsg('E040098').then((response) => {
+                  this.showError(response.data)
+                })
+                this.$refs.koujiiraiNo.focus()
+                return false
+          }
+        }
             this.$router.push({ name: 'TD00101', params: { 業者コード: rowData.業者コード, 業者コード枝番: rowData.業者コード枝番, 工事依頼No: rowData.工事依頼No.replace('-', ''), 工事依頼No枝番: rowData.工事依頼No枝番, 発注サブNo: rowData.発注サブNo, 検収回数: rowData.検収回数 } })
           }
         }

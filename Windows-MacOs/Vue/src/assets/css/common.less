@@ -60,6 +60,11 @@
   line-height: 30px;
   border-radius: 1px;
   vertical-align: top;
+  border: 1px solid #646464;
+}
+
+.el-form td .el-input__inner {
+  border: 1px solid #DCDFE6;
 }
 
 .el-form .el-input__icon {
@@ -67,7 +72,7 @@
 }
 
 .el-form .el-form-item__label {
-  color: white;
+  color: black !important;
 }
 .el-form-item.is-required > .el-form-item__label {
   background: rgb(155, 194, 230);//#ff6600;
@@ -101,13 +106,66 @@
 .is-readonly .el-input > .el-input__inner[readonly="readonly"],
 .is-readonly > .el-textarea__inner[readonly="readonly"] {
   background: rgb(211, 211, 211);
-  border-color: #b7b5b5;
+  border-color: #646464;
   color: black;
   text-overflow: ellipsis;
 }
 
 .el-button{
   font-family: 'Meiryo UI';
+}
+
+.el-textarea__inner{
+  border: 1px solid #646464 !important;
+}
+
+.el-input.is-disabled .el-input__inner {
+  border-color: #646464;
+}
+
+td .el-input.is-disabled input.el-input__inner {
+  border: 1px solid #DCDFE6;
+}
+
+.el-select .el-input.is-disabled .el-input__inner:hover {
+  border-color: #646464;
+}
+
+td .el-input.is-disabled input.el-input__inner:hover {
+  border: 1px solid #DCDFE6;
+}
+
+.el-select:hover .el-input__inner {
+  border-color: #000;
+}
+
+td .el-select:hover .el-input__inner {
+  border-color: #DCDFE6;
+}
+
+button.el-button:not(.el-button--text) {
+  border: 1px solid #646464;
+}
+
+button.el-button:not(.el-button--text).el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
+  border-color: #646464;
+}
+
+td button.el-button:not(.el-button--text) {
+  border: 1px solid #DCDFE6;
+}
+
+td button.el-button:not(.el-button--text).el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
+  border: 1px solid #DCDFE6;
+}
+
+.el-select-dropdown.el-popper.el-popper-required {
+  background-color: lightgoldenrodyellow;
+}
+
+.el-select-dropdown.el-popper.el-popper-required li.hover {
+  background-color: #0078d7;
+  color: white;
 }
 
 .el-scrollbar{

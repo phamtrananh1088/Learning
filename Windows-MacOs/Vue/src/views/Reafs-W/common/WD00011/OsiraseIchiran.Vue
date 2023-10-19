@@ -145,13 +145,15 @@
 <script>
 import reafsinputtext from "@/components/basic/ReafsControl/ReafsInputText.vue";
 import opensearch from "@/components/basic/openSearch.vue";
+import moment from 'moment'
 
 var $thisValue;
 
 export default {
   components: {
     reafsinputtext,
-    opensearch
+    opensearch,
+    moment
   },
   props: {
     showNo: {
@@ -259,6 +261,18 @@ export default {
         return false
       }
 
+      if ($thisValue.searchForm.tekiyouDateStart && $thisValue.searchForm.tekiyouDateEnd &&
+          moment($thisValue.searchForm.tekiyouDateStart) > moment($thisValue.searchForm.tekiyouDateEnd)) {
+        this.getMsg('E010352').then((response) => {
+          this.showError(response.data, {
+            callback: () => {
+              this.$refs.refTekiyouDateStart.focus()
+            }
+          })
+        })
+        return false
+      }
+
       $thisValue.loading = true;
       $thisValue.total = 0;
       $thisValue.tableData = undefined;
@@ -343,6 +357,9 @@ export default {
     reafsmodalBack_searchSyouninTantoi(obj) {
       this.searchForm.tourokuTantoiCd = obj.txtCd;
       this.tourokuTantoiNm = obj.lblNm;
+    },
+    getMsg (key) {
+      return this.commonFunctionUI.getMsg(key)
     },
     showError (message, option = null, title = this.$store.getters.getPageTitle()) {
       var self = this

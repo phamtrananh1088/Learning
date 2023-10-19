@@ -71,6 +71,10 @@ export default {
       if (this.iFrameSrc && this.iFrameSrc.includes('TeikiMitsumoriDataTorikomi')) {
         return 'TeikiMitsumoriDataTorikomi'
       }
+      if (this.iFrameSrc && this.iFrameSrc.includes('TeikiSeikyuSubSub')) {
+        return 'TeikiSeikyuSubSub'
+      }
+
 
       return ''
     }
@@ -260,4 +264,11 @@ export default {
   height: 95%;
   overflow: auto;
 }
+.TeikiSeikyuSubSub .el-dialog {
+  width: 60%;
+  margin-top: 5% !important;
+  height: 80%;
+  overflow: auto;
+}
+
 </style>

@@ -23,6 +23,9 @@
     "test": {
       "presets": ["env", "stage-2"],
       "plugins": ["transform-vue-jsx", "transform-es2015-modules-commonjs", "dynamic-import-node"]
+    },
+    "production": {
+      "plugins": ["transform-remove-console"] // ハノイ側修正2022/03/29　STEP2_W　console無効化処理
     }
   }
 }

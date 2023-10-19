@@ -343,10 +343,15 @@ export default {
   methods: {
     GetDropdown帳票種類 () {
       this.http
-        .get('/api/Reafs_W/Irai/WD00130/GetDropdown帳票種類', { 帳票区分: this.queryParams.帳票区分, 参照パターン: this.queryParams.参照パターン }, 'アクセスしています...')
+        .get('/api/Reafs_W/Irai/WD00130/GetDropdown帳票種類', 
+        { 帳票区分: this.queryParams.帳票区分, 
+          参照パターン: this.queryParams.参照パターン,
+          工事依頼No: this.queryParams.工事依頼No,
+          契約No: this.queryParams.契約No,
+          契約履歴No: this.queryParams.契約履歴No }, 'アクセスしています...')
         .then((response) => {
           if (response.data !== null) {
-            $select帳票種類value.帳票種類value = response.data
+            $select帳票種類value.帳票種類value = response.data.帳票種類データ
             this.TyohyoIchiranForm.帳票種類 = '－'
           }
         })
@@ -496,11 +501,20 @@ export default {
     },
     async onDownload (row) {
       this.loading = true
+
+      const file_type = row.物理ファイル名.split('.').pop()
+      // その他帳票名でダウンロード可能とする
+      const sonotaFileName = row.帳票名 + '.' + file_type
       const fileName = row.物理ファイル名
+
+      // その他帳票の場合(199,299)、その他帳票名でダウンロード
+      const dlFileName =  (row.帳票種類=='199' || row.帳票種類=='299' )?sonotaFileName: fileName 
+
       const FileDownloadInfo = {
         FilePath: row.ダウンロードパス,
         FileName: fileName
       }
+      
       await this.http
         .post('/api/Reafs_W/Common/DownloadFile', FileDownloadInfo, 'アクセスしています....', {
           responseType: 'blob'
@@ -512,7 +526,8 @@ export default {
           // link.setAttribute('download', fileName)
           // document.body.appendChild(link)
           // link.click()
-          await this.base.saveFileDownload(blob, fileName)
+          // ダウンロード時のファイル名を変更
+          await this.base.saveFileDownload(blob, dlFileName)
           this.getMsg('M040020').then(response => {
             this.showSuccess(response.data)
           })

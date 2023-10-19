@@ -333,7 +333,9 @@ export default {
         {名称コード: '3', 名称コード_名称: '一時保存'},
         {名称コード: '4', 名称コード_名称: '見積提出'},
         {名称コード: '5', 名称コード_名称: '実施・契約'},
-        {名称コード: '6', 名称コード_名称: '見積不採用'}
+        {名称コード: '6', 名称コード_名称: '見積不採用'},
+        {名称コード: '7', 名称コード_名称: '保留' },
+        {名称コード: '8', 名称コード_名称: '中止' }
       ],
       負担区分value: [],
       showDialogSearchBukken: false,
@@ -668,7 +670,7 @@ export default {
     },
     onClickBack () {
       // this.$router.push({ name: "TD00001" });
-      window.location.href = this.http.resolve('/Reafs_T/MainMenu')
+      window.location.href = '/Reafs_T/MainMenu'
     },
 
     async onSearch () {

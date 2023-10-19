@@ -178,7 +178,7 @@
               </div>
             </el-col>
             <el-col :span="layoutSpan.two" class="two">
-              <el-form-item label="営業店" prop="営業店">
+              <el-form-item label="営業所" prop="営業店">
                 <div style="display: flex">
                   <reafsinputtext maxlength="34" v-model="pageData.営業店" ref="ref営業店" width="100%"
                     class="input-multi-code" @keydown.native="keydownTextbox($event, pageData.営業店)">
@@ -684,7 +684,7 @@ export default {
         },
         {
           key: '14',
-          title: '営業店',
+          title: '営業所',
           children: [
             {
               key: '15',
@@ -857,8 +857,8 @@ export default {
                   renderBodyCell: ({ row }) => {
                     return (
                       <div style="display: grid" class="cell-body-custome cell-2">
-                        <div style="display: flex; align-items: center;" class="cell-body-2"><span style="margin: 0 auto;">{row.不備チェック1=='1'?'✓':''}</span></div>
-                        <div style="display: flex; align-items: center;" class="cell-body-2"><span style="margin: 0 auto;">{row.不備チェック2=='1'?'✓':''}</span></div>
+                        <div style="display: flex; align-items: center;" class="cell-body-2"><span style="margin: 0 auto;">{row.不備チェック1 == '1' ? '✓' : ''}</span></div>
+                        <div style="display: flex; align-items: center;" class="cell-body-2"><span style="margin: 0 auto;">{row.不備チェック2 == '1' ? '✓' : ''}</span></div>
                       </div>
                     )
                   }
@@ -1111,38 +1111,22 @@ export default {
         })
     },
     handleLinkClick (row) {
-      if (!row.工事区分コード) {
-        return
-      }
+      // if (!row.工事区分コード) {
+      //   return
+      // }
       // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」Start
 
       this.$store.commit('setKeepAliveFlag', 0)
       this.scrollTop = document.querySelector('.ve-table-container').scrollTop
-      if (row.工事区分.includes('一般') || row.工事区分.includes('緊急') || row.工事区分.includes('スポット')) {
-        if (row.承認フラグ == 0) {
-          // F100.承認フラグ=0の場合、依頼入力画面に遷移する
-          this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.依頼No, page: 'WD00210' } })
-
-          // if(row.依頼入力フラグ == 1){
-          //   // 依頼入力済・差戻の場合依頼入力画面に遷移
-          //   this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.依頼No, page: 'WD00210' } })
-          // }else {
-          //   this.$router.push({ name: 'WD00111', query: {工事依頼No: row.f001工事依頼No ? row.f001工事依頼No : row.依頼No, page: 'WD00210'} })
-          //   // window.location.href = `/Reafs_W/SyuzenIraiSansyoShonin?工事依頼No=${row.f001工事依頼No ? row.f001工事依頼No : row.依頼No}&page=WD00210`
-          // }
-        } else if (row.承認フラグ == 1) {
-          this.$router.push({ name: 'WD00520',
-            query: {工事依頼No: row.f001工事依頼No ? row.f001工事依頼No : row.依頼No,
-              page: 'WD00210'} })
-          // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.f001工事依頼No ? row.f001工事依頼No : row.依頼No}&page=WD00210`
-        }
-        // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」End
-      } else if (row.工事区分.includes('定期')) {
+      // ハノイ側修正2023/03/03　STEP2_W　課題管理表№304：設計書「修正履歴」 明細の「依頼内容/工事・契約件名」のリンク押下時、画面遷移できないケースがある。 Start
+      // if (row.工事区分.includes('一般') || row.工事区分.includes('緊急') || row.工事区分.includes('スポット')) {
+      if ((row.工事区分コード && row.工事区分コード[0] == '4') || row.修繕区分大コード == '05') {
+        // ハノイ側修正2023/03/03　STEP2_W　課題管理表№304：設計書「修正履歴」 明細の「依頼内容/工事・契約件名」のリンク押下時、画面遷移できないケースがある。 End
         // ハノイ側修正2022/09/14　STEP2_W　課題管理表№103：設計書「修正履歴」シートの「2022/09/08仕様変更分」「画面遷移仕様を変更(処理概要)」START
         // this.$router.push({ name: 'WD00530' })
         if (row.承認フラグ == 0) {
-           // F100.承認フラグ=0の場合、依頼入力画面に遷移する
-          this.$router.push({ name: 'WD00110', query: { 工事依頼No: (row.f001工事依頼No ? row.f001工事依頼No : row.依頼No), page: 'WD00210' } })
+          // F100.承認フラグ=0の場合、依頼入力画面に遷移する
+          this.$router.push({ name: 'WD00110', params: { 工事依頼No: (row.f001工事依頼No ? row.f001工事依頼No : row.依頼No), page: 'WD00210' } })
 
           // this.$router.push({ name: 'WD00530',
           //   query: {
@@ -1157,14 +1141,14 @@ export default {
             checkExistF011 = true
           }
           // F011とF021(F050)を「契約NO、履歴NO」で結合
-          if (row.f050契約No && row.f050履歴No && (row.f011契約No == row.f050契約No) && (row.f050履歴No == row.f011履歴No)) {
+          if (row.f050契約No && row.f050履歴No != null && (row.f011契約No == row.f050契約No) && (row.f050履歴No == row.f011履歴No)) {
             checkExistF021 = true
           }
-          
+
           if (checkExistF011 === false) {
             // F011が存在しない場合、WD00311に遷移する
             this.$router.push({ name: 'WD00311',
-              query: {
+              params: {
                 依頼No: (row.f001工事依頼No ? row.f001工事依頼No : row.依頼No),
                 page: 'WD00210'
               }})
@@ -1177,17 +1161,17 @@ export default {
           } else {
             if (checkExistF021 === false) {
               // 2022/11/17 条件追加
-              if(row.定期申請状況フラグ==1){
+              if (row.定期申請状況フラグ == 1) {
                 this.$router.push({ name: 'WD00530',
-                  query: {
+                  params: {
                     契約NO: row.f011契約No,
                     履歴NO: row.f011履歴No,
                     契約年度: row.f011契約年度,
                     page: 'WD00210'
                   }})
-              }else{
+              } else {
                 this.$router.push({ name: 'WD00311',
-                  query: {
+                  params: {
                     依頼No: (row.f001工事依頼No ? row.f001工事依頼No : row.依頼No),
                     page: 'WD00210'
                   }})
@@ -1195,7 +1179,7 @@ export default {
               // window.location.href = `/Reafs_W/WD00530/TeikiIraiSansyoShonin?契約NO=${row.f011契約No}&履歴NO=${row.f011履歴No}&契約年度=${row.f011契約年度}&page=WD00210`
             } else {
               this.$router.push({ name: 'WD00530',
-                query: {
+                params: {
                   契約NO: row.f050契約No,
                   履歴NO: row.f050履歴No,
                   明細NO: row.f050明細No,
@@ -1208,6 +1192,29 @@ export default {
           }
         }
         // ハノイ側修正2022/09/14　STEP2_W　課題管理表№103：設計書「修正履歴」シートの「2022/09/08仕様変更分」「画面遷移仕様を変更(処理概要)」END
+      }
+      else if (row.工事区分コード && row.工事区分コード[0] != '4') {
+        // ハノイ側修正2023/03/03　STEP2_W　課題管理表№304：設計書「修正履歴」 明細の「依頼内容/工事・契約件名」のリンク押下時、画面遷移できないケースがある。 End
+        if (row.承認フラグ == 0) {
+          // F100.承認フラグ=0の場合、依頼入力画面に遷移する
+          this.$router.push({ name: 'WD00110', params: { 工事依頼No: row.依頼No, page: 'WD00210' } })
+
+          // if(row.依頼入力フラグ == 1){
+          //   // 依頼入力済・差戻の場合依頼入力画面に遷移
+          //   this.$router.push({ name: 'WD00110', query: { 工事依頼No: row.依頼No, page: 'WD00210' } })
+          // }else {
+          //   this.$router.push({ name: 'WD00111', query: {工事依頼No: row.f001工事依頼No ? row.f001工事依頼No : row.依頼No, page: 'WD00210'} })
+          //   // window.location.href = `/Reafs_W/SyuzenIraiSansyoShonin?工事依頼No=${row.f001工事依頼No ? row.f001工事依頼No : row.依頼No}&page=WD00210`
+          // }
+        } else if (row.承認フラグ == 1) {
+          this.$router.push({ name: 'WD00520',
+            params: {工事依頼No: row.f001工事依頼No ? row.f001工事依頼No : row.依頼No,
+              page: 'WD00210'} })
+          // window.location.href = `/Reafs_W/WD00520/SyuzenIraiSansyoShonin?工事依頼No=${row.f001工事依頼No ? row.f001工事依頼No : row.依頼No}&page=WD00210`
+        }
+        // ハノイ側修正2022/09/09　STEP2_W　課題管理表№81：設計書「修正履歴」シートの「2022/09/06仕様変更分」「画面遷移時のパラメータを追加」End
+        // ハノイ側修正2023/03/03　STEP2_W　課題管理表№304：設計書「修正履歴」 明細の「依頼内容/工事・契約件名」のリンク押下時、画面遷移できないケースがある。 Start
+        // } else if (row.工事区分.includes('定期')) {
       }
     },
     async onSearch () {

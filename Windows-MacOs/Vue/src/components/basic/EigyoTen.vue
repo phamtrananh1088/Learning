@@ -193,6 +193,12 @@ export default {
   text-overflow: ellipsis;
   height: 30px;
   line-height: 30px;
+  border: 1px solid #646464;
+  border-left: none;
+  width: 100%
+}
+.el-button.is-search + .append-label{
+  margin-left: -3px;
 }
 .append-background{
   display: inline-flex;

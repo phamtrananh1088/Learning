@@ -118,7 +118,7 @@
         <el-col :span="24" Class="title">
           <el-label Class="m-bottom-less title-bg heder-width-2" :width="'40px'">№</el-label>
           <el-label Class="m-bottom-less title-bg heder-width-30" :width="'300px'">作業内容</el-label>      
-          <el-label Class="m-bottom-less title-bg heder-width-6" :width="'60px'">数量</el-label>
+          <el-label Class="m-bottom-less title-bg heder-width-12" :width="'120px'">数量</el-label>
           <el-label Class="m-bottom-less title-bg heder-width-8" :width="'80px'">単位</el-label>
           <el-label Class="m-bottom-less title-bg heder-width-12" :width="'120px'">単価</el-label>
           <el-label Class="m-bottom-less title-bg heder-width-16" :width="'165px'">金額（税抜）</el-label>
@@ -133,8 +133,10 @@
             </reafsinputnumber>
             <reafsinputtext v-model="searchForm.sagyoumeisyo" class="is-readonly" maxlength="3" disabled="disabled" :width="'300px'">
             </reafsinputtext>
-            <reafsinputnumber floatLength=0 v-model="searchForm.suryo" class="is-readonly" maxlength="3" disabled="disabled" :width="'60px'">
-            </reafsinputnumber>
+            <!-- <reafsinputnumber floatLength=0 v-model="searchForm.suryo" class="is-readonly" maxlength="3" disabled="disabled" :width="'200px'">
+            </reafsinputnumber> -->
+            <reafsinputnumber2 intlength=6 floatLength=2 v-model="searchForm.suryo" class="is-readonly" disabled="disabled" :width="'120px'">
+            </reafsinputnumber2>
             <reafsinputtext v-model="searchForm.tani" class="is-readonly" maxlength="3" disabled="disabled" :width="'80px'">
             </reafsinputtext>
             <reafsinputnumber floatLength=0 v-model="searchForm.tanka" class="is-readonly" maxlength="3" disabled="disabled" :width="'120px'">
@@ -343,7 +345,6 @@
                   @change="txtKaisuChanged(3)"
                 ></reafsinputnumber>
                 
-                <!-- <el-label Class="row-bg kaisu">{{searchForm.kaisuSum}}</el-label> -->
                 <reafsinputnumber floatLength=0 v-model="searchForm.kaisuSum" class="is-readonly kaisu" maxlength="3" disabled="disabled" :width="'50px'"></reafsinputnumber>
                 <el-label>回</el-label>
             </div>
@@ -586,7 +587,7 @@
 import reafsinputtext from '@/components/basic/ReafsControl/ReafsInputText.vue'
 import reafsinputnumber from '@/components/basic/ReafsControl/ReafsInputNumber.vue'
 import reafsmodal from '@/components/modal/Modal.vue'
-import ReafsInputNumber from '../../../../components/basic/ReafsControl/ReafsInputNumber.vue';
+import reafsinputnumber2 from '@/components/basic/ReafsControl/ReafsInputNumber2.vue'
 
 export default {
   beforeRouteEnter(to, from, next) {
@@ -598,7 +599,8 @@ export default {
   components: {
     reafsinputtext,
     reafsinputnumber,
-    reafsmodal
+    reafsmodal,
+    reafsinputnumber2
   },
 
   props: {
@@ -1088,7 +1090,8 @@ export default {
         if (this.searchForm.kaisu04 === '' || isFinite(this.searchForm.kaisu04) == false){
           this.searchForm.kingaku04 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku04 = this.searchForm.genkaKingaku_tanka;
+          var kingaku4 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu04)
+          this.searchForm.kingaku04 = kingaku4;
         }
       } else if (month == 5){
         if (5 < Number(this.searchForm.kaisu05)){
@@ -1097,7 +1100,8 @@ export default {
         if (this.searchForm.kaisu05 === '' || isFinite(this.searchForm.kaisu05) == false){
           this.searchForm.kingaku05 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku05 = this.searchForm.genkaKingaku_tanka;
+          var kingaku5 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu05)
+          this.searchForm.kingaku05 = kingaku5;
         }
       } else if (month == 6){
         if (5 < Number(this.searchForm.kaisu06)){
@@ -1106,7 +1110,8 @@ export default {
         if (this.searchForm.kaisu06 === '' || isFinite(this.searchForm.kaisu06) == false){
           this.searchForm.kingaku06 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku06 = this.searchForm.genkaKingaku_tanka;
+          var kingaku6 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu06)
+          this.searchForm.kingaku06 = kingaku6;
         }
       } else if (month == 7){
         if (5 < Number(this.searchForm.kaisu07)){
@@ -1115,7 +1120,8 @@ export default {
         if (this.searchForm.kaisu07 === '' || isFinite(this.searchForm.kaisu07) == false){
           this.searchForm.kingaku07 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku07 = this.searchForm.genkaKingaku_tanka;
+          var kingaku7 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu07)
+          this.searchForm.kingaku07 = kingaku7;
         }
       } else if (month == 8){
         if (5 < Number(this.searchForm.kaisu08)){
@@ -1124,7 +1130,8 @@ export default {
         if (this.searchForm.kaisu08 === '' || isFinite(this.searchForm.kaisu08) == false){
           this.searchForm.kingaku08 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku08 = this.searchForm.genkaKingaku_tanka;
+          var kingaku8 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu08)
+          this.searchForm.kingaku08 = kingaku8;
         }
       } else if (month == 9){
         if (5 < Number(this.searchForm.kaisu09)){
@@ -1133,7 +1140,8 @@ export default {
         if (this.searchForm.kaisu09 === '' || isFinite(this.searchForm.kaisu09) == false){
           this.searchForm.kingaku09 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku09 = this.searchForm.genkaKingaku_tanka;
+          var kingaku9 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu09)
+          this.searchForm.kingaku09 = kingaku9;
         }
       } else if (month == 10){
         if (5 < Number(this.searchForm.kaisu10)){
@@ -1142,7 +1150,8 @@ export default {
         if (this.searchForm.kaisu10 === '' || isFinite(this.searchForm.kaisu10) == false){
           this.searchForm.kingaku10 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku10 = this.searchForm.genkaKingaku_tanka;
+          var kingaku10 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu10)
+          this.searchForm.kingaku10 = kingaku10;
         }
       } else if (month == 11){
         if (5 < Number(this.searchForm.kaisu11)){
@@ -1151,7 +1160,8 @@ export default {
         if (this.searchForm.kaisu11 === '' || isFinite(this.searchForm.kaisu11) == false){
           this.searchForm.kingaku11 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku11 = this.searchForm.genkaKingaku_tanka;
+          var kingaku11 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu11)
+          this.searchForm.kingaku11 = kingaku11;
         }
       } else if (month == 12){
         if (5 < Number(this.searchForm.kaisu12)){
@@ -1160,7 +1170,8 @@ export default {
         if (this.searchForm.kaisu12 === '' || isFinite(this.searchForm.kaisu12) == false){
           this.searchForm.kingaku12 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku12 = this.searchForm.genkaKingaku_tanka;
+          var kingaku12 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu11)
+          this.searchForm.kingaku12 = kingaku12;
         }
       } else if (month == 1){
         if (5 < Number(this.searchForm.kaisu01)){
@@ -1169,7 +1180,8 @@ export default {
         if (this.searchForm.kaisu01 === '' || isFinite(this.searchForm.kaisu01) == false){
           this.searchForm.kingaku01 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku01 = this.searchForm.genkaKingaku_tanka;
+          var kingaku1 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu01)
+          this.searchForm.kingaku01 = kingaku1;
         }
       } else if (month == 2){
         if (5 < Number(this.searchForm.kaisu02)){
@@ -1178,7 +1190,8 @@ export default {
         if (this.searchForm.kaisu02 === '' || isFinite(this.searchForm.kaisu02) == false){
           this.searchForm.kingaku02 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku02 = this.searchForm.genkaKingaku_tanka;
+          var kingaku2 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu02)
+          this.searchForm.kingaku02 = kingaku2;
         }
       } else if (month == 3){
         if (5 < Number(this.searchForm.kaisu03)){
@@ -1187,7 +1200,8 @@ export default {
         if (this.searchForm.kaisu03 === '' || isFinite(this.searchForm.kaisu03) == false){
           this.searchForm.kingaku03 = 0;
         } else if(this.searchForm.genkaKingakuType == 2){
-          this.searchForm.kingaku03 = this.searchForm.genkaKingaku_tanka;
+          var kingaku3 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu03)
+          this.searchForm.kingaku03 = kingaku3;
         }
       }
 
@@ -1251,40 +1265,52 @@ export default {
 
       // 作業回数が空でない月に入力した単価を反映する
       if (this.searchForm.kaisu04 != '') {
-        this.searchForm.kingaku04 = this.searchForm.genkaKingaku_tanka
+        var kingaku4 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu04)
+        this.searchForm.kingaku04 = kingaku4
       }
       if (this.searchForm.kaisu05 != '') {
-        this.searchForm.kingaku05 = this.searchForm.genkaKingaku_tanka
+        var kingaku5 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu05)
+        this.searchForm.kingaku05 = kingaku5
       }
       if (this.searchForm.kaisu06 != '') {
-        this.searchForm.kingaku06 = this.searchForm.genkaKingaku_tanka
+        var kingaku6 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu06)
+        this.searchForm.kingaku06 = kingaku6
       }
       if (this.searchForm.kaisu07 != '') {
-        this.searchForm.kingaku07 = this.searchForm.genkaKingaku_tanka
+        var kingaku7 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu07)
+        this.searchForm.kingaku07 = kingaku7
       }
       if (this.searchForm.kaisu08 != '') {
-        this.searchForm.kingaku08 = this.searchForm.genkaKingaku_tanka
+        var kingaku8 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu08)
+        this.searchForm.kingaku08 = kingaku8
       }
       if (this.searchForm.kaisu09 != '') {
-        this.searchForm.kingaku09 = this.searchForm.genkaKingaku_tanka
+        var kingaku9 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu09)
+        this.searchForm.kingaku09 = kingaku9
       }
       if (this.searchForm.kaisu10 != '') {
-        this.searchForm.kingaku10 = this.searchForm.genkaKingaku_tanka
+        var kingaku10 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu10)
+        this.searchForm.kingaku10 = kingaku10
       }
       if (this.searchForm.kaisu11 != '') {
-        this.searchForm.kingaku11 = this.searchForm.genkaKingaku_tanka
+        var kingaku11 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu11)
+        this.searchForm.kingaku11 = kingaku11
       }
       if (this.searchForm.kaisu12 != '') {
-        this.searchForm.kingaku12 = this.searchForm.genkaKingaku_tanka
+        var kingaku12 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu12)
+        this.searchForm.kingaku12 = kingaku12
       }
       if (this.searchForm.kaisu01 != '') {
-        this.searchForm.kingaku01 = this.searchForm.genkaKingaku_tanka
+        var kingaku1 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu01)
+        this.searchForm.kingaku01 = kingaku1
       }
       if (this.searchForm.kaisu02 != '') {
-        this.searchForm.kingaku02 = this.searchForm.genkaKingaku_tanka
+        var kingaku2 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu02)
+        this.searchForm.kingaku02 = kingaku2
       }
       if (this.searchForm.kaisu03 != '') {
-        this.searchForm.kingaku03 = this.searchForm.genkaKingaku_tanka
+        var kingaku3 = Number(this.searchForm.genkaKingaku_tanka.replaceAll(',', '')) * Number(this.searchForm.kaisu03)
+        this.searchForm.kingaku03 = kingaku3
       }
     },
 
@@ -1462,22 +1488,24 @@ export default {
         });
         return;
       }
-
+      
+      // 税率を百分率から小数点へ変換
+      let zeiritsu = this.queryParams.genkazeiritsu / 100
       // 各月の合計が12桁を超えるか
       if (
           (
-              Number(this.searchForm.kingaku04.replaceAll(',', '')) + (Number(this.searchForm.kingaku04.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku05.replaceAll(',', '')) + (Number(this.searchForm.kingaku05.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku06.replaceAll(',', '')) + (Number(this.searchForm.kingaku06.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku07.replaceAll(',', '')) + (Number(this.searchForm.kingaku07.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku08.replaceAll(',', '')) + (Number(this.searchForm.kingaku08.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku09.replaceAll(',', '')) + (Number(this.searchForm.kingaku09.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku10.replaceAll(',', '')) + (Number(this.searchForm.kingaku10.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku11.replaceAll(',', '')) + (Number(this.searchForm.kingaku11.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku12.replaceAll(',', '')) + (Number(this.searchForm.kingaku12.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku01.replaceAll(',', '')) + (Number(this.searchForm.kingaku01.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku02.replaceAll(',', '')) + (Number(this.searchForm.kingaku02.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
-            + Number(this.searchForm.kingaku03.replaceAll(',', '')) + (Number(this.searchForm.kingaku03.replaceAll(',', '')) * this.queryParams.genkazeiritsu)
+              Number(this.searchForm.kingaku04.replaceAll(',', '')) + (Number(this.searchForm.kingaku04.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku05.replaceAll(',', '')) + (Number(this.searchForm.kingaku05.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku06.replaceAll(',', '')) + (Number(this.searchForm.kingaku06.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku07.replaceAll(',', '')) + (Number(this.searchForm.kingaku07.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku08.replaceAll(',', '')) + (Number(this.searchForm.kingaku08.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku09.replaceAll(',', '')) + (Number(this.searchForm.kingaku09.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku10.replaceAll(',', '')) + (Number(this.searchForm.kingaku10.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku11.replaceAll(',', '')) + (Number(this.searchForm.kingaku11.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku12.replaceAll(',', '')) + (Number(this.searchForm.kingaku12.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku01.replaceAll(',', '')) + (Number(this.searchForm.kingaku01.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku02.replaceAll(',', '')) + (Number(this.searchForm.kingaku02.replaceAll(',', '')) * zeiritsu)
+            + Number(this.searchForm.kingaku03.replaceAll(',', '')) + (Number(this.searchForm.kingaku03.replaceAll(',', '')) * zeiritsu)
           )
           > 999999999999
         )
