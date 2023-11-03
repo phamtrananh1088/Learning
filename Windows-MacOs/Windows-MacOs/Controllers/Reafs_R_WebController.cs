@@ -24,7 +24,7 @@ namespace WinMacOs.Controllers
             return File("~/Reafs_R_Web/index.html", "text/html");
         }
 
-        [HttpGet, HttpPost, Route("getAllMenu"), AllowAnonymous]
+        [HttpGet, HttpPost, Route("Common/getAllMenu"), AllowAnonymous]
         public async Task<ActionResult> GetAllMenu()
         {
             WebResponseContent responseContent = new WebResponseContent();

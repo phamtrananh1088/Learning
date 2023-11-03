@@ -17,12 +17,7 @@ namespace WinMacOs.Controllers
     {
         public ActionResult Index()
         {
-            string path = Request.Url.AbsolutePath;
-                var router = new Dictionary<string, string>();
-                router.Add("Reafs_W", "Home");
-                {
-                    return RedirectToRoute(router);
-                }
+            return View();
         }
 
         public ActionResult NotFound()

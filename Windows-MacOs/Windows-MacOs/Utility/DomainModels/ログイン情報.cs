@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinMacOs.Utility.DomainModels
 {
-    public class LoginInfo
+    public class ログイン情報
     {
         public string 事務所コード { get; set; }
         public string 営業所コード { get; set; }

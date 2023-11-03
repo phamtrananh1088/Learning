@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Diagnostics;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -10,7 +11,6 @@ namespace WinMacOs.ActionFilter.Api
     /// </summary>
     public class ExecuteTimeAttribute : ActionFilterAttribute
     {
-        private Stopwatch stopwatch;
 
         /// <summary>ログ.</summary>
         /// <inheritdoc/>
@@ -32,8 +32,7 @@ namespace WinMacOs.ActionFilter.Api
             NLogger.Default.InfoLog("実行開始");
 
             // 経過時間開始
-            stopwatch = new Stopwatch();
-            stopwatch.Start();
+            GetTimer(filterContext, "action").Start();
             base.OnActionExecuting(filterContext);
         }
 
@@ -54,10 +53,23 @@ namespace WinMacOs.ActionFilter.Api
             }
 
             // 経過時間終了
-            stopwatch.Stop();
-            NLogger.Default.InfoLog(string.Format("実行終了。実行時間: {0} ms", stopwatch.ElapsedMilliseconds));
-            stopwatch = null;
+            var actionTimer = GetTimer(filterContext, "action");
+            actionTimer.Stop();
+            NLogger.Default.InfoLog(string.Format("実行終了。実行時間: {0} ms", actionTimer.ElapsedMilliseconds));
             base.OnActionExecuted(filterContext);
+        }
+
+        private Stopwatch GetTimer(ControllerContext context, string name)
+        {
+            string key = "__actionExecuteTimer__" + name;
+            if (context.HttpContext.Items.Contains(key))
+            {
+                return (Stopwatch)context.HttpContext.Items[key];
+            }
+
+            var result = new Stopwatch();
+            context.HttpContext.Items[key] = result;
+            return result;
         }
     }
 }

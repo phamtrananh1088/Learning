@@ -136,7 +136,7 @@ namespace WinMacOs.DataRepository.Utilities
             return _userInfo ?? new UserInfo();
         }
 
-        public LoginInfo LoginInfo
+        public ログイン情報 ログイン情報
         {
             get
             {
@@ -148,9 +148,9 @@ namespace WinMacOs.DataRepository.Utilities
             }
         }
 
-        private LoginInfo _ログイン情報 { get; set; }
+        private ログイン情報 _ログイン情報 { get; set; }
 
-        public LoginInfo Get部署情報()
+        public ログイン情報 Get部署情報()
         {
             if (_ログイン情報 != null) return _ログイン情報;
 
@@ -220,7 +220,7 @@ namespace WinMacOs.DataRepository.Utilities
                                     + x.GetValue("課コード")?.ToString()
                                     + x.GetValue("係コード")?.ToString()
                                     == 所属部署コード)
-                                    .Select(o => new LoginInfo
+                                    .Select(o => new ログイン情報
                                     {
                                         事務所コード = o.GetValue("事務所コード")?.ToString(),
                                         営業所コード = o.GetValue("営業所コード")?.ToString(),
@@ -232,7 +232,7 @@ namespace WinMacOs.DataRepository.Utilities
                                         社員名 = o.GetValue("社員名")?.ToString()
                                     }).FirstOrDefault();
 
-            return _ログイン情報 ?? new LoginInfo();
+            return _ログイン情報 ?? new ログイン情報();
         }
 
         public void LogOut(string key)
