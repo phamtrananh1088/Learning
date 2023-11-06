@@ -38,6 +38,51 @@ namespace WinMacOs.DataRepository.Repositories
         }
         #endregion
 
+        #region F090_ドキュメント管理ファイル
+        private IF090Repository _F090_ドキュメント管理ファイル;
+        public IF090Repository F090_ドキュメント管理ファイル
+        {
+            get
+            {
+                if (this._F090_ドキュメント管理ファイル == null)
+                {
+                    this._F090_ドキュメント管理ファイル = new F090Repository(DbContext);
+                }
+                return this._F090_ドキュメント管理ファイル;
+            }
+        }
+        #endregion
+
+        #region F093_一時添付ファイル
+        private IF093Repository _F093_一時添付ファイル;
+        public IF093Repository F093_一時添付ファイル
+        {
+            get
+            {
+                if (this._F093_一時添付ファイル == null)
+                {
+                    this._F093_一時添付ファイル = new F093Repository(DbContext);
+                }
+                return this._F093_一時添付ファイル;
+            }
+        }
+        #endregion
+
+        #region S018_ドキュメント定義
+        private IS018Repository _S018_ドキュメント定義;
+        public IS018Repository S018_ドキュメント定義
+        {
+            get
+            {
+                if (this._S018_ドキュメント定義 == null)
+                {
+                    this._S018_ドキュメント定義 = new S018Repository(DbContext);
+                }
+                return this._S018_ドキュメント定義;
+            }
+        }
+        #endregion
+
         DbContextTransaction dbContextTransaction = null;
         public async Task BeginTransactionAsync()
         {
@@ -57,10 +102,7 @@ namespace WinMacOs.DataRepository.Repositories
         public void Dispose()
         {
             DbContext.Dispose();
-            if (dbContextTransaction != null)
-            {
-                dbContextTransaction.Dispose();
-            }
+            dbContextTransaction?.Dispose();
         }
     }
 }

@@ -10,12 +10,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WinMacOs.ActionFilter;
 using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.DataRepository.Utilities;
 using WinMacOs.Models;
 using WinMacOs.Models.Enums;
 using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Extensions;
+using WinMacOs.Utility.PInvoke.CommonModels;
+using WinMacOs.Utility.PInvoke.Mpr;
+using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 
 namespace WinMacOs.Controllers.Reafs_T
@@ -23,67 +27,6 @@ namespace WinMacOs.Controllers.Reafs_T
     //[Authorize]
     public partial class CommonController
     {
-        async Task<WebResponseContent> GetAllMenuActionList()
-        {
-            WebResponseContent responseContent = new WebResponseContent();
-
-            string sql =
-                        $"   SELECT                                          " +
-                        $"          S002.メニューID     AS MenuId            " +
-                        $"         ,S002.メニュー名     AS MenuName          " +
-                        $"         ,S003.サブメニューID AS SubMenuId         " +
-                        $"         ,S003.サブメニュー名 AS SubMenuName       " +
-                        $"         ,S003.フォームID     AS Path              " +
-                        $"     FROM ST002_メニューマスタ     S002            " +
-                        $"LEFT JOIN ST003_サブメニューマスタ S003            " +
-                        $"       ON S002.メニューID = S003.メニューID        " +
-                        $"    WHERE S003.削除区分 = 0                        " +
-                        $"    ORDER BY S003.表示順                         ";
-
-            responseContent.Data = await repository.DapperContext.QueryListAsync<object>(sql, null);
-
-            return responseContent;
-        }
-
-        public class NETRESOURCE
-        {
-            public int dwScope { get; set; }
-            public int dwType { get; set; }
-            public int dwDisplayType { get; set; }
-            public int dwUsage { get; set; }
-            public string lpLocalName { get; set; }
-            public string lpRemoteName { get; set; }
-            public string lpComment { get; set; }
-            public string lpProvider { get; set; }
-        }
-
-        [DllImport("mpr.dll")]
-        private static extern int WNetAddConnection2(NETRESOURCE lpNetResource, string lpPassword, string lpUsername, int dwFlags);
-
-        public static int NetResourceConnect()
-        {
-            int ret = 0;
-            string shareName = AppSetting.ShareName;
-            string userId = AppSetting.Credentials.userId;
-            string password = AppSetting.Credentials.password;
-
-            if (!string.IsNullOrEmpty(shareName))
-            {
-                var netResource = new NETRESOURCE();
-                netResource.dwScope = 0;
-                netResource.dwType = 1;
-                netResource.dwDisplayType = 0;
-                netResource.dwUsage = 0;
-                netResource.lpLocalName = "";
-                netResource.lpRemoteName = shareName;
-                netResource.lpComment = "";
-                netResource.lpProvider = "";
-                ret = WNetAddConnection2(netResource, password, userId, 0);
-            }
-
-            return ret;
-        }
-
         struct 工事
         {
             public string 依頼No;
@@ -133,7 +76,6 @@ namespace WinMacOs.Controllers.Reafs_T
         /// <returns></returns>
         async Task<WebResponseContent> GetControlActiveButton(string menuId, string submenuId)
         {
-            string msg = string.Empty;
             WebResponseContent responseContent = new WebResponseContent();
             var userId = UserContext.Current.ログインID;
             //入力されたログインＩＤより「M004_兼務マスタ」を参照し、所属部署をプルダウンに設定する。
@@ -300,11 +242,11 @@ namespace WinMacOs.Controllers.Reafs_T
                     dt権限 = await repository.DapperContext.QueryListAsync<object>(sql,
                         new
                         {
-                            営業所コード = UserContext.Current.ログイン情報.営業所コード,
+                            UserContext.Current.ログイン情報.営業所コード,
                             部コード = UserContext.Current.ログイン情報.部署コード,
-                            課コード = UserContext.Current.ログイン情報.課コード,
-                            係コード = UserContext.Current.ログイン情報.係コード,
-                            役職コード = UserContext.Current.ログイン情報.役職コード,
+                            UserContext.Current.ログイン情報.課コード,
+                            UserContext.Current.ログイン情報.係コード,
+                            UserContext.Current.ログイン情報.役職コード,
                             メニューID = menuId,
                             サブメニューID = submenuId
                         });
@@ -314,8 +256,8 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             catch (Exception ex)
             {
-                msg = ex.Message + ex.StackTrace;
-                return responseContent.Error(ResponseType.ServerError);
+                string msg = ex.Message + ex.StackTrace;
+                return responseContent.Error(ResponseType.ServerError, msg);
             }
             finally
             {
@@ -334,10 +276,16 @@ namespace WinMacOs.Controllers.Reafs_T
                 byte[] imageArray = new byte[] { };
                 if (!string.IsNullOrEmpty(path))
                 {
-                    Reafs_W.CommonService.NetResourceConnect();
-                    if (System.IO.File.Exists(path))
+                    int status = Mpr.NetResourceConnect();
+                    if (status == 0 ) { 
+                        if (System.IO.File.Exists(path))
+                        {
+                            imageArray = await FileExtensions.ReadAllBytesAsync(path);
+                        }
+                        Mpr.NetResourceCancelConnect();
+                    } else
                     {
-                        imageArray = await FileExtensions.ReadAllBytesAsync(path);
+                        throw new Exception(Enum.GetName(typeof(SysErrorCode), status));
                     }
                 }
 
@@ -345,7 +293,7 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             catch (Exception ex)
             {
-                repository.Dispose();
+                LogActionAttribute.WriteError(ex.Message + ex.StackTrace, path);
                 return null;
             }
         }
@@ -417,7 +365,7 @@ namespace WinMacOs.Controllers.Reafs_T
         }
 
 
-        private F090_ドキュメント管理ファイル setDefaultCommonF090(F090_ドキュメント管理ファイル _f090)
+        private F090_ドキュメント管理ファイル SetDefaultCommonF090(F090_ドキュメント管理ファイル _f090)
         {
             F090_ドキュメント管理ファイル f090 = _f090;
             f090.工事依頼No = !string.IsNullOrEmpty(f090.工事依頼No) ? f090.工事依頼No : "";
@@ -455,17 +403,17 @@ namespace WinMacOs.Controllers.Reafs_T
             return f090;
         }
 
-        async Task<WebResponseContent> fnc_InsertF090(JArray data)
+        async Task<WebResponseContent> Fnc_InsertF090(JArray data)
         {
             string errStr = String.Empty;
             WebResponseContent responseContent = new WebResponseContent();
             try
             {
-                List<object> lstData = data.ToObject<List<object>>();
-                foreach (JObject item in lstData)
+                //List<object> lstData = data.ToObject<List<object>>();
+                foreach (JObject item in data.Cast<JObject>())
                 {
                     F090_ドキュメント管理ファイル _f090 = item["F090_ドキュメント管理ファイル"].ToObject<F090_ドキュメント管理ファイル>();
-                    F090_ドキュメント管理ファイル f090 = setDefaultCommonF090(_f090);
+                    F090_ドキュメント管理ファイル f090 = SetDefaultCommonF090(_f090);
                     string 添付NO = item["添付NO"].ToObject<string>();
                     string 帳票種類 = item["帳票種類"].ToObject<string>();
                     string 業者コード = item["業者コード"].ToObject<string>();
@@ -615,15 +563,15 @@ namespace WinMacOs.Controllers.Reafs_T
                     //            return responseContent.Error(msgCd);
                     //        }
                     //    }
-                    var ドキュメントNO = getSeqドキュメントNO();
+                    var ドキュメントNO = GetSeqドキュメントNO();
                     f090.ドキュメントNO = ドキュメントNO;
-                    errStr = await fnc_insertF090(f090);
+                    errStr = await Fnc_insertF090(f090);
 
                     string SAVE_FILE_NAME = f090.物理ファイル名;
-                    string ルートパス = await getS018_ルートパス(f090.添付種類);
+                    string ルートパス = await GetS018_ルートパス(f090.添付種類);
                     string SAVE_DIR = ルートパス + f090.ファイルパス;
                     SAVE_DIR = new FileInfo(SAVE_DIR).DirectoryName;
-                    await fnc_SaveFileServer(SAVE_DIR, SAVE_FILE_NAME, int.Parse(添付NO));
+                    await Fnc_SaveFileServer(SAVE_DIR, SAVE_FILE_NAME, int.Parse(添付NO));
                 }
                 //20221118 rep
                 if (errStr != string.Empty)
@@ -645,7 +593,7 @@ namespace WinMacOs.Controllers.Reafs_T
             }
         }
 
-        private string getExt(string 添付元ファイル名)
+        private string GetExt(string 添付元ファイル名)
         {
             string ext = "";
             if (添付元ファイル名.LastIndexOf(".") >= 0 && 添付元ファイル名.LastIndexOf(".") < 添付元ファイル名.Length - 1)
@@ -655,45 +603,7 @@ namespace WinMacOs.Controllers.Reafs_T
             return ext;
         }
 
-        private string getPhysicalFileName(string 帳票コード, string 拡張子, 工事 Koji)
-        {
-            string 物理ファイル名 = string.Empty;
-            DataTable dt保存時ファイル名 = get保存時ファイル名();
-            物理ファイル名 = dt保存時ファイル名.Select("帳票コード='" + 帳票コード + "'")[0]["物理ファイル名"].ToString();
-            if (!Koji.Equals(null))
-            {
-                物理ファイル名 = 物理ファイル名.Replace("{依頼№}", Koji.依頼No);
-                物理ファイル名 = 物理ファイル名.Replace("{枝番}", Koji.枝番);
-                物理ファイル名 = 物理ファイル名.Replace("{取引先}", (Koji.取引先));
-                物理ファイル名 = 物理ファイル名.Replace("{完了年月}", Koji.完了年月);
-                物理ファイル名 = 物理ファイル名.Replace("{検収回数:00}", Koji.検収回数.PadLeft(2, '0'));
-
-                物理ファイル名 = 物理ファイル名.Replace("{請求書№}", Koji.請求書No);
-                物理ファイル名 = 物理ファイル名.Replace("{契約№}", Koji.契約No);
-                物理ファイル名 = 物理ファイル名.Replace("{契約履歴№}", Koji.契約履歴No);
-                物理ファイル名 = 物理ファイル名.Replace("{契約年月}", Koji.契約年月);
-                物理ファイル名 = 物理ファイル名.Replace("{契約書管理№}", Koji.契約書管理No);
-                物理ファイル名 = 物理ファイル名.Replace("{予定実施年月}", Koji.予定実施年月);
-                物理ファイル名 = 物理ファイル名.Replace("{作業明細№}", Koji.作業明細No);
-                物理ファイル名 = 物理ファイル名.Replace("{年月明細№}", Koji.年月明細No);
-            }
-
-            物理ファイル名 = 物理ファイル名.Replace("yyyyMMddHHmmss", DateTime.Now.ToString("yyyyMMddHHmmss"));
-            物理ファイル名 = 物理ファイル名.Replace("yyyymmddHHmmss", DateTime.Now.ToString("yyyyMMddHHmmss"));
-
-            if (!string.IsNullOrEmpty(拡張子))
-            {
-                物理ファイル名 = 物理ファイル名 + (拡張子.Substring(0, 1) == "." ? "" : ".") + 拡張子;
-            }
-
-            if (!物理ファイル名.Equals(null))
-            {
-                物理ファイル名 = RemoveInvalidCharacter(物理ファイル名);
-            }
-            return 物理ファイル名;
-        }
-
-        private DataTable get保存時ファイル名()
+        private DataTable Get保存時ファイル名()
         {
             string[,] arrCol = {
                 { "101", "依頼書_{依頼№}_yyyyMMddHHmmss"},
@@ -747,14 +657,14 @@ namespace WinMacOs.Controllers.Reafs_T
             return str;
         }
 
-        private Int64 getSeqドキュメントNO()
+        private Int64 GetSeqドキュメントNO()
         {
-            string sql = getSeqドキュメントNOSQL();
+            string sql = GetSeqドキュメントNOSQL();
             Int64 seqNo = (Int64)repository.DapperContext.ExecuteScalar(sql, null);
             return seqNo;
         }
 
-        private string getSeqドキュメントNOSQL()
+        private string GetSeqドキュメントNOSQL()
         {
             StringBuilder sql = new StringBuilder();
 
@@ -787,35 +697,24 @@ namespace WinMacOs.Controllers.Reafs_T
         }
         //20221118 rep
 
-        private async Task<string> getS018_ルートパス(string 添付種類)
+        private async Task<string> GetS018_ルートパス(string 添付種類)
         {
             S018_ドキュメント定義 s018Db = await repository.S018_ドキュメント定義.FindFirstAsync(x => x.帳票種類 == 添付種類);
             return s018Db.ルートパス;
         }
 
         //20221118 rep 図面添付登録処理はReafs-Rと同じように修正。
-        private async Task<bool> fnc_SaveFileServer(string SAVE_DIR, string SAVE_FILE_NAME, int 添付NO)
+        private async Task<bool> Fnc_SaveFileServer(string SAVE_DIR, string SAVE_FILE_NAME, int 添付NO)
         {
-            byte[] bファイルデータ = new byte[] { };
-            //if (!string.IsNullOrEmpty(添付NO))
-            //{
-            //    int i添付NO = Int32.Parse(添付NO);
-            //    bファイルデータ = await getFile(i添付NO);
-            //    string path = string.Empty;
-            //    path = Path.Combine(ルートパス, folder);
-
-            //    saveFile(path, f090.物理ファイル名, bファイルデータ);
-            //}
-            //return true;
-            bファイルデータ = await getFile(添付NO);
-            bool res = saveFile(SAVE_DIR, SAVE_FILE_NAME, bファイルデータ);
+            byte[] bファイルデータ = await GetFile(添付NO);
+            bool res = SaveFile(SAVE_DIR, SAVE_FILE_NAME, bファイルデータ);
             string msgCd = await Fnc_delF093Entity(添付NO);
 
             return res && String.IsNullOrEmpty(msgCd);
         }
         //20221118 rep
 
-        private async Task<byte[]> getFile(int 添付NO)
+        private async Task<byte[]> GetFile(int 添付NO)
         {
             F093_一時添付ファイル f093Data = await repository.F093_一時添付ファイル.FindFirstAsync(x => x.添付NO == 添付NO && x.枝番 == 1);
             byte[] ファイルデータ = new byte[] { };
@@ -826,22 +725,28 @@ namespace WinMacOs.Controllers.Reafs_T
             return ファイルデータ;
         }
 
-        private bool saveFile(string SAVE_DIR, string SAVE_FILE_NAME, byte[] FILE_DATA)
+        private bool SaveFile(string SAVE_DIR, string SAVE_FILE_NAME, byte[] FILE_DATA)
         {
-            NetResourceConnect();
-            if (!Directory.Exists(SAVE_DIR))
-            {
-                Directory.CreateDirectory(SAVE_DIR);
+            int status = Mpr.NetResourceConnect();
+            if (status == 0) {
+                if (!Directory.Exists(SAVE_DIR))
+                {
+                    Directory.CreateDirectory(SAVE_DIR);
+                }
+                System.IO.File.WriteAllBytes(Path.Combine(SAVE_DIR, SAVE_FILE_NAME), FILE_DATA);
+                Mpr.NetResourceCancelConnect();
             }
-            File.WriteAllBytes(Path.Combine(SAVE_DIR, SAVE_FILE_NAME), FILE_DATA);
+            else
+            {
+                throw new Exception(Enum.GetName(typeof(SysErrorCode), status));
+            }
             return true;
         }
 
-        private async Task<string> fnc_insertF090(F090_ドキュメント管理ファイル f090)
+        private async Task<string> Fnc_insertF090(F090_ドキュメント管理ファイル f090)
         {
             string errMsg = "";
-            int rsts = 0;
-            string sql = insertF090SQL();
+            string sql = InsertF090SQL();
 
             if (String.IsNullOrEmpty(f090.添付元))
             {
@@ -849,7 +754,7 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             if (String.IsNullOrEmpty(f090.物理ファイル名))
             {
-                string ext = getExt(f090.添付元ファイル名);
+                string ext = GetExt(f090.添付元ファイル名);
                 工事 koji = new 工事();
                 koji.依頼No = f090.工事依頼No;
                 koji.契約No = f090.契約NO;
@@ -867,17 +772,17 @@ namespace WinMacOs.Controllers.Reafs_T
                 koji.完了年月 = "";
                 koji.請求書管理No = f090.請求書管理NO;
 
-                f090.物理ファイル名 = fnc_getPhysicalFileName(f090.添付種類, ext, koji, f090.掲示ID, f090.ファイルNo, f090.添付NO);
+                f090.物理ファイル名 = Fnc_getPhysicalFileName(f090.添付種類, ext, koji, f090.掲示ID, f090.ファイルNo, f090.添付NO);
 
                 //20210112 add デフォルトの稟議申請ファイル名を取得
-                f090.稟議申請ファイル名 = getS018_帳票名称取得(f090.添付種類) + "." + ext;
+                f090.稟議申請ファイル名 = GetS018_帳票名称取得(f090.添付種類) + "." + ext;
 
             }
             string[] type1 = { "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "120", "125", "130", "140", "199", "901", "902", "903" };
             string[] type2 = { "131", "231" };
 
             string[] type3 = { "201", "202", "203", "204", "205", "220", "221", "222", "223", "225", "226", "240", "299" };
-            string[] type4 = { };
+            string[] _ = { };
             string[] type5 = { "910" };
             string[] type6 = { "900" };
             string folder = "";
@@ -972,50 +877,50 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             if ((f090.発注稟議添付 ?? 0) == 0)
             {
-                f090.発注稟議添付 = getS018_発注稟議添付(f090.添付種類);
+                f090.発注稟議添付 = GetS018_発注稟議添付(f090.添付種類);
             }
             try
             {
                 var paramCommon = GetParamCommon();
-                rsts = await repository.DapperContext.ExcuteNonQueryAsync(sql,
-                    new F090_ドキュメント管理ファイル
-                    {
-                        会社コード = f090.会社コード,
-                        ドキュメントNO = f090.ドキュメントNO,
-                        工事依頼No = f090.工事依頼No ?? "",
-                        添付元 = f090.添付元 ?? "",
-                        添付種類 = f090.添付種類 ?? "",
-                        その他帳票名 = f090.その他帳票名 ?? "",
-                        ファイルパス = f090.ファイルパス ?? "",
-                        物理ファイル名 = f090.物理ファイル名 ?? "",
-                        添付元ファイル名 = f090.添付元ファイル名 ?? "",
-                        契約NO = f090.契約NO ?? "",
-                        履歴NO = f090.履歴NO ?? 0,
-                        明細NO = f090.明細NO ?? 0,
-                        契約年月 = f090.契約年月 ?? "",
-                        契約年月明細NO = f090.契約年月明細NO ?? 0,
-                        予定年月 = f090.予定年月 ?? "",
-                        契約書管理NO = f090.契約書管理NO ?? "",
-                        請求書管理NO = f090.請求書管理NO ?? "",
-                        枝番 = f090.枝番 ?? "",
-                        取引先コード = f090.取引先コード ?? "",
-                        取引先コード枝番 = f090.取引先コード枝番 ?? "",
-                        検収回数 = f090.検収回数 ?? 0,
-                        請求書NO = f090.請求書NO ?? "",
-                        日付 = f090.日付 ?? "",
-                        備考1 = f090.備考1 ?? "",
-                        備考2 = f090.備考2 ?? "",
-                        Ｗ参照区分 = f090.Ｗ参照区分 ?? 0,
-                        Ｔ参照区分 = f090.Ｔ参照区分 ?? 0,
-                        発注稟議添付 = f090.発注稟議添付,
-                        稟議申請ファイル名 = f090.稟議申請ファイル名 ?? "",
-                        削除区分 = f090.削除区分 != 0 && f090.削除区分 != null ? f090.削除区分 : 0, //ハノイ側修正2022/10/12　課題管理表№28：設計書「修正履歴」シートの「2022/10/11仕様変更分」「ファイルアップロード用の共通関数呼び出し時、参照時の引数を追加。F090_ドキュメント管理ファイル参照処理の条件に添付種類を追加。」
-                        INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                        INSERT_PG = f090.INSERT_PG ?? "",
-                        INSERT_HOST = paramCommon.HOST ?? "",
-                        INSERT_ID = !String.IsNullOrEmpty(f090.INSERT_ID) ? f090.INSERT_ID : (UserContext.Current.ログインID ?? ""),
-                        物件コード = f090.物件コード ?? ""
-                    });
+                int rsts = await repository.DapperContext.ExcuteNonQueryAsync(sql,
+        new F090_ドキュメント管理ファイル
+        {
+            会社コード = f090.会社コード,
+            ドキュメントNO = f090.ドキュメントNO,
+            工事依頼No = f090.工事依頼No ?? "",
+            添付元 = f090.添付元 ?? "",
+            添付種類 = f090.添付種類 ?? "",
+            その他帳票名 = f090.その他帳票名 ?? "",
+            ファイルパス = f090.ファイルパス ?? "",
+            物理ファイル名 = f090.物理ファイル名 ?? "",
+            添付元ファイル名 = f090.添付元ファイル名 ?? "",
+            契約NO = f090.契約NO ?? "",
+            履歴NO = f090.履歴NO ?? 0,
+            明細NO = f090.明細NO ?? 0,
+            契約年月 = f090.契約年月 ?? "",
+            契約年月明細NO = f090.契約年月明細NO ?? 0,
+            予定年月 = f090.予定年月 ?? "",
+            契約書管理NO = f090.契約書管理NO ?? "",
+            請求書管理NO = f090.請求書管理NO ?? "",
+            枝番 = f090.枝番 ?? "",
+            取引先コード = f090.取引先コード ?? "",
+            取引先コード枝番 = f090.取引先コード枝番 ?? "",
+            検収回数 = f090.検収回数 ?? 0,
+            請求書NO = f090.請求書NO ?? "",
+            日付 = f090.日付 ?? "",
+            備考1 = f090.備考1 ?? "",
+            備考2 = f090.備考2 ?? "",
+            Ｗ参照区分 = f090.Ｗ参照区分 ?? 0,
+            Ｔ参照区分 = f090.Ｔ参照区分 ?? 0,
+            発注稟議添付 = f090.発注稟議添付,
+            稟議申請ファイル名 = f090.稟議申請ファイル名 ?? "",
+            削除区分 = f090.削除区分 != 0 && f090.削除区分 != null ? f090.削除区分 : 0, //ハノイ側修正2022/10/12　課題管理表№28：設計書「修正履歴」シートの「2022/10/11仕様変更分」「ファイルアップロード用の共通関数呼び出し時、参照時の引数を追加。F090_ドキュメント管理ファイル参照処理の条件に添付種類を追加。」
+            INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+            INSERT_PG = f090.INSERT_PG ?? "",
+            INSERT_HOST = paramCommon.HOST ?? "",
+            INSERT_ID = !String.IsNullOrEmpty(f090.INSERT_ID) ? f090.INSERT_ID : (UserContext.Current.ログインID ?? ""),
+            物件コード = f090.物件コード ?? ""
+        });
 
                 if (rsts < 0)
                 {
@@ -1025,18 +930,19 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             catch (Exception ex)
             {
+                string parameters = JsonConvert.SerializeObject(f090);
+                LogActionAttribute.WriteError(ex.Message + ex.StackTrace, parameters);
                 errMsg = "更新に失敗しました";
                 return errMsg;
             }
             return errMsg;
         }
 
-        private string fnc_getPhysicalFileName(string 帳票コード, string 拡張子, 工事 Koji, long 掲示ID, int ファイルNo, int 添付NO)
+        private string Fnc_getPhysicalFileName(string 帳票コード, string 拡張子, 工事 Koji, long 掲示ID, int ファイルNo, int 添付NO)
         {
-            string 物理ファイル名 = "";
-            DataTable dt保存時ファイル名 = get保存時ファイル名();
+            DataTable dt保存時ファイル名 = Get保存時ファイル名();
 
-            物理ファイル名 = dt保存時ファイル名.Select("帳票コード='" + 帳票コード + "'").Length > 0 ? dt保存時ファイル名.Select("帳票コード='" + 帳票コード + "'")[0]["物理ファイル名"].ToString() : "";
+            string 物理ファイル名 = dt保存時ファイル名.Select("帳票コード='" + 帳票コード + "'").Length > 0 ? dt保存時ファイル名.Select("帳票コード='" + 帳票コード + "'")[0]["物理ファイル名"].ToString() : "";
             物理ファイル名 = 物理ファイル名.Replace("{依頼№}", Koji.依頼No);
             物理ファイル名 = 物理ファイル名.Replace("{枝番}", Koji.枝番);
             物理ファイル名 = 物理ファイル名.Replace("{取引先}", (Koji.取引先));
@@ -1070,23 +976,23 @@ namespace WinMacOs.Controllers.Reafs_T
             return 物理ファイル名;
         }
 
-        private string getS018_帳票名称取得(string 添付種類)
+        private string GetS018_帳票名称取得(string 添付種類)
         {
             S018_ドキュメント定義 s018Db = repository.S018_ドキュメント定義.FindFirst(x => x.帳票種類 == 添付種類);
             var 帳票名称 = s018Db.稟議帳票名称 == "" || s018Db.稟議帳票名称 == null ? s018Db.帳票名称 : s018Db.稟議帳票名称;
             return 帳票名称;
         }
 
-        private int getS018_発注稟議添付(string 添付種類)
+        private int GetS018_発注稟議添付(string 添付種類)
         {
             S018_ドキュメント定義 s018Db = repository.S018_ドキュメント定義.FindFirst(x => x.帳票種類 == 添付種類);
             return s018Db.発注稟議添付 ?? 0;
         }
 
-        async Task<WebResponseContent> insertF090WithSaveFile(JObject data, byte[] FILE_DATA)
+        async Task<WebResponseContent> InsertF090WithSaveFile(JObject data, byte[] FILE_DATA)
         {
-            string errStr = String.Empty;
             WebResponseContent responseContent = new WebResponseContent();
+            string errStr;
             try
             {
                 F090_ドキュメント管理ファイル f090 = data["F090_ドキュメント管理ファイル"].ToObject<F090_ドキュメント管理ファイル>();
@@ -1095,15 +1001,15 @@ namespace WinMacOs.Controllers.Reafs_T
                     return responseContent.Error(ResponseType.BadRequest);
                 }
 
-                var ドキュメントNO = getSeqドキュメントNO();
+                var ドキュメントNO = GetSeqドキュメントNO();
                 f090.ドキュメントNO = ドキュメントNO;
-                errStr = await fnc_insertF090(f090);
+                errStr = await Fnc_insertF090(f090);
 
                 string SAVE_FILE_NAME = f090.物理ファイル名;
-                string ルートパス = await getS018_ルートパス(f090.添付種類);
+                string ルートパス = await GetS018_ルートパス(f090.添付種類);
                 string SAVE_DIR = ルートパス + f090.ファイルパス;
                 SAVE_DIR = new FileInfo(SAVE_DIR).DirectoryName;
-                saveFile(SAVE_DIR, SAVE_FILE_NAME, FILE_DATA);
+                SaveFile(SAVE_DIR, SAVE_FILE_NAME, FILE_DATA);
 
                 if (errStr != string.Empty)
                 {
@@ -1124,9 +1030,9 @@ namespace WinMacOs.Controllers.Reafs_T
             }
         }
         // 20230726 add 3回チェック処理追加
-        async Task<string> insertF090WithSaveFile1(JObject data, byte[] FILE_DATA, int cnt)
+        async Task<string> InsertF090WithSaveFile1(JObject data, byte[] FILE_DATA, int cnt)
         {
-            string errStr = String.Empty;
+            string errStr;
             try
             {
                 F090_ドキュメント管理ファイル f090 = data["F090_ドキュメント管理ファイル"].ToObject<F090_ドキュメント管理ファイル>();
@@ -1135,19 +1041,19 @@ namespace WinMacOs.Controllers.Reafs_T
                     return "f090 is null";
                 }
 
-                var ドキュメントNO = getSeqドキュメントNO();
+                var ドキュメントNO = GetSeqドキュメントNO();
                 f090.ドキュメントNO = ドキュメントNO;
-                errStr = await fnc_insertF090(f090);
+                errStr = await Fnc_insertF090(f090);
                 if (errStr != string.Empty)
                 {
                     return errStr;
                 }
 
                 string SAVE_FILE_NAME = f090.物理ファイル名;
-                string ルートパス = await getS018_ルートパス(f090.添付種類);
+                string ルートパス = await GetS018_ルートパス(f090.添付種類);
                 string PATH = ルートパス + f090.ファイルパス;
                 string SAVE_DIR = new FileInfo(PATH).DirectoryName;
-                saveFile(SAVE_DIR, SAVE_FILE_NAME, FILE_DATA);
+                SaveFile(SAVE_DIR, SAVE_FILE_NAME, FILE_DATA);
 
                 bool result = true;
                 string message = string.Empty;
@@ -1159,14 +1065,14 @@ namespace WinMacOs.Controllers.Reafs_T
 
                     message = "insertF090WithSaveFile round: " + cnt.ToString();
                     string parameters = JsonConvert.SerializeObject(f090);
-                    Filters.LogActionAttribute.WriteError(message, parameters);
+                    LogActionAttribute.WriteError(message, parameters);
 
-                    errStr = fnc_deleteF090(ドキュメントNO, f090.INSERT_PG);
+                    errStr = Fnc_deleteF090(ドキュメントNO, f090.INSERT_PG);
                     if (cnt < 3)
                     {
                         await Task.Delay(milliSeconds); // タイマー時間設定方法：30秒⇒30　、　1分⇒60
                         cnt++;
-                        errStr = await insertF090WithSaveFile1(data, FILE_DATA, cnt);
+                        errStr = await InsertF090WithSaveFile1(data, FILE_DATA, cnt);
                         if (errStr == string.Empty)
                         {
                             result = true;
@@ -1194,24 +1100,23 @@ namespace WinMacOs.Controllers.Reafs_T
         }
         // 20230726 add 
         // 20230726 add 3回チェック処理追加
-        private string fnc_deleteF090(long ドキュメントNO, string UPDATE_PG)
+        private string Fnc_deleteF090(long ドキュメントNO, string UPDATE_PG)
         {
             string errMsg = "";
-            int rsts = 0;
-            string sql = deleteF090SQL();
+            string sql = DeleteF090SQL();
 
             try
             {
                 var paramCommon = GetParamCommon();
-                rsts = repository.DapperContext.ExcuteNonQuery(sql,
-                    new F090_ドキュメント管理ファイル
-                    {
-                        ドキュメントNO = ドキュメントNO,
-                        UPDATE_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                        UPDATE_PG = UPDATE_PG,
-                        UPDATE_HOST = paramCommon.HOST,
-                        UPDATE_ID = UserContext.Current.社員ID
-                    });
+                int rsts = repository.DapperContext.ExcuteNonQuery(sql,
+        new F090_ドキュメント管理ファイル
+        {
+            ドキュメントNO = ドキュメントNO,
+            UPDATE_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+            UPDATE_PG = UPDATE_PG,
+            UPDATE_HOST = paramCommon.HOST,
+            UPDATE_ID = UserContext.Current.社員ID
+        });
 
                 if (rsts < 0)
                 {
@@ -1221,6 +1126,7 @@ namespace WinMacOs.Controllers.Reafs_T
             }
             catch (Exception ex)
             {
+                LogActionAttribute.WriteError(ex.Message + ex.StackTrace, ドキュメントNO.ToString());
                 errMsg = "更新に失敗しました";
                 return errMsg;
             }
@@ -1228,7 +1134,7 @@ namespace WinMacOs.Controllers.Reafs_T
         }
         // 20230726 add
         // 20230726 add 3回チェック処理追加
-        private string deleteF090SQL()
+        private string DeleteF090SQL()
         {
             StringBuilder sql = new StringBuilder();
 
@@ -1268,7 +1174,7 @@ namespace WinMacOs.Controllers.Reafs_T
         }
 
         #region SQL
-        private string insertF090SQL()
+        private string InsertF090SQL()
         {
             StringBuilder sql = new StringBuilder();
 
@@ -1352,25 +1258,34 @@ namespace WinMacOs.Controllers.Reafs_T
 
         #endregion
 
-        static Byte[] getFileImage(string PATH)
+        static Byte[] GetFileImage(string PATH)
         {
-            string errStr = String.Empty;
             try
             {
-                NetResourceConnect();
-                var 存在チェック = new FileInfo(PATH);
-                if (存在チェック.Exists)
+                int status = Mpr.NetResourceConnect();
+                if (status == 0)
                 {
-                    byte[] by = System.IO.File.ReadAllBytes(PATH);
-                    return by;
+                    var 存在チェック = new FileInfo(PATH);
+                    if (存在チェック.Exists)
+                    {
+                        byte[] by = System.IO.File.ReadAllBytes(PATH);
+                        Mpr.NetResourceCancelConnect();
+                        return by;
+                    }
+                    else
+                    {
+                        Mpr.NetResourceCancelConnect();
+                        return null;
+                    }
                 }
                 else
                 {
-                    return null;
+                    throw new Exception(Enum.GetName(typeof(SysErrorCode), status));
                 }
             }
             catch (Exception ex)
             {
+                LogActionAttribute.WriteError(ex.Message + ex.StackTrace, PATH);
                 return null;
             }
         }

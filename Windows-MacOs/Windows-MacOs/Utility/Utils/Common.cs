@@ -14,9 +14,8 @@ namespace WinMacOs.Utility.Utils
         public static object GetValue(this object obj, string propertyName)
         {
             if (obj == null) return null;
-            if (obj is IDictionary<string, object>)
+            if (obj is IDictionary<string, object> data)
             {
-                var data = (IDictionary<string, object>)obj;
                 object value = data[propertyName];
                 return value;
             }
@@ -35,20 +34,19 @@ namespace WinMacOs.Utility.Utils
             {
                 throw new Exception("Wrong type.");
             }
-            if (copyToEntity is IDictionary<string, object> && copyFromEntity is IDictionary<string, object>)
+            if (copyToEntity is IDictionary<string, object> dictionary && copyFromEntity is IDictionary<string, object> dictionary1)
             {
-                var dataCopyTo = (IDictionary<string, object>)copyToEntity;
-                var dataCopyFrom = (IDictionary<string, object>)copyFromEntity;
+                var dataCopyTo = dictionary;
+                var dataCopyFrom = dictionary1;
                 foreach (var from in dataCopyFrom)
                 {
                     dataCopyTo[from.Key] = from.Value;
                 }
                 copyToEntity = (TEntity)dataCopyTo;
             }
-            else if (copyToEntity is IDictionary<string, object> &&
+            else if (copyToEntity is IDictionary<string, object> dataCopyTo &&
                 copyFromEntity?.GetType()?.Name?.IndexOf("<>f__AnonymousType") >= 0)
             {
-                var dataCopyTo = (IDictionary<string, object>)copyToEntity;
                 PropertyInfo[] oProperties = copyFromEntity.GetType().GetProperties();
 
                 foreach (PropertyInfo CurrentProperty in oProperties)
@@ -77,9 +75,8 @@ namespace WinMacOs.Utility.Utils
         public static TEntity SetValue<TEntity>(this TEntity obj, object value, string propertyName)
         {
             if (obj == null) return obj;
-            if (obj is IDictionary<string, object>)
+            if (obj is IDictionary<string, object> data)
             {
-                var data = (IDictionary<string, object>)obj;
                 data[propertyName] = value;
                 return (TEntity)data;
             }
@@ -89,65 +86,6 @@ namespace WinMacOs.Utility.Utils
                 pi?.SetValue(obj, value);
                 return obj;
             };
-        }
-
-        /// <summary>
-        /// コンテンツタイプリストを取得する.
-        /// </summary>
-        /// <returns>コンテンツタイプリスト.</returns>
-        public static string GetContentType(this string fileName)
-        {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                return "application/octet-stream";
-            }
-
-            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fileName);
-            if (fileInfo == null) return "application/octet-stream";
-
-            string fileNameExtension = fileInfo.Extension.ToLower();
-            Dictionary<string, string> contentDict = new Dictionary<string, string>();
-
-            contentDict.Add(".doc", "application/msword");
-            contentDict.Add(".exe", "application/octet-stream");
-            contentDict.Add(".pdf", "application/pdf");
-            contentDict.Add(".xls", "application/vnd.ms-excel");
-            contentDict.Add(".xlsx", "application/vnd.ms-excel");
-            contentDict.Add(".ppt", "application/vnd.ms-powerpoint");
-            contentDict.Add(".lzh", "application/x-lha");
-            contentDict.Add(".tar", "application/x-tar");
-            contentDict.Add(".tgz", "application/x-tar");
-            contentDict.Add(".taz", "application/x-tar");
-            contentDict.Add(".zip", "application/zip");
-            contentDict.Add(".mp3", "audio/mp3");
-            contentDict.Add(".mp4", "audio/mp4");
-            contentDict.Add(".css", "text/css");
-            contentDict.Add(".csv", "text/csv");
-            contentDict.Add(".html", "text/html");
-            contentDict.Add(".text", "text/plain");
-            contentDict.Add(".txt", "text/plain");
-            contentDict.Add(".js", "text/javascript");
-            contentDict.Add(".bmp", "image/bmp");
-            contentDict.Add(".gif", "image/gif");
-            contentDict.Add(".jpeg", "image/jpeg");
-            contentDict.Add(".jpg", "image/jpeg");
-            contentDict.Add(".png", "image/png");
-            contentDict.Add(".avi", "video/avi");
-            contentDict.Add(".mpg", "video/mpg");
-            contentDict.Add(".mpeg", "video/mpg");
-
-            if (string.IsNullOrEmpty(fileNameExtension))
-            {
-                return "application/octet-stream";
-            }
-
-            // コンテンツタイプリストからコンテンツタイプを取得する。
-            if (contentDict.ContainsKey(fileNameExtension))
-            {
-                return contentDict[fileNameExtension];
-            }
-
-            return "application/octet-stream";
         }
 
         public static async Task<byte[]> DownloadFile(string path)
@@ -177,55 +115,15 @@ namespace WinMacOs.Utility.Utils
             return Guid.NewGuid().ToString("N");
         }
 
-        public static decimal decimalParser(this object obj)
+        public static decimal DecimalParser(this object obj)
         {
             if (obj == null)
             {
                 return 0;
             }
 
-            decimal result = 0;
-            decimal.TryParse(obj?.ToString(), out result);
+            decimal.TryParse(obj?.ToString(), out decimal result);
             return result;
-        }
-
-        private struct NETRESOURCE
-        {
-            public int dwScope { get; set; }
-            public int dwType { get; set; }
-            public int dwDisplayType { get; set; }
-            public int dwUsage { get; set; }
-            public string lpLocalName { get; set; }
-            public string lpRemoteName { get; set; }
-            public string lpComment { get; set; }
-            public string lpProvider { get; set; }
-        }
-
-        [DllImport("mpr.dll")]
-        private static extern int WNetAddConnection2(NETRESOURCE lpNetResource, string lpPassword, string lpUsername, int dwFlags);
-
-        public static int NetResourceConnect()
-        {
-            int ret = 0;
-            string shareName = AppSetting.ShareName;
-            string userId = AppSetting.Credentials.userId;
-            string password = AppSetting.Credentials.password;
-
-            if (!string.IsNullOrEmpty(shareName))
-            {
-                var netResource = new NETRESOURCE();
-                netResource.dwScope = 0;
-                netResource.dwType = 1;
-                netResource.dwDisplayType = 0;
-                netResource.dwUsage = 0;
-                netResource.lpLocalName = "";
-                netResource.lpRemoteName = shareName;
-                netResource.lpComment = "";
-                netResource.lpProvider = "";
-                ret = WNetAddConnection2(netResource, password, userId, 0);
-            }
-
-            return ret;
         }
     }
 }

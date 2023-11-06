@@ -7,6 +7,7 @@ using System.Web.Routing;
 using WinMacOs.ActionFilter;
 using WinMacOs.DataRepository.BaseProvider;
 using WinMacOs.DataRepository.IRepositories;
+using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Utils;
 
 namespace WinMacOs.Controllers
@@ -24,6 +25,16 @@ namespace WinMacOs.Controllers
         public BaseVueController(IUnitOfWork repository)
         {
             this.repository = repository;
+        }
+
+        protected ParamCommon GetParamCommon()
+        {
+            ParamCommon paramCommon = new ParamCommon
+            {
+                HOST = RouteUtils.GetClientIP()
+            };
+
+            return paramCommon;
         }
     }
 }

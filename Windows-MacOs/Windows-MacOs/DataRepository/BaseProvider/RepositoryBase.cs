@@ -308,14 +308,14 @@ namespace WinMacOs.DataRepository.BaseProvider
             return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy, returnRowCount).Select(selectorResult).ToList();
         }
 
-        public List<TEntity> QueryByPage(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, bool returnRowCount = true)
+        public List<TEntity> QueryByPage(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy)
         {
             return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy).ToList();
         }
 
         public virtual List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult = null)
         {
-            return IQueryablePage<TEntity>(pageIndex, pagesize, out int rowcount, predicate, orderBy).Select(selectorResult).ToList();
+            return IQueryablePage<TEntity>(pageIndex, pagesize, out _, predicate, orderBy).Select(selectorResult).ToList();
         }
 
         /// <summary>
@@ -567,29 +567,29 @@ namespace WinMacOs.DataRepository.BaseProvider
             {
                 Type detailType = entityType.GetCustomAttribute<EntityAttribute>().DetailTable?[0];
                 if (detailType != null)
-                    sql = sql + $"DELETE FROM {detailType.GetEntityTableName()} where {tKey} in ({joinKeys});";
+                    sql += $"DELETE FROM {detailType.GetEntityTableName()} where {tKey} in ({joinKeys});";
             }
             return ExecuteSqlCommand(sql);
         }
 
         private TEntity SetCommonParam(TEntity entitie, bool isInsert = false)
         {
-            BaseEntity baseEntity = entitie as BaseEntity;
-            if (baseEntity != null)
+            if (entitie is BaseEntity baseEntity)
             {
                 if (isInsert)
                 {
                     baseEntity.INSERT_HOST = UserContext.Current.ClientHost;
                     baseEntity.INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
                     baseEntity.INSERT_ID = UserContext.Current.社員ID ?? UserContext.Current.ログインID;
-                    if(String.IsNullOrEmpty(baseEntity.INSERT_PG))
+                    if (String.IsNullOrEmpty(baseEntity.INSERT_PG))
                         baseEntity.INSERT_PG = DefaultDbContext.INSERT_UPDATE_PG;
 
                     baseEntity.UPDATE_HOST = String.Empty;
                     baseEntity.UPDATE_TIME = String.Empty;
                     baseEntity.UPDATE_ID = String.Empty;
                     baseEntity.UPDATE_PG = String.Empty;
-                } else
+                }
+                else
                 {
                     baseEntity.UPDATE_HOST = !String.IsNullOrEmpty(baseEntity.UPDATE_HOST) ? baseEntity.UPDATE_HOST : UserContext.Current.ClientHost;
                     baseEntity.UPDATE_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
@@ -607,8 +607,7 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         private IEnumerable<TEntity> SetCommonParam(IEnumerable<TEntity> entities, bool isInsert = false)
         {
-            var listEntity = entities as IList<TEntity>;
-            if (listEntity != null)
+            if (entities is IList<TEntity> listEntity)
             {
                 for (int i = 0; i < listEntity.Count; i++)
                 {
@@ -649,7 +648,7 @@ namespace WinMacOs.DataRepository.BaseProvider
             return AddRangeAsync(new List<TEntity>() { entities }, properties?.GetExpressionProperty());
         }
 
-        public Task AddRangeAsync(IEnumerable<TEntity> entities, string[] properties, bool saveChanges = false)
+        public Task AddRangeAsync(IEnumerable<TEntity> entities, string[] properties)
         {
             entities = SetCommonParam(entities, true);
             if (properties != null && entities.First() is BaseEntity)

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using WinMacOs.Utility.Attributes.Common;
 
 namespace WinMacOs.Utility.Extensions
 {
@@ -56,7 +58,7 @@ namespace WinMacOs.Utility.Extensions
         //     A task that represents the asynchronous operation.
         public static Task AddRangeAsync<TEntity>(this DbSet<TEntity> dbSet, [NotNullAttribute] IEnumerable<TEntity> entities, CancellationToken cancellationToken = default) where TEntity : class
         {
-            return Task.Factory.StartNew(() => dbSet.AddRange(entities));
+            return Task.Factory.StartNew(() => dbSet.AddRange(entities), cancellationToken);
         }
     }
 }

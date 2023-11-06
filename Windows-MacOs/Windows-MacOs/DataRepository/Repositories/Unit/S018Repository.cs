@@ -11,17 +11,16 @@ using WinMacOs.Utility.TableModels;
 
 namespace WinMacOs.DataRepository.Repositories
 {
-    public partial class SrtRepository : RepositoryBase<Srt>, ISrtRepository
+    public partial class S018Repository : RepositoryBase<S018_ドキュメント定義>, IS018Repository
     {
-        public SrtRepository(WinMacDbContext dbContext)
+        public S018Repository(WinMacDbContext dbContext)
         : base(dbContext)
         {
 
         }
-        public static ISrtRepository Instance
+        public static IS018Repository Instance
         {
-            get { return AutofacContainerModule.GetService<ISrtRepository>(); }
+            get { return AutofacContainerModule.GetService<IS018Repository>(); }
         }
-
     }
 }

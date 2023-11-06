@@ -14,6 +14,8 @@ namespace WinMacOs.DataRepository.IRepositories
         void Dispose();
         string INSERT_UPDATE_PG { get; set; }
         ISrtRepository SrtRepo { get; }
-        
+        IS018Repository S018_ドキュメント定義 { get; }
+        IF090Repository F090_ドキュメント管理ファイル { get; }
+        IF093Repository F093_一時添付ファイル { get; }
     }
 }

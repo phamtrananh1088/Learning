@@ -202,13 +202,7 @@ namespace WinMacOs.Utility.Utils
             {
                 if (SysInfo.Instance.AllMenu != null)
                 {
-                    MenuModel menu = SysInfo.Instance.AllMenu.FirstOrDefault(n => StringUtils.NullToEmpty(n.URL).Equals(sActionUrl));
-                    if (menu == null)
-                    {
-                        // コントローラーで検索
-                        menu = SysInfo.Instance.AllMenu.FirstOrDefault(n => StringUtils.NullToEmpty(n.URL).Contains(sControlUrl));
-                    }
-
+                    MenuModel menu = SysInfo.Instance.AllMenu.FirstOrDefault(n => StringUtils.NullToEmpty(n.URL).Equals(sActionUrl)) ?? SysInfo.Instance.AllMenu.FirstOrDefault(n => StringUtils.NullToEmpty(n.URL).Contains(sControlUrl));
                     if (menu != null)
                     {
                         return menu.MENU_NM;

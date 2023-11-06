@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -17,11 +18,11 @@ namespace WinMacOs.Utility.Extensions
             return path.Replace("\\", "/");
 
         }
-        private static DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
+        private static readonly DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
 
-        private static long longTime = 621355968000000000;
+        private static readonly long longTime = 621355968000000000;
 
-        private static int samllTime = 10000000;
+        private static readonly int samllTime = 10000000;
         /// <summary>
         /// 获取时间戳 
         /// </summary>
@@ -73,21 +74,19 @@ namespace WinMacOs.Utility.Extensions
 
         public static bool GetGuid(this string guid, out Guid outId)
         {
-            Guid emptyId = Guid.Empty;
             return Guid.TryParse(guid, out outId);
         }
 
         public static bool IsGuid(this string guid)
         {
-            Guid newId;
-            return guid.GetGuid(out newId);
+            return guid.GetGuid(out _);
         }
 
         public static bool IsInt(this object obj)
         {
             if (obj == null)
                 return false;
-            bool reslut = Int32.TryParse(obj.ToString(), out int _number);
+            bool reslut = Int32.TryParse(obj.ToString(), out _);
             return reslut;
 
         }
@@ -307,8 +306,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static sbyte? ToSByte(this string value)
         {
-            sbyte value2;
-            if (sbyte.TryParse(value, out value2))
+            if (sbyte.TryParse(value, out sbyte value2))
             {
                 return value2;
             }
@@ -317,8 +315,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static byte? ToByte(this string value)
         {
-            byte value2;
-            if (byte.TryParse(value, out value2))
+            if (byte.TryParse(value, out byte value2))
             {
                 return value2;
             }
@@ -327,8 +324,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static ushort? ToUInt16(this string value)
         {
-            ushort value2;
-            if (ushort.TryParse(value, out value2))
+            if (ushort.TryParse(value, out ushort value2))
             {
                 return value2;
             }
@@ -346,8 +342,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static uint? ToUInt32(this string value)
         {
-            uint value2;
-            if (uint.TryParse(value, out value2))
+            if (uint.TryParse(value, out uint value2))
             {
                 return value2;
             }
@@ -356,8 +351,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static ulong? ToUInt64(this string value)
         {
-            ulong value2;
-            if (ulong.TryParse(value, out value2))
+            if (ulong.TryParse(value, out ulong value2))
             {
                 return value2;
             }
@@ -366,8 +360,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static long? ToInt64(this string value)
         {
-            long value2;
-            if (long.TryParse(value, out value2))
+            if (long.TryParse(value, out long value2))
             {
                 return value2;
             }
@@ -376,8 +369,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static float? ToSingle(this string value)
         {
-            float value2;
-            if (float.TryParse(value, out value2))
+            if (float.TryParse(value, out float value2))
             {
                 return value2;
             }
@@ -386,8 +378,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static double? ToDouble(this string value)
         {
-            double value2;
-            if (double.TryParse(value, out value2))
+            if (double.TryParse(value, out double value2))
             {
                 return value2;
             }
@@ -396,8 +387,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static decimal? ToDecimal(this string value)
         {
-            decimal value2;
-            if (decimal.TryParse(value, out value2))
+            if (decimal.TryParse(value, out decimal value2))
             {
                 return value2;
             }
@@ -406,8 +396,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static bool? ToBoolean(this string value)
         {
-            bool value2;
-            if (bool.TryParse(value, out value2))
+            if (bool.TryParse(value, out bool value2))
             {
                 return value2;
             }
@@ -418,8 +407,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static Guid? ToGuid(this string str)
         {
-            Guid value;
-            if (Guid.TryParse(str, out value))
+            if (Guid.TryParse(str, out Guid value))
             {
                 return value;
             }
@@ -428,8 +416,7 @@ namespace WinMacOs.Utility.Extensions
 
         public static DateTime? ToDateTime(this string value)
         {
-            DateTime value2;
-            if (DateTime.TryParse(value, out value2))
+            if (DateTime.TryParse(value, out DateTime value2))
             {
                 return value2;
             }
@@ -442,8 +429,7 @@ namespace WinMacOs.Utility.Extensions
             {
                 return null;
             }
-            int value;
-            if (int.TryParse(input, out value))
+            if (int.TryParse(input, out int value))
             {
                 return value;
             }
@@ -461,7 +447,7 @@ namespace WinMacOs.Utility.Extensions
             return string.IsNullOrEmpty(input) ? null : Regex.Replace(input, "\\s", replacement, RegexOptions.Compiled);
         }
 
-        private static char[] randomConstant ={
+        private static readonly char[] randomConstant ={
         '0','1','2','3','4','5','6','7','8','9',
         'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
         'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
@@ -500,6 +486,66 @@ namespace WinMacOs.Utility.Extensions
         public static String[] Split(this string str, String separator, StringSplitOptions options = StringSplitOptions.None)
         {
             return str.Split(new string[] { separator }, options);
+        }
+
+        /// <summary>
+        /// コンテンツタイプリストを取得する.
+        /// </summary>
+        /// <returns>コンテンツタイプリスト.</returns>
+        public static string GetContentType(this string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return "application/octet-stream";
+            }
+
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fileName);
+            if (fileInfo == null) return "application/octet-stream";
+
+            string fileNameExtension = fileInfo.Extension.ToLower();
+            Dictionary<string, string> contentDict = new Dictionary<string, string>
+            {
+                { ".doc", "application/msword" },
+                { ".exe", "application/octet-stream" },
+                { ".pdf", "application/pdf" },
+                { ".xls", "application/vnd.ms-excel" },
+                { ".xlsx", "application/vnd.ms-excel" },
+                { ".ppt", "application/vnd.ms-powerpoint" },
+                { ".lzh", "application/x-lha" },
+                { ".tar", "application/x-tar" },
+                { ".tgz", "application/x-tar" },
+                { ".taz", "application/x-tar" },
+                { ".zip", "application/zip" },
+                { ".mp3", "audio/mp3" },
+                { ".mp4", "audio/mp4" },
+                { ".css", "text/css" },
+                { ".csv", "text/csv" },
+                { ".html", "text/html" },
+                { ".text", "text/plain" },
+                { ".txt", "text/plain" },
+                { ".js", "text/javascript" },
+                { ".bmp", "image/bmp" },
+                { ".gif", "image/gif" },
+                { ".jpeg", "image/jpeg" },
+                { ".jpg", "image/jpeg" },
+                { ".png", "image/png" },
+                { ".avi", "video/avi" },
+                { ".mpg", "video/mpg" },
+                { ".mpeg", "video/mpg" }
+            };
+
+            if (string.IsNullOrEmpty(fileNameExtension))
+            {
+                return "application/octet-stream";
+            }
+
+            // コンテンツタイプリストからコンテンツタイプを取得する。
+            if (contentDict.ContainsKey(fileNameExtension))
+            {
+                return contentDict[fileNameExtension];
+            }
+
+            return "application/octet-stream";
         }
     }
 }

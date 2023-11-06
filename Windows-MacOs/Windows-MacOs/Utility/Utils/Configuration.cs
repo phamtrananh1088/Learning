@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using WinMacOs.Models;
+using WinMacOs.Utility.Extensions;
 
 namespace WinMacOs.Utility.Utils
 {
@@ -80,6 +81,23 @@ namespace WinMacOs.Utility.Utils
         /// オンラインユーザリスト.
         /// </summary>
         public static List<LoginUser> LoginUsers { get; set; }
+
+        public static string SystemName {
+            get
+            {
+                string sVar = ConfigurationManager.AppSettings["SystemName"];
+                return sVar ?? "Core";
+            }
+        }
+
+        public static int PrintAPIRecallDelayTime
+        {
+            get
+            {
+                string sVar = ConfigurationManager.AppSettings["PrintAPIRecallDelayTime"];
+                return (sVar ?? "0").GetInt();
+            }
+        } // タイマー時間：30秒⇒30　、　1分⇒60
     }
 
     public class Connection
