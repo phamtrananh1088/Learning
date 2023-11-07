@@ -13,28 +13,23 @@ using WinMacOs.Utility.Utils;
 namespace WinMacOs.Controllers
 {
     [LargeJsonNetFilter]
-    public abstract class BaseVueController<TRepository> : Controller
-        where TRepository : IRepository
+    public abstract class BaseVueController<IServiceBase> : Controller       
     {
-        protected IUnitOfWork repository;
+        protected IServiceBase Service;
         protected override void Initialize(RequestContext requestContext)
         {
             base.Initialize(requestContext);
         }
 
-        public BaseVueController(IUnitOfWork repository)
+        public BaseVueController()
         {
-            this.repository = repository;
+
+        }
+        public BaseVueController(IServiceBase service)
+        {
+            Service = service;
         }
 
-        protected ParamCommon GetParamCommon()
-        {
-            ParamCommon paramCommon = new ParamCommon
-            {
-                HOST = RouteUtils.GetClientIP()
-            };
-
-            return paramCommon;
-        }
+        
     }
 }

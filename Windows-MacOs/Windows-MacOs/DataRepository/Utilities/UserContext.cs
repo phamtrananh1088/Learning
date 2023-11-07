@@ -31,12 +31,12 @@ namespace WinMacOs.DataRepository.Utilities
             }
         }
 
-        public UserContext(HttpContextBase Context)
+        public UserContext()
         {
-            this.HttpContext = Context ?? throw new Exception("HttpContextBaseはインスタンス化されません。");
+            this.HttpContext = System.Web.HttpContext.Current;
         }
 
-        private HttpContextBase HttpContext { get; set; }
+        private HttpContext HttpContext { get; set; }
 
         private static ICacheService CacheService
         {

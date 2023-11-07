@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using _03.Reafs_W_NetCore.Business.IServices.Reafs_R_Web;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,14 +10,15 @@ using System.Web.Mvc;
 using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.Models;
 
-namespace WinMacOs.Controllers.Reafs_T
+namespace WinMacOs.Controllers.Reafs_R_Web
 {
     //[Authorize]
-    public partial class Reafs_TController
+    public partial class Reafs_R_WebController : BaseVueController<ICommonService>
     {
-        public ActionResult Index()
+        public Reafs_R_WebController()
+             : base()
         {
-            return File("~/Reafs_T/index.html", "text/html");
+
         }
     }
 }

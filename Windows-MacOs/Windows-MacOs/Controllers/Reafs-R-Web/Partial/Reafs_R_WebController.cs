@@ -9,14 +9,15 @@ using System.Web.Mvc;
 using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.Models;
 
-namespace WinMacOs.Controllers.Reafs_T
+namespace WinMacOs.Controllers.Reafs_R_Web
 {
     //[Authorize]
-    public partial class Reafs_TController
+    public partial class Reafs_R_WebController
     {
-        public ActionResult Index()
+        public ActionResult Index(String path)
         {
-            return File("~/Reafs_T/index.html", "text/html");
+            return File("~/Reafs_R_Web/index.html", "text/html");
         }
+
     }
 }

@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using WinMacOs.DataRepository.Dapper;
 using WinMacOs.DataRepository.EFDbContext;
 using WinMacOs.Utility.Enums;
+using WinMacOs.Utility.SystemModels;
 
 namespace WinMacOs.DataRepository.BaseProvider
 {
-    public interface IRepository<TEntity> where TEntity : new()
+    public interface IRepository<TEntity> where TEntity : BaseEntity
     {
 
         /// <summary>
