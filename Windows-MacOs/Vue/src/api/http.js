@@ -276,7 +276,7 @@ function replaceToken () {
   if (_vue.$router.options.routes[0].name == 'Index_R') {
     url = '/api/User/replaceToken'
   } else if (_vue.$router.options.routes[0].name == 'Index_T') {
-    url = '/api/Reafs_T/replaceToken'
+    url = '/api/Reafs_T/User/replaceToken'
   } else if (_vue.$router.options.routes[0].name == 'Index_W') {
     url = '/api/User/replaceToken'
   }

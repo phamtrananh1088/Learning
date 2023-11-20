@@ -45,7 +45,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyModel, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.7.0.0\lib\net462\Microsoft.Extensions.DependencyModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.7.0.3\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.7.0.3\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.7.0.3\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.7.0.3\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -56,8 +74,42 @@
       <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.7.0.3\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.7.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.7.0.0\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -238,21 +290,33 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\Partial\ICommonService.cs" />
+    <Compile Include="Business\IServices\Reafs_T\Common\ILoginService.cs" />
+    <Compile Include="Business\IServices\Reafs_T\Common\Partial\ILoginService.cs" />
     <Compile Include="Business\IServices\Reafs_W\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_W\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\CommonService.cs" />
+    <Compile Include="Business\Services\Reafs_T\Common\LoginService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\Partial\CommonService.cs" />
+    <Compile Include="Business\Services\Reafs_T\Common\Partial\LoginService.cs" />
+    <Compile Include="Business\Services\Reafs_W\Common\CommonService.cs" />
+    <Compile Include="Business\Services\Reafs_W\Common\Partial\CommonService.cs" />
+    <Compile Include="Business\Services\System\Partial\Sys_LogService.cs" />
     <Compile Include="Controllers\Reafs-R-Web\Partial\Reafs_R_WebController.cs" />
     <Compile Include="Controllers\Reafs-R-Web\Reafs_R_WebController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\Reafs-W\Common\CommonController.cs" />
+    <Compile Include="Controllers\Reafs-W\Common\Partial\CommonController.cs" />
     <Compile Include="Controllers\Reafs-W\Partial\Reafs_WController.cs" />
     <Compile Include="Controllers\Reafs_T\Common\CommonController.cs" />
+    <Compile Include="Controllers\Reafs_T\Common\LoginController.cs" />
     <Compile Include="Controllers\Reafs_T\Common\Partial\CommonController.cs" />
+    <Compile Include="Controllers\Reafs_T\Common\Partial\LoginController.cs" />
     <Compile Include="Controllers\Reafs_T\Partial\Reafs_TController.cs" />
     <Compile Include="Controllers\Reafs-W\Reafs_WController.cs" />
     <Compile Include="DataRepository\AutofacManager\AutofacContainerModule.cs" />
+    <Compile Include="DataRepository\AutofacManager\AutofacContainerModuleExtension.cs" />
     <Compile Include="DataRepository\BaseProvider\IRepository.cs" />
     <Compile Include="DataRepository\BaseProvider\IService.cs" />
     <Compile Include="DataRepository\BaseProvider\RepositoryBase.cs" />
@@ -263,10 +327,16 @@
     <Compile Include="DataRepository\EFDbContext\WinMacDbContext.cs" />
     <Compile Include="DataRepository\IRepositories\Unit\IF090Repository.cs" />
     <Compile Include="DataRepository\IRepositories\Unit\IF093Repository.cs" />
+    <Compile Include="DataRepository\IRepositories\Unit\IF140Repository.cs" />
+    <Compile Include="DataRepository\IRepositories\Unit\IM015Repository.cs" />
+    <Compile Include="DataRepository\IRepositories\Unit\IS016Repository.cs" />
     <Compile Include="DataRepository\IRepositories\Unit\IS018Repository.cs" />
     <Compile Include="DataRepository\Repositories\UnitOfWorkRepository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\F090Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\F093Repository.cs" />
+    <Compile Include="DataRepository\Repositories\Unit\F140Repository.cs" />
+    <Compile Include="DataRepository\Repositories\Unit\M015Repository.cs" />
+    <Compile Include="DataRepository\Repositories\Unit\S016Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\S018Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\SrtRepository.cs" />
     <Compile Include="Models\MenuModel.cs" />
@@ -275,6 +345,7 @@
     <Compile Include="Models\LoginUser.cs" />
     <Compile Include="Utility\Attributes\Common\Common.cs" />
     <Compile Include="Utility\DomainModels\CommonInfo.cs" />
+    <Compile Include="Utility\DomainModels\LoginInfo.cs" />
     <Compile Include="Utility\DomainModels\MenuInfo.cs" />
     <Compile Include="Utility\DomainModels\ParamCommon.cs" />
     <Compile Include="Utility\EntityFramework\Query\IIncludableQueryable.cs" />
@@ -327,6 +398,7 @@
     <Compile Include="Utility\TableModels\F140_ログイン認証ファイル.cs" />
     <Compile Include="Utility\TableModels\M003_社員マスタ.cs" />
     <Compile Include="Utility\TableModels\M015_業者ユーザマスタ.cs" />
+    <Compile Include="Utility\TableModels\S016_メッセージマスタ.cs" />
     <Compile Include="Utility\TableModels\S018_ドキュメント定義.cs" />
     <Compile Include="Utility\TableModels\Srt.cs" />
     <Compile Include="Models\NoteModels - Copy.cs" />
@@ -350,6 +422,8 @@
     <Compile Include="Utility\Resolver\NullToEmptyStringContractResolver.cs" />
     <Compile Include="Utility\Resolver\NullToEmptyStringValueProvider.cs" />
     <Compile Include="Utility\Resolver\UpperCaseContractResolver.cs" />
+    <Compile Include="Utility\Utils\Binder\JTokenModelBinderProviders.cs" />
+    <Compile Include="Utility\Utils\Binder\JTokenModelBinder.cs" />
     <Compile Include="Utility\Utils\CodeAnalysis.cs" />
     <Compile Include="Utility\Utils\Common.cs" />
     <Compile Include="Utility\Utils\Configuration.cs" />
@@ -358,6 +432,8 @@
     <Compile Include="Utility\Utils\Credentials.cs" />
     <Compile Include="Utility\Utils\DataBaseType.cs" />
     <Compile Include="Utility\Utils\EntityAttribute.cs" />
+    <Compile Include="Utility\Utils\JwtHelper.cs" />
+    <Compile Include="Utility\Utils\PassWordHelper.cs" />
     <Compile Include="Utility\Utils\RouteUtils.cs" />
     <Compile Include="Utility\Utils\Secret.cs" />
     <Compile Include="Utility\Utils\SingletonProvider.cs" />

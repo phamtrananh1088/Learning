@@ -11,16 +11,10 @@ namespace WinMacOs.DataRepository.EFDbContext
         /// <summary>
         /// データベースアクセス名称 
         /// </summary>
-        public string DataBaseName = null;
         public string INSERT_UPDATE_PG = String.Empty;
         public WinMacDbContext()
-                : base()
+                : base("WinMacDbContext")
         {
-        }
-        public WinMacDbContext(string connection)
-            : base()
-        {
-            DataBaseName = connection;
         }
 
         public override int SaveChanges()
@@ -43,6 +37,8 @@ namespace WinMacOs.DataRepository.EFDbContext
         {
             modelBuilder.Entity<Srt>()
              .HasKey(c => new { c.JI_NO });
+            modelBuilder.Entity<M015_業者ユーザマスタ>()
+            .HasKey(c => new { c.業者コード, c.業者コード枝番, c.ユーザーＩＤ });
         }
     }
 }

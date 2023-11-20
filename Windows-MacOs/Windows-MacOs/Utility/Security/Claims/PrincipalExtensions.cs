@@ -28,7 +28,7 @@ namespace WinMacOs.Utility.Security.Claims
         //     is not present.
         public static string FindFirstValue(this ClaimsPrincipal principal, string claimType)
         {
-            return principal.Claims.FirstOrDefault((m) => m.Type == claimType).Value;
+            return principal.Claims.FirstOrDefault((m) => m.Type == claimType)?.Value;
         }
     }
 }

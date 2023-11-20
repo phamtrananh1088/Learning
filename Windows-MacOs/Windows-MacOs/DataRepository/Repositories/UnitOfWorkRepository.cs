@@ -5,6 +5,7 @@ using WinMacOs.DataRepository.BaseProvider;
 using WinMacOs.DataRepository.EFDbContext;
 using WinMacOs.Utility.Extensions;
 using System.Data.Entity;
+using Microsoft.Owin.Logging;
 
 namespace WinMacOs.DataRepository.Repositories
 {
@@ -23,20 +24,20 @@ namespace WinMacOs.DataRepository.Repositories
             }
         }
 
-        #region Per Unit Repository
-        private ISrtRepository _SrtRepo;
-        public ISrtRepository SrtRepo
-        {
-            get
-            {
-                if (this._SrtRepo == null)
-                {
-                    this._SrtRepo = new SrtRepository(DbContext);
-                }
-                return this._SrtRepo;
-            }
-        }
-        #endregion
+        //#region Per Unit Repository
+        //private ISrtRepository _SrtRepo;
+        //public ISrtRepository SrtRepo
+        //{
+        //    get
+        //    {
+        //        if (this._SrtRepo == null)
+        //        {
+        //            this._SrtRepo = new SrtRepository(DbContext);
+        //        }
+        //        return this._SrtRepo;
+        //    }
+        //}
+        //#endregion
 
         #region F090_ドキュメント管理ファイル
         private IF090Repository _F090_ドキュメント管理ファイル;
@@ -82,6 +83,55 @@ namespace WinMacOs.DataRepository.Repositories
             }
         }
         #endregion
+
+        #region M015_業者ユーザマスタ
+        private IM015Repository _M015_業者ユーザマスタ;
+        public IM015Repository M015_業者ユーザマスタ
+        {
+            get
+            {
+                if (this._M015_業者ユーザマスタ == null)
+                {
+                    this._M015_業者ユーザマスタ = new M015Repository(DbContext);
+                }
+                return this._M015_業者ユーザマスタ;
+            }
+        }
+        #endregion
+
+        #region S016_メッセージマスタ
+        private IS016Repository _S016_メッセージマスタ;
+        public IS016Repository S016_メッセージマスタ
+        {
+            get
+            {
+                if (this._S016_メッセージマスタ == null)
+                {
+                    this._S016_メッセージマスタ = new S016Repository(DbContext);
+                }
+                return this._S016_メッセージマスタ;
+            }
+        }
+        #endregion
+
+        #region F140_ログイン認証ファイル
+        private IF140Repository _F140_ログイン認証ファイル;
+        public IF140Repository F140_ログイン認証ファイル
+        {
+            get
+            {
+                if (this._F140_ログイン認証ファイル == null)
+                {
+                    this._F140_ログイン認証ファイル = new F140Repository(DbContext);
+                }
+                return this._F140_ログイン認証ファイル;
+            }
+        }
+        #endregion
+
+        public UnitOfWork(WinMacDbContext context): base(context)
+        {
+        }
 
         DbContextTransaction dbContextTransaction = null;
         public async Task BeginTransactionAsync()

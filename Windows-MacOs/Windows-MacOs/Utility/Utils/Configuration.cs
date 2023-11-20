@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Web.Hosting;
 using WinMacOs.Models;
 using WinMacOs.Utility.Extensions;
 
@@ -68,6 +70,33 @@ namespace WinMacOs.Utility.Utils
             }
         }
 
+        public static string TokenHeaderName = "Authorization";
+
+        public static int TokenCount { 
+         get
+            {
+                return (ConfigurationManager.AppSettings["TokenCount"] ?? "5").GetInt();
+            }
+        }
+
+        public static string CurrentPath {
+            get
+            {
+                return HostingEnvironment.ApplicationPhysicalPath;
+            }
+        }
+        public static string DownLoadPath { get { return CurrentPath + "\\Download\\"; } }
+
+
+        public static Secret Secret
+        {
+            get
+            {
+                NameValueCollection section = (NameValueCollection)ConfigurationManager.GetSection("secret");
+                return new Secret() { JWT = section["JWT"], Audience = section["Audience"], Issuer = section["Issuer"] };
+            }
+        }
+
         public static Credentials Credentials
         {
             get
@@ -81,14 +110,6 @@ namespace WinMacOs.Utility.Utils
         /// オンラインユーザリスト.
         /// </summary>
         public static List<LoginUser> LoginUsers { get; set; }
-
-        public static string SystemName {
-            get
-            {
-                string sVar = ConfigurationManager.AppSettings["SystemName"];
-                return sVar ?? "Core";
-            }
-        }
 
         public static int PrintAPIRecallDelayTime
         {

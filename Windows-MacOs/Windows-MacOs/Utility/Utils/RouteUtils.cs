@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Configuration;
+using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 using WinMacOs.Models;
 using WinMacOs.Utility.DomainModels;
@@ -117,6 +119,23 @@ namespace WinMacOs.Utility.Utils
             return StringUtils.NullToEmpty(routedata.Values["controller"]);
         }
 
+        public static string SystemName()
+        {
+            return "C";
+        }
+        public static string SystemName(ActionExecutingContext context)
+        {
+            switch (context.Controller.GetType().Namespace) {
+                case "WinMacOs.Controllers.Reafs_T":
+                    return "T";
+                case "WinMacOs.Controllers.Reafs_W":
+                    return "W";
+                case "WinMacOs.Controllers.Reafs_R_Web":
+                    return "R";
+                default:
+                    return "C";
+            }
+        }
         /// <summary>
         /// プログラムIDを取得する.
         /// </summary>

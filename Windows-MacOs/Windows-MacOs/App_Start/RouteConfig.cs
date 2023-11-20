@@ -15,6 +15,14 @@ namespace WinMacOs
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapMvcAttributeRoutes();
+            //AreaRegistration.RegisterAllAreas();
+
+            //routes.MapRoute(
+            //    name: "Reafs_T Api",
+            //    url: "api/Reafs_T/{controller}/{action}",
+            //    defaults: new { controller = "Common", action = "getAllMenu" },
+            //    namespaces: new string[] { "WinMacOs.Controllers.Reafs_T" }
+            //);
 
             routes.MapRoute(
                 name: "Reafs_T",

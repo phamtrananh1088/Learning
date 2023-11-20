@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using System.Web;
 using WinMacOs.Models.Enums;
 
@@ -21,12 +24,16 @@ namespace WinMacOs.Models
         }
 
         //処理状態
-        public bool Status { get; set; }
+        [JsonProperty("status")]
+        public bool Status { get; set; } = true;
         //Httpコード
+        [JsonProperty("code")]
         public string Code { get; set; }
         //エラーメッセージ
+        [JsonProperty("message")]
         public string Message { get; set; }
         //レスポンスデータ
+        [JsonProperty("data")]
         public object Data { get; set; }
 
         #region Response OK
@@ -34,6 +41,10 @@ namespace WinMacOs.Models
         {
             this.Status = true;
             return this;
+        }
+        public async Task<WebResponseContent> OKAsync(string message = null, object data = null)
+        {
+            return await Task.Factory.StartNew(() => OK(message, data));
         }
         public WebResponseContent OK(string message = null, object data = null)
         {

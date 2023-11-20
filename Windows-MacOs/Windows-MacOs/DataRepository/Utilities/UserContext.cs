@@ -12,6 +12,7 @@ using WinMacOs.Utility.Utils;
 using WinMacOs.Utility.CacheManager;
 using System.Web;
 using WinMacOs.Utility.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace WinMacOs.DataRepository.Utilities
 {
@@ -252,7 +253,7 @@ namespace WinMacOs.DataRepository.Utilities
         {
             get
             {
-                return (User.FindFirstValue(/*JwtRegisteredClaimNames.Jti*/"Jti")
+                return (User.FindFirstValue(JwtRegisteredClaimNames.Jti)
                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier))?.ToString();
             }
         }

@@ -30,7 +30,7 @@ namespace WinMacOs.ActionFilter
                 string controller = (routerData.Values["controller"]?.ToString()) ?? "";
                 string action = (routerData.Values["action"]?.ToString()) ?? "";
 
-                string sシステム名 = AppSetting.SystemName;
+                string sシステム名 = RouteUtils.SystemName(context);
 
                 //if (action.Equals("Login"))
                 //{
@@ -86,7 +86,7 @@ namespace WinMacOs.ActionFilter
             string host = userContext.ClientHost;
             Task.Factory.StartNew(() =>
             {
-                string sシステム名 = AppSetting.SystemName;
+                string sシステム名 = RouteUtils.SystemName();
                 
                 StringBuilder sqlBuilder = new StringBuilder();
                 sqlBuilder.AppendLine("INSERT INTO S020_Webエラーログファイル (");

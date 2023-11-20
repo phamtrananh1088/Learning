@@ -14,10 +14,11 @@ namespace WinMacOs.Utility.TableModels
     public class Srt : BaseEntity
     {
         public string JI_NO { get; set; }
+
         /// <summary>
-        /// IsCreateNew.
+        /// FilePath.
         /// </summary>
-        public bool IsCreateNew { get; set; }
+        public string FilePath { get; set; }
 
         /// <summary>
         /// FileName.
@@ -27,6 +28,7 @@ namespace WinMacOs.Utility.TableModels
         /// <summary>
         /// CreateDate.
         /// </summary>
+        [NotMapped]
         public DateTime CreateDate { get; set; }
         /// <summary>
         /// Level.

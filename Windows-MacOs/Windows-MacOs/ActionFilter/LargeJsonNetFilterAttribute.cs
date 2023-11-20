@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WinMacOs.Utility;
 using WinMacOs.Utils;
 using WinMacOs.Utils.Resolver;

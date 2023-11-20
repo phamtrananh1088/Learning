@@ -1,23 +1,14 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Services.Description;
-using WinMacOs.Business.IServices.Reafs_T;
+using System.Text;
+using WinMacOs.Business.IServices.Reafs_W;
 using WinMacOs.DataRepository.AutofacManager;
 using WinMacOs.DataRepository.BaseProvider;
 using WinMacOs.DataRepository.IRepositories;
-using WinMacOs.Models;
-using WinMacOs.Utility.DomainModels;
-using WinMacOs.Utility.Extensions;
-using WinMacOs.Utility.SystemModels;
 
-namespace WinMacOs.Business.Services.Reafs_T
+namespace WinMacOs.Business.Services.Reafs_W
 {
+
     public partial class CommonService : ServiceBase<IUnitOfWork>, ICommonService
     {
         public CommonService(IUnitOfWork repository)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -6,6 +7,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using WinMacOs.Controllers;
 using WinMacOs.DataRepository.AutofacManager;
+using WinMacOs.Utility.Utils.Binder;
 
 namespace WinMacOs
 {
@@ -21,6 +23,9 @@ namespace WinMacOs
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             Bootstrapper.Initialise();
+
+            //ModelBinders.Binders.Add(typeof(JToken), new JTokenModelBinder());
+            ModelBinderProviders.BinderProviders.Add(new JTokenModelBinderProviders());
         }
 
         protected void Application_Error(object sender, EventArgs e)

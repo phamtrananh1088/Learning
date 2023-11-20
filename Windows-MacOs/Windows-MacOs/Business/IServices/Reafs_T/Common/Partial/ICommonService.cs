@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WinMacOs.Models;
 
-namespace _03.Reafs_W_NetCore.Business.IServices.Reafs_T
+namespace WinMacOs.Business.IServices.Reafs_T
 {
     public partial interface ICommonService
     {

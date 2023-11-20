@@ -224,7 +224,7 @@ export default {
 
       this.loading = true
       this.http
-        .post('/api/Reafs_T/login', this.userInfo, 'アクセスしています....')
+        .post('/api/Reafs_T/User/login', this.userInfo, 'アクセスしています....')
         .then((result) => {
           //認証OK以外の場合
           if (result.code != 1) {
@@ -268,7 +268,7 @@ export default {
     },
     updM015(){
       this.http
-        .post('/api/Reafs_T/updM015', this.userInfo)
+        .post('/api/Reafs_T/User/updM015', this.userInfo)
         .then((result) => {
           this.errorMessage = result.message
         });
