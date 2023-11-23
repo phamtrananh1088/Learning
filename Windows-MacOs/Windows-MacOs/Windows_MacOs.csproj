@@ -288,6 +288,8 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Business\IServices\Manager\ICanvasService.cs" />
+    <Compile Include="Business\IServices\Manager\Partial\ICanvasService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ILoginService.cs" />
@@ -296,6 +298,8 @@
     <Compile Include="Business\IServices\Reafs_W\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\Partial\ICommonService.cs" />
+    <Compile Include="Business\Services\Manager\CanvasService.cs" />
+    <Compile Include="Business\Services\Manager\Partial\CanvasService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\CommonService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\LoginService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\Partial\CommonService.cs" />
@@ -303,6 +307,8 @@
     <Compile Include="Business\Services\Reafs_W\Common\CommonService.cs" />
     <Compile Include="Business\Services\Reafs_W\Common\Partial\CommonService.cs" />
     <Compile Include="Business\Services\System\Partial\Sys_LogService.cs" />
+    <Compile Include="Controllers\Manager\Common\CanvasController.cs" />
+    <Compile Include="Controllers\Manager\Common\Partial\CanvasController.cs" />
     <Compile Include="Controllers\Reafs-R-Web\Partial\Reafs_R_WebController.cs" />
     <Compile Include="Controllers\Reafs-R-Web\Reafs_R_WebController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -508,6 +514,7 @@
     <Content Include="Scripts\knockout.validation.min.js" />
     <Content Include="Scripts\master\GetMessages.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Pages\Manager\canvas.js" />
     <Content Include="Scripts\sammy-0.7.5.js" />
     <Content Include="Scripts\sammy-0.7.5.min.js" />
     <Content Include="Unity.Mvc3.README.txt" />
@@ -535,9 +542,12 @@
     <Content Include="Views\Notes\Edit.cshtml" />
     <Content Include="Views\Error\_Error.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\Canvas\_Canvas.cshtml" />
+    <Content Include="Views\Canvas\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\Manager\Partial\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>

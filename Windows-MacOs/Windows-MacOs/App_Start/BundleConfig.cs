@@ -32,6 +32,11 @@ namespace WinMacOs
             // 共通JS
             bundles.Add(new ScriptBundle("~/bundles/common").Include(
                         "~/Scripts/common/torihiki.*"));
+
+            // View JS
+            bundles.Add(new ScriptBundle("~/bundles/manager/canvas").Include(
+                        "~/Scripts/Pages/manager/canvas.js"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(

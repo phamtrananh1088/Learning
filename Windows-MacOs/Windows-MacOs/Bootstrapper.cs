@@ -3,11 +3,13 @@ using Microsoft.Practices.Unity;
 using Unity.Mvc3;
 using Reafs_TIServices = WinMacOs.Business.IServices.Reafs_T;
 using Reafs_WIServices = WinMacOs.Business.IServices.Reafs_W;
+using ManagerIServices = WinMacOs.Business.IServices.Manager;
 using WinMacOs.Controllers;
 using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.DataRepository.Repositories;
 using Reafs_TServices = WinMacOs.Business.Services.Reafs_T;
 using Reafs_WServices = WinMacOs.Business.Services.Reafs_W;
+using ManagerServices = WinMacOs.Business.Services.Manager;
 
 namespace WinMacOs
 {
@@ -31,6 +33,7 @@ namespace WinMacOs
             container.RegisterType<Reafs_TIServices.ICommonService, Reafs_TServices.CommonService>();
             container.RegisterType<Reafs_TIServices.ILoginService, Reafs_TServices.LoginService>();
             container.RegisterType<Reafs_WIServices.ICommonService, Reafs_WServices.CommonService>();
+            container.RegisterType<ManagerIServices.ICanvasService, ManagerServices.CanvasService>();
             container.RegisterType<IUnitOfWork, UnitOfWork>();
             return container;
         }

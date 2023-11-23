@@ -13,7 +13,7 @@ using WinMacOs.Utility.Utils;
 namespace WinMacOs.Controllers
 {
     [LargeJsonNetFilter]
-    public abstract class BaseVueController<IServiceBase> : Controller       
+    public abstract class BaseVueController<IServiceBase> : Controller
     {
         protected IServiceBase Service;
         protected override void Initialize(RequestContext requestContext)
