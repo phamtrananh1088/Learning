@@ -1,4 +1,4 @@
-var CHUMON01 = {
+var canvas01 = {
 
     init: function () {
         let self = this;
@@ -48,5 +48,8 @@ var CHUMON01 = {
 }
 
 $(document).ready(function () {
-    CHUMON01.init();
+    canvas01.init();
+    var HTMLElementEvents = new TorihikiHtmlEvent({
+        target: $('#myCanvas')
+    });
 });
