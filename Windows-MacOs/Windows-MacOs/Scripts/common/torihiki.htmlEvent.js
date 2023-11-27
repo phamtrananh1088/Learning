@@ -1,4 +1,48 @@
 ﻿(function ($, global) {
+    var Enum = class {
+        static ActionTypes = {
+            none: 0,
+            select: 1
+        }
+    };
+    var Action = class {
+        constructor() {
+        }
+        actionType = Enum.ActionTypes.select;
+        p = new Selection(0, 0);
+        select(evt) {
+            if (evt.type === 'pointerdown') {
+                this.actionType = Enum.ActionTypes.select;
+                this.p = new Selection(evt.offsetX, evt.offsetY);
+                console.log(this.p);
+            } else if (evt.type === 'pointermove') {
+                this.p.eX = evt.offsetX;
+                this.p.eY = evt.offsetY;
+            } else if (evt.type === 'pointerup') {
+                this.p.eX = evt.offsetX;
+                this.p.eY = evt.offsetY;
+                this.actionType = Enum.ActionTypes.none;
+                console.log(this.p);
+            }
+
+        }
+    };
+    var Selection = class {
+        x = 0;
+        y = 0;
+        eX = 0;
+        eY = 0;
+        get height() {
+            return eY - y;
+        };
+        get width() {
+            return ex - x;
+        }
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+    };
     var HtmlEvent = function () {
         this._initialize.apply(this, arguments);
     };
@@ -979,6 +1023,9 @@
                 } else {
                     //TODO
                     console.log('pointerdown', evt);
+                    if (self.actionType === Enum.ActionTypes.select) {
+                        self.action.select(evt)
+                    }
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1021,6 +1068,9 @@
                 } else {
                     //TODO
                     console.log('pointermove', evt);
+                    if (self.actionType === Enum.ActionTypes.select) {
+                        self.action.select(evt)
+                    }
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1063,6 +1113,9 @@
                 } else {
                     //TODO
                     console.log('pointerup', evt);
+                    if (self.actionType === Enum.ActionTypes.select) {
+                        self.action.select(evt)
+                    }
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1265,7 +1318,9 @@
                 }
             });
         },
-    }
+        actionType: Enum.ActionTypes.select,
+        action: new Action(),
+    };
     global.TorihikiHtmlEvent = HtmlEvent;
 
 })(jQuery, this);
