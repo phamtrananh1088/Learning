@@ -500,6 +500,8 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="libman.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\common\torihiki.aDiv.js" />
+    <Content Include="Scripts\common\torihiki.aSVG.js" />
     <Content Include="Scripts\common\torihiki.htmlEvent.js" />
     <Content Include="Scripts\fontawesome-6.2.1.js" />
     <Content Include="Scripts\common\torihiki.message.js" />

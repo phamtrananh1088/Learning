@@ -6,23 +6,52 @@
         }
     };
     var Action = class {
-        constructor() {
+        constructor(content, svg) {
+            this.content = content;
+            this.svg = svg;
         }
+        content = new TorihikiDIV();
+        svg = new TorihikiSVG();
         actionType = Enum.ActionTypes.select;
-        p = new Selection(0, 0);
+        p = null;
         select(evt) {
             if (evt.type === 'pointerdown') {
                 this.actionType = Enum.ActionTypes.select;
                 this.p = new Selection(evt.offsetX, evt.offsetY);
-                console.log(this.p);
-            } else if (evt.type === 'pointermove') {
+                this.content.addRect({
+                    x: this.p.x,
+                    y: this.p.y,
+                    width: 0,
+                    height: 0
+                });
+                this.svg.addRect({
+                    x: this.p.x,
+                    y: this.p.y,
+                    width: 0,
+                    height: 0
+                });
+            } else if (evt.type === 'pointermove' || evt.type === 'pointerup') {
+                if (this.p == null) {
+                    return;
+                }
                 this.p.eX = evt.offsetX;
                 this.p.eY = evt.offsetY;
-            } else if (evt.type === 'pointerup') {
-                this.p.eX = evt.offsetX;
-                this.p.eY = evt.offsetY;
-                this.actionType = Enum.ActionTypes.none;
-                console.log(this.p);
+                this.content.editRect({
+                    x: this.p.x,
+                    y: this.p.y,
+                    width: this.p.width,
+                    height: this.p.height
+                });
+                this.svg.editRect({
+                    x: this.p.x,
+                    y: this.p.y,
+                    width: this.p.width,
+                    height: this.p.height
+                });
+            }
+            if (evt.type === 'pointerup' || evt.type === 'pointerout') {
+                this.p = null;
+                console.log(null);
             }
 
         }
@@ -33,10 +62,10 @@
         eX = 0;
         eY = 0;
         get height() {
-            return eY - y;
+            return this.eY - this.y;
         };
         get width() {
-            return ex - x;
+            return this.eX - this.x;
         }
         constructor(x, y) {
             this.x = x;
@@ -48,7 +77,9 @@
     };
 
     var defaults = {
-        target: undefined
+        target: undefined,
+        content: undefined,
+        svg: undefined
     };
 
     HtmlEvent.prototype = {
@@ -84,7 +115,7 @@
             if (!self.conf.target) {
                 throw new Error("target control is not set");
             };
-
+            self.action = new Action(self.conf.svg);
             self.conf.target
                 .bind('beforeinput', async function (evt) {
                     let res = await self.beforeinput(evt);
@@ -1085,6 +1116,9 @@
                 } else {
                     //TODO
                     console.log('pointerout', evt);
+                    if (self.actionType === Enum.ActionTypes.select) {
+                        self.action.select(evt)
+                    }
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1319,7 +1353,7 @@
             });
         },
         actionType: Enum.ActionTypes.select,
-        action: new Action(),
+        action: new Action(null, null),
     };
     global.TorihikiHtmlEvent = HtmlEvent;
 

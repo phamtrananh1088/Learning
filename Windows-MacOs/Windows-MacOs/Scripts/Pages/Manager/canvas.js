@@ -50,6 +50,12 @@ var canvas01 = {
 $(document).ready(function () {
     canvas01.init();
     var HTMLElementEvents = new TorihikiHtmlEvent({
-        target: $('#myCanvas')
+        target: $('#myCanvas'),
+        content: TorihikiDIV({
+            target: $('#myContent'),
+        }), 
+        svg: new TorihikiSVG({
+            target: $('#mySVG'),
+        })
     });
 });
