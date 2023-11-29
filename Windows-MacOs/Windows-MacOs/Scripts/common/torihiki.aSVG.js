@@ -59,7 +59,7 @@
                 //}
             });
             self.curRect = rect;
-            
+            return rect;
         },
         editRect: function (conf) {
             var self = this;
@@ -98,6 +98,7 @@
             var refreshEvent = new CustomEvent("refresh", { detail: resfreshData });
             // Dispatch the event.
             rect[0].dispatchEvent(refreshEvent);
+            return rect;
         },
     };
     global.TorihikiSVG = SVG;

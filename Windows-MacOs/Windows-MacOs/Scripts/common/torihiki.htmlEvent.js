@@ -7,47 +7,54 @@
     };
     var Action = class {
         constructor(content, svg) {
+            if (content === undefined && svg === undefined) {
+                throw new Error("content and svg is not set");
+            };
             this.content = content;
             this.svg = svg;
         }
+
         content = new TorihikiDIV();
         svg = new TorihikiSVG();
         actionType = Enum.ActionTypes.select;
         p = null;
+
         select(evt) {
             if (evt.type === 'pointerdown') {
                 this.actionType = Enum.ActionTypes.select;
                 this.p = new Selection(evt.offsetX, evt.offsetY);
-                this.content.addRect({
+                const cRect = this.content.addRect({
                     x: this.p.x,
                     y: this.p.y,
                     width: 0,
                     height: 0
                 });
-                this.svg.addRect({
+                const svgRect = this.svg.addRect({
                     x: this.p.x,
                     y: this.p.y,
                     width: 0,
                     height: 0
                 });
+                BasicFunction.addHistory([cRect, svgRect]);
             } else if (evt.type === 'pointermove' || evt.type === 'pointerup') {
                 if (this.p == null) {
                     return;
                 }
                 this.p.eX = evt.offsetX;
                 this.p.eY = evt.offsetY;
-                this.content.editRect({
+                const cRect = this.content.editRect({
                     x: this.p.x,
                     y: this.p.y,
                     width: this.p.width,
                     height: this.p.height
                 });
-                this.svg.editRect({
+                const svgRect = this.svg.editRect({
                     x: this.p.x,
                     y: this.p.y,
                     width: this.p.width,
                     height: this.p.height
                 });
+                BasicFunction.editHistory([cRect, svgRect]);
             }
             if (evt.type === 'pointerup' || evt.type === 'pointerout') {
                 this.p = null;
@@ -115,7 +122,7 @@
             if (!self.conf.target) {
                 throw new Error("target control is not set");
             };
-            self.action = new Action(self.conf.svg);
+            self.action = new Action(self.conf.content, self.conf.svg);
             self.conf.target
                 .bind('beforeinput', async function (evt) {
                     let res = await self.beforeinput(evt);
@@ -384,8 +391,15 @@
                 .bind("selectstart", async function (evt) {
                     let res = await self.selectstart(evt);
                     return res;
-                })
-                ;
+                });
+
+            $(document).bind("keydown", async function (evt) {
+                let res = await BasicFunction.keydown(evt);
+                return res;
+            }).bind("keyup", async function (evt) {
+                let res = await BasicFunction.keyup(evt);
+                return res;
+            })
 
             return false;
         },
@@ -1354,6 +1368,85 @@
         },
         actionType: Enum.ActionTypes.select,
         action: new Action(null, null),
+    };
+
+    var BasicFunction = class {
+        static counter = (function () {
+                let privateHistory = [];
+                function addBy(val) {
+                    privateHistory.push(val);
+                }
+                function removeBy() {
+                    return privateHistory.pop()
+                }
+            return {
+                add(val) {
+                    addBy(val);
+                },
+
+                remove() {
+                    const data = removeBy();
+                    if (Array.isArray(data)) {
+                        data.forEach((element) => element.remove());
+                    }
+                },
+
+                replace(val) {
+                    removeBy();
+                    addBy(val);
+                },
+
+                value() {
+                    return privateHistory;
+                },
+                };
+            })();
+
+        static keydown(evt, conf) {
+            return new Promise((re, rj) => {
+                if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
+                    conf.keydown(evt, resolve, reject);
+                } else {
+                    //TODO
+                    //console.log('keydown', evt);
+                    if (evt.ctrlKey === true && evt.key === 'z') {
+                        BasicFunction.undo()
+                    } else if (evt.ctrlKey === true && evt.key === 'y') {
+                        BasicFunction.redo()
+                    }
+                    //evt.stopPropagation();
+                    //evt.preventDefault();
+                    re(true);
+                }
+            });
+        }
+
+        static keyup (evt) {
+            return new Promise((re, rj) => {
+                if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
+                    conf.keyup(evt, resolve, reject);
+                } else {
+                    //TODO
+                    //console.log('keyup', evt);
+                    //evt.stopPropagation();
+                    //evt.preventDefault();
+                    re(true);
+                }
+            });
+        }
+        static undo() {
+            console.log('undo')
+            BasicFunction.counter.remove();
+        }
+        static redo() {
+            console.log('redo')
+        }
+        static addHistory(data) {
+            BasicFunction.counter.add(data);
+        }
+        static editHistory(data) {
+            BasicFunction.counter.replace(data);
+        }
     };
     global.TorihikiHtmlEvent = HtmlEvent;
 

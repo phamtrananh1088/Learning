@@ -51,7 +51,7 @@ $(document).ready(function () {
     canvas01.init();
     var HTMLElementEvents = new TorihikiHtmlEvent({
         target: $('#myCanvas'),
-        content: TorihikiDIV({
+        content: new TorihikiDIV({
             target: $('#myContent'),
         }), 
         svg: new TorihikiSVG({
