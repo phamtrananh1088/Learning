@@ -16,6 +16,7 @@ using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.DataRepository.Utilities;
 using WinMacOs.Models;
 using WinMacOs.Models.Enums;
+using WinMacOs.Models.Manager.Canvas;
 using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Extensions;
 using WinMacOs.Utility.PInvoke.CommonModels;
@@ -40,8 +41,8 @@ namespace WinMacOs.Controllers.Manager
         [Route("index")]
         public async Task<ActionResult> Index()
         {
-            //return Json(await (new WebResponseContent()).OKAsync("OK"), JsonRequestBehavior.AllowGet);
-            return View();
+            CanvasModel model = await Service.GetCanvasModel();
+            return View(model);
         }
 
         #region ログイン

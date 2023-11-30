@@ -1,5 +1,12 @@
-﻿<div id="container-bar" style="width: 700px; height: 600px; overflow: scroll;">
-    <svg width="1000" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" style="background: #353535;">
+﻿@{
+    @model WinMacOs.Models.Manager.Canvas.CanvasModel
+    ViewBag.Title = "Canvas";
+}
+
+<div class="menu"></div>
+<div class="toolbar"></div>
+<div id="container-bar" style="width: calc(100% - 380px); height: calc(100vh - 70px); overflow: scroll;">
+    <svg width="1000" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">
         @*line*@
         <line x1="0" y1="19" x2="1000" y2="19" stroke="white" />
         @*col*@
@@ -204,7 +211,7 @@
         <line x1="990" y1="15" x2="990" y2="19" stroke="white" />
         <line x1="995" y1="15" x2="995" y2="19" stroke="white" />
         <line x1="1000" y1="5" x2="1000" y2="19" stroke="white" />
-        @*text*@
+        @*ruler-x*@
         <text x="2" y="12" style="fill: white; font-size: 10px;">0</text>
         <text x="52" y="12" style="fill: white; font-size: 10px;">50</text>
         <text x="102" y="12" style="fill: white; font-size: 10px;">100</text>
@@ -225,30 +232,56 @@
         <text x="852" y="12" style="fill: white; font-size: 10px;">850</text>
         <text x="902" y="12" style="fill: white; font-size: 10px;">900</text>
         <text x="952" y="12" style="fill: white; font-size: 10px;">950</text>
+        @*ruler-y*@
 
     </svg>
-    <div style="width: 1000px; height: 1000px; background: #d1d1d1; display: flex;">
-        <div style="margin: auto; width: 300px; height: 300px; position: relative;">
-            <div style="position: absolute; width: 300px; height: 300px; box-sizing: content-box; border: 1px solid #d3d3d3; background: transparent; top: 48px; z-index: 3; ">
-                <canvas id="myCanvas" width="300" height="300" style="background: transparent;">
+    <div class="viewContent" style="background: #d1d1d1; display: flex;">
+        <div class="a4LandScape" style="margin: auto; position: relative;">
+            <div class="a4LandScape" style="position: absolute; box-sizing: content-box; border: 1px solid #d3d3d3; background: transparent; top: 48px; z-index: 3; ">
+                <canvas id="myCanvas" width="1122" height="793" style="background: transparent;">
                     YourbrowserdoesnotsupporttheHTML5canvastag.
                 </canvas>
             </div>
-            <div style="position: absolute; width: 300px; height: 300px; box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 2;">
-                <div id="myContent" style=" width: 300px; height: 300px; background: white;">
+            <div class="a4LandScape" style="position: absolute; box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 2;">
+                <div id="myContent" class="a4LandScape" style="background: white;">
                 </div>
             </div>
-            <div style="position: absolute; width: 300px; height: 300px; box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 1; visibility: hidden;">
-                <svg id="mySVG" width="300" height="300" version="1.1" xmlns="http://www.w3.org/2000/svg" style="background: white;">
+            <div class="a4LandScape" style="position: absolute;box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 1; visibility: hidden;">
+                <svg id="mySVG" width="1122" height="793" version="1.1" xmlns="http://www.w3.org/2000/svg" style="background: white;">
                 </svg>
             </div>
         </div>
     </div>
 </div>
-<script>    
+<script>
     $(document).ready(function () {
         document.getElementById('container-bar').scrollTo(155, 265);
     });
 </script>
 <style>
+    body {
+        background: #353535;
+    }
+
+
+    .menu {
+        width: 100%;
+        height: 25px;
+        border-bottom: 1px solid #303030;
+    }
+
+    .toolbar {
+        width: 100%;
+        height: 40px;
+    }
+
+    .a4LandScape {
+        width: 1122px;
+        height: 793px;
+    }
+
+    .viewContent {
+        width: 3500px;
+        height: 2100px;
+    }
 </style>

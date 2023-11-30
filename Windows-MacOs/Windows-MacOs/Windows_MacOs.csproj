@@ -345,6 +345,9 @@
     <Compile Include="DataRepository\Repositories\Unit\S016Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\S018Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\SrtRepository.cs" />
+    <Compile Include="Models\Manager\Canvas\MenuItemModel.cs" />
+    <Compile Include="Models\Manager\Canvas\MenuModel.cs" />
+    <Compile Include="Models\Manager\Canvas\CanvasModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Resources\Messages.Designer.cs" />
     <Compile Include="Utility\Attributes\Check\MaxLengthExAttribute.cs" />
