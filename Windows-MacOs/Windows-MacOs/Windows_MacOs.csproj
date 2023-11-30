@@ -547,6 +547,8 @@
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\Canvas\_Canvas.cshtml" />
     <Content Include="Views\Canvas\Index.cshtml" />
+    <Content Include="Views\Canvas\_ViewStart.cshtml" />
+    <Content Include="Views\Canvas\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
