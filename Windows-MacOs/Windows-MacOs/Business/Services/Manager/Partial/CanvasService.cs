@@ -25,27 +25,27 @@ namespace WinMacOs.Business.Services.Manager
                 {
                     new Models.Manager.Canvas.MenuModel()
                     {
-                        Name = "File",
-                        MenuItems = new List<MenuItemModel>()
+                        MenuName = "File",
+                        SubMenus = new List<Models.Manager.Canvas.MenuModel>()
                         {
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="100",
-                                MenuItemName="New",
+                                MenuNo="100",
+                                MenuName="New",
                                 ShortCut = new string[] {"Ctrl", "N"},
-                                
+
                             },
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="101",
-                                MenuItemName="Open",
+                                MenuNo="101",
+                                MenuName="Open",
                                 ShortCut = new string[] {"Ctrl", "O"},
 
                             },
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="102",
-                                MenuItemName="Open",
+                                MenuNo="102",
+                                MenuName="Open",
                                 ShortCut = new string[] {"Ctrl", "O"},
 
                             },
@@ -53,44 +53,43 @@ namespace WinMacOs.Business.Services.Manager
                     },
                     new Models.Manager.Canvas.MenuModel()
                     {
-                        Name = "Edit",
-                        MenuItems = new List<MenuItemModel>()
+                        MenuName = "Edit",
+                        SubMenus = new List<Models.Manager.Canvas.MenuModel>()
                         {
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="200",
-                                MenuItemName="Copy",
+                                MenuNo="200",
+                                MenuName="Copy",
                                 ShortCut = new string[] {"Ctrl", "C"},
 
                             },
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="201",
-                                MenuItemName="Paste",
+                                MenuNo="201",
+                                MenuName="Paste",
                                 ShortCut = new string[] {"Ctrl", "V"},
 
                             },
-                            new MenuItemModel()
+                            new Models.Manager.Canvas.MenuModel()
                             {
-                                MenuItemNo="202",
-                                MenuItemName="Paste...",
-                                MenuItems=new List<MenuItemModel>()
+                                MenuNo="202",
+                                MenuName="Paste...",
+                                SubMenus=new List<Models.Manager.Canvas.MenuModel>()
                                 {
-                                    new MenuItemModel()
+                                    new Models.Manager.Canvas.MenuModel()
                                     {
-                                        MenuItemNo = "2021",
-                                        MenuItemName = "In Place",
+                                        MenuNo = "2021",
+                                        MenuName = "In Place",
                                         ShortCut = new string[] {"Ctrl", "Alt", "V"},
-                                        ParentMenuItemNo="202",
+                                        ParentMenuNo="202",
                                     },
-                                    new MenuItemModel()
+                                    new Models.Manager.Canvas.MenuModel()
                                     {
-                                        MenuItemNo = "2022",
-                                        MenuItemName = "On Page",
-                                        ParentMenuItemNo="202",
+                                        MenuNo = "2022",
+                                        MenuName = "On Page",
+                                        ParentMenuNo="202",
                                     }
                                 }
-
                             },
                         }
                     }

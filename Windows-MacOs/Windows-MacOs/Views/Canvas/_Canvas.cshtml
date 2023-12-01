@@ -3,8 +3,17 @@
     ViewBag.Title = "Canvas";
 }
 
-<div class="menu"></div>
-<div class="toolbar"></div>
+<div id="head-window-bar">
+    <i class="fa-solid fa-magnifying-glass"></i>
+</div>
+@*注文側資料*@
+<div id="head-menu">
+    @* 明細データ tcc-scroll-div tcc-scroll-div-max tcc-grid-auto-height *@
+    <div id="listMenu">
+        @Html.EditorFor(model => model.Menus)
+    </div>
+</div>
+<div id="head-toolbar"></div>
 <div id="container-bar" style="width: calc(100% - 380px); height: calc(100vh - 70px); overflow: scroll;">
     <svg width="1000" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg">
         @*line*@
@@ -235,7 +244,7 @@
         @*ruler-y*@
 
     </svg>
-    <div class="viewContent" style="background: #d1d1d1; display: flex;">
+    <div id="viewContent" style="background: #d1d1d1; display: flex;">
         <div class="a4LandScape" style="margin: auto; position: relative;">
             <div class="a4LandScape" style="position: absolute; box-sizing: content-box; border: 1px solid #d3d3d3; background: transparent; top: 48px; z-index: 3; ">
                 <canvas id="myCanvas" width="1122" height="793" style="background: transparent;">
@@ -263,14 +272,19 @@
         background: #353535;
     }
 
+    #head-window-bar {
+        width: 100%;
+        height: 25px;
+        background-color: #000;
+    }
 
-    .menu {
+    #head-menu {
         width: 100%;
         height: 25px;
         border-bottom: 1px solid #303030;
     }
 
-    .toolbar {
+    #head-toolbar {
         width: 100%;
         height: 40px;
     }
@@ -280,7 +294,7 @@
         height: 793px;
     }
 
-    .viewContent {
+    #viewContent {
         width: 3500px;
         height: 2100px;
     }

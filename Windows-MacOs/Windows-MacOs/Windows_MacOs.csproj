@@ -345,7 +345,6 @@
     <Compile Include="DataRepository\Repositories\Unit\S016Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\S018Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\SrtRepository.cs" />
-    <Compile Include="Models\Manager\Canvas\MenuItemModel.cs" />
     <Compile Include="Models\Manager\Canvas\MenuModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasModel.cs" />
     <Compile Include="Models\MenuModel.cs" />
@@ -552,6 +551,8 @@
     <Content Include="Views\Canvas\Index.cshtml" />
     <Content Include="Views\Canvas\_ViewStart.cshtml" />
     <Content Include="Views\Canvas\Shared\_Layout.cshtml" />
+    <Content Include="Views\Canvas\EditorTemplates\MenuModel.cshtml" />
+    <Content Include="Views\Canvas\EditorTemplates\Menus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

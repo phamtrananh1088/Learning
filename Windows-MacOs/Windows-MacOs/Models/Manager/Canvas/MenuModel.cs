@@ -10,12 +10,18 @@ namespace WinMacOs.Models.Manager.Canvas
     /// </summary>
     public class MenuModel
     {
+        [Required]
+        [Key]
+        public string MenuNo { get; set; }
         /// <summary>
         ///Name.
         /// </summary>
-        public string Name { get; set; }
+        public string MenuName { get; set; }
+        public string[] ShortCut { get; set; }
 
-        [UIHint("MenuItems")]
-        public List<MenuItemModel> MenuItems { get; set; }
+        public string ParentMenuNo { get; set; }
+
+        [UIHint("SubMenus")]
+        public List<MenuModel> SubMenus { get; set; }
     }
 }
