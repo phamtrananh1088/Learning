@@ -7,3 +7,8 @@
 /Windows-MacOs/packages
 /Windows-MacOs/.vs
 /Windows-MacOs/.vs/WinMac/FileContentIndex
+/Windows-MacOs/Windows-MacOs/dist
+/Windows-MacOs/Windows-MacOs/logs
+/Windows-MacOs/Windows-MacOs/Files
+/Windows-MacOs/Windows-MacOs/obj/Release
+/Windows-MacOs/Windows-MacOs/obj/x86/Debug
