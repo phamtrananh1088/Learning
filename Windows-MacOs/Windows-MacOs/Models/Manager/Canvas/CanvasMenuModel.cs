@@ -8,7 +8,7 @@ namespace WinMacOs.Models.Manager.Canvas
     /// <summary>
     /// Menu.
     /// </summary>
-    public class MenuModel
+    public class CanvasMenuModel
     {
         [Required]
         [Key]
@@ -17,11 +17,14 @@ namespace WinMacOs.Models.Manager.Canvas
         ///Name.
         /// </summary>
         public string MenuName { get; set; }
+
         public string[] ShortCut { get; set; }
 
         public string ParentMenuNo { get; set; }
 
         [UIHint("SubMenus")]
-        public List<MenuModel> SubMenus { get; set; }
+        public List<CanvasMenuModel> SubMenus { get; set; }
+
+        public string MenuType { get; set; } = "";
     }
 }

@@ -55,6 +55,8 @@ namespace WinMacOs
                  "~/Content/bootstrap-grid.css",
                  "~/Content/font-awesome.css",
                  "~/Content/Site.css"));
+            bundles.Add(new StyleBundle("~/font-awesome/css").Include(
+                 "~/Content/font-awesome.css"));
         }
     }
 }
