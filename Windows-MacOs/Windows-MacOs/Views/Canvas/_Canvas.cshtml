@@ -1,5 +1,5 @@
 ﻿@{
-    @model WinMacOs.CanvasModel
+    @model WinMacOs.Models.Manager.Canvas.CanvasModel
     ViewBag.Title = "Canvas";
 }
 
@@ -10,7 +10,7 @@
 <div id="head-menu">
     @* 明細データ tcc-scroll-div tcc-scroll-div-max tcc-grid-auto-height *@
     <div id="listMenu">
-        @Html.EditorFor(model => model.Menus)
+        @Html.EditorFor(model => model.CanvasMenus)
     </div>
 </div>
 <div id="head-toolbar"></div>

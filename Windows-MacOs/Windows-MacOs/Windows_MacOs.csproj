@@ -551,8 +551,8 @@
     <Content Include="Views\Canvas\Index.cshtml" />
     <Content Include="Views\Canvas\_ViewStart.cshtml" />
     <Content Include="Views\Canvas\Shared\_Layout.cshtml" />
-    <Content Include="Views\Canvas\EditorTemplates\MenuModel.cshtml" />
-    <Content Include="Views\Canvas\EditorTemplates\Menus.cshtml" />
+    <Content Include="Views\Canvas\EditorTemplates\CanvasMenuModel.cshtml" />
+    <Content Include="Views\Canvas\EditorTemplates\CanvasMenus.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
