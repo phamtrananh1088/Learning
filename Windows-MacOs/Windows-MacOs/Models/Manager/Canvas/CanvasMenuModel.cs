@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace WinMacOs.Models.Manager.Canvas
 {
@@ -20,6 +21,13 @@ namespace WinMacOs.Models.Manager.Canvas
 
         public string[] ShortCut { get; set; }
 
+        public string ShortCutView
+        {
+            get
+            {
+                return ShortCut is null || ShortCut.Length == 0 ? "" : String.Join("+", ShortCut);
+            }
+        }
         public string ParentMenuNo { get; set; }
 
         [UIHint("SubMenus")]

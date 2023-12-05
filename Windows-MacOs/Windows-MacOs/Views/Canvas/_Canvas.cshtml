@@ -3,9 +3,17 @@
     ViewBag.Title = "Canvas";
 }
 
-<div id="head-window-bar">
-    <i class="fa-solid fa-magnifying-glass"></i>
-</div>
+<header id="head-window-bar" class="modal-card-head">
+    <span class="modal-card-title is-small">
+        <span class="is-size-5">
+            @ViewBag.Title
+        </span>
+    </span>
+    @*<i class="fa-solid fa-magnifying-glass"></i>*@
+    <div class="modal-button-close">
+        <button id="close" tooltip="Close" class="delete" aria-label="close" onclick="closeModal()" />
+    </div>
+</header>
 @*注文側資料*@
 <div id="head-menu">
     @* 明細データ tcc-scroll-div tcc-scroll-div-max tcc-grid-auto-height *@
@@ -31,8 +39,8 @@
     width: 100%;
     height: 100%;
 ">
-                    <div id="" style="width: 100%;height: 100%;max-width: 100%;overflow: scroll;/* flex-grow: 0; */">
-                        <svg width="auto" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" style="
+                    <div id="container-bar" style="width: 100%;height: 100%;max-width: 100%;overflow: scroll;/* flex-grow: 0; */">
+                        <svg width="1000" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" style="
     max-width: 1000px;
     background-color: #1e1e1e;
 ">
@@ -308,9 +316,37 @@
     $(document).ready(function () {
         document.getElementById('container-bar').scrollTo(155, 265);
     });
+    function closeModal(evt) {
+        TorihikiMsg.confirm({
+            title: '@ViewBag.Title',
+            message: 'Want to save your changes?',
+            buttons: {
+                Save: {
+                    action: function () {
+                    }
+                },
+                "Don't Save": {
+                    action: function () {
+                    }
+                },
+                Cancel: {
+                    action: function () {
+                    }
+                },
+
+            },
+            //titleClass: self.options.confirmTitleClass || 'bg-info',
+            //ok: function () {
+            //    // ローディング表示
+            //    TorihikiUtils.showLoading();
+
+            //    resolve(processStep.confirmSuccess);
+            //}
+        });
+    };
 </script>
 <style>
-    body {
+    body, .main-bg {
         background: #353535;
     }
 
@@ -334,6 +370,7 @@
     #main-content {
         background-color: #2D2D2D;
     }
+
     .a4LandScape {
         width: 1122px;
         height: 793px;
@@ -347,10 +384,87 @@
     .content-height {
         height: calc(100vh - 185px);
     }
+
     #color-bar {
         height: 42px;
     }
+
     #status-bar {
         height: 36px;
+    }
+
+    .modal-card-head {
+        align-items: center;
+        background-color: #000;
+        display: flex;
+        flex-shrink: 0;
+        justify-content: flex-start;
+        padding: 4px;
+        position: relative;
+    }
+
+    .modal-card-title {
+        color: white;
+        flex-grow: 1;
+        flex-shrink: 0;
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .modal-button-close {
+        display: inline;
+        padding: 3px 10px;
+    }
+
+        .modal-button-close:hover {
+            background: #e81123;
+        }
+
+    .delete {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-color: rgba(10, 10, 10, 0.2);
+        border: none;
+        border-radius: 290486px;
+        cursor: pointer;
+        pointer-events: auto;
+        display: inline-block;
+        flex-grow: 0;
+        flex-shrink: 0;
+        font-size: 0;
+        height: 20px;
+        max-height: 20px;
+        max-width: 20px;
+        min-height: 20px;
+        min-width: 20px;
+        outline: none;
+        position: relative;
+        vertical-align: top;
+        width: 20px;
+    }
+
+        .delete::before, .modal-close::before {
+            height: 2px;
+            width: 50%;
+        }
+
+        .delete::after {
+            height: 50%;
+            width: 2px;
+        }
+
+        .delete::before, .delete::after {
+            background-color: white;
+            content: "";
+            display: block;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%) rotate(45deg);
+            transform-origin: center center;
+        }
+
+    .jconfirm.jconfirm-white .jconfirm-box .jconfirm-buttons button, .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons button {
+        text-transform: none;
     }
 </style>

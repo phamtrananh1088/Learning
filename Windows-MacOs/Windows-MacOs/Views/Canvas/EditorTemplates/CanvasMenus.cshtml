@@ -1,0 +1,97 @@
+﻿@model List<WinMacOs.Models.Manager.Canvas.CanvasMenuModel>
+<div id="cover"></div>
+<div id="menu_bar" class="col-md-12" style="height:100%;">
+    <table class="menu-datatable main-bg">
+        <tbody>
+            <tr>
+                @{ int index = -1;}
+                @for (int idx = 0; idx < Model.Count(); idx++)
+                {
+                    string id = Model[idx].MenuNo;
+                    @*@Html.EditorFor(model => Model[idx], new { idx = idx, index = index });*@
+                    <td class="is-centered lv1-menu" style="position:relative;" data-group-index="@index" data-index="@idx" data-id="@id">
+                        <div id="menu-@id" class="lv1-menuName">
+                            @Html.DisplayFor(model => Model[idx].MenuName)
+                        </div>
+                        <nav id="nav-@id">
+                            <div class="listMenu">
+                                @if (Model[idx].SubMenus != null)
+                                {
+                                    @Html.EditorFor(model => Model[idx].SubMenus, new { idx = idx, id = id })
+                                }
+                            </div>
+                        </nav>
+                        <script>
+                            $(document).ready(function () {
+                                var btn1 = document.getElementById(`menu-@id`);
+                                var nav = document.getElementById(`nav-@id`);
+                                var cover = document.getElementById('cover');
+
+                                btn1.addEventListener('click', () => {
+                                    btn1.classList.toggle('open-menu');
+                                    nav.classList.toggle('open-menu');
+                                    cover.classList.toggle("open-cover");
+                                });
+
+
+                                $(document).mouseup(function (e) {
+                                    if ($(e.target).closest(".open-menu").length === 0) {
+                                        if (nav.classList.contains("open-menu")) {
+                                            btn1.classList.toggle('open-menu');
+                                            nav.classList.toggle('open-menu');
+                                            cover.classList.toggle("open-cover");
+                                        }
+                                    }
+                                });
+
+                            });
+                        </script>
+                    </td>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+
+</script>
+<style>
+    .lv1-menu {
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        min-width: 36px;
+    }
+    .lv1-menuName {
+        text-align: center;
+        border-bottom: 2px solid transparent;
+    }
+        .lv1-menuName.open-menu {
+            color: #3584bc;
+            border-bottom: 2px solid #15529d;
+        }
+        .open-cover {
+            position: fixed;
+            background: transparent;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 99;
+        }
+
+    .lv1-menu > nav.open-menu {
+        width: max-content;
+    }
+
+    .lv1-menu > nav {
+        position: absolute;
+        z-index: 100;
+        top: 25px;
+        left: 0;
+        overflow-x: hidden;
+        text-align: left;
+        width: 0;
+        transition: .5s;
+    }
+</style>

@@ -18,6 +18,12 @@ namespace WinMacOs
                 "~/Scripts/jquery.unobtrusive*",
                 "~/Scripts/jquery.validate*"));
 
+            // JQuery Comfirm
+            bundles.Add(new ScriptBundle("~/bundles/jquery-confirm").Include(
+                        "~/Scripts/jquery-confirm.js"));
+            bundles.Add(new StyleBundle("~/css/jquery-confirm").Include(
+                     "~/Content/jquery-confirm.css"));
+
             bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
                 "~/Scripts/knockout-{version}.js",
                 "~/Scripts/knockout.validation.js"));
@@ -44,6 +50,8 @@ namespace WinMacOs
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                 "~/Scripts/bootstrap.js"));
+            bundles.Add(new StyleBundle("~/css/bootstrap").Include(
+                     "~/Content/bootstrap.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/fontawesome").Include(
                 "~/Scripts/fontawesome-{version}.js"));

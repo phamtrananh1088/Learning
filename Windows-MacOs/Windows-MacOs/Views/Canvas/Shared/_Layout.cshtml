@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="font-size: 14px;">
 <head>
     <meta charset="utf-8" />
     <title>@ViewBag.Title - My ASP.NET Application</title>
@@ -8,14 +8,21 @@
     @Styles.Render("~/font-awesome/css")
     @*@Scripts.Render("~/bundles/modernizr")*@
     @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/jquery-confirm")
+    @Styles.Render("~/css/jquery-confirm")
+
     @Scripts.Render("~/bundles/messages")
     @Scripts.Render("~/bundles/fontawesome")
-    @*@Scripts.Render("~/bundles/bootstrap")*@
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @Styles.Render("~/css/bootstrap")
+
     @Scripts.Render("~/bundles/common")
     @RenderSection("Scripts", required: false)
 </head>
 <body>
-    <div class="container body-content">
+    <div class="body-content">
         @RenderBody()
         @RenderSection("SPAViews", required: false)
         <footer>

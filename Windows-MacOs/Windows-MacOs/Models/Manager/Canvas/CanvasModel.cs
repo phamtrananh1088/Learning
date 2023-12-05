@@ -13,7 +13,7 @@ namespace WinMacOs.Models.Manager.Canvas
         /// <summary>
         ///Menu.
         /// </summary>
-        [UIHint("Menus")]
+        [UIHint("CanvasMenus")]
         public List<CanvasMenuModel> CanvasMenus { get; set; }
 
     }

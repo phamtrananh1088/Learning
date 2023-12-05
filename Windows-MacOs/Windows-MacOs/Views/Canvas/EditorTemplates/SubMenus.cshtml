@@ -1,0 +1,25 @@
+﻿@model List<WinMacOs.Models.Manager.Canvas.CanvasMenuModel>
+
+@{
+    Layout = null;
+    var idx = ViewBag.idx;
+    var id = ViewBag.id;
+    var index = ViewBag.index;
+}
+
+<div id="sub-menu-@id" class="col-md-12" style="height: 100%; border: 1px solid #090909; padding-left: 0px; padding-right: 0px;">
+    <table class="sub-menu-datatable main-bg">
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                @Html.EditorFor(model => Model[i], new { idx = i, id = Model[i].MenuNo });
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+
+</script>
+<style>
+    
+</style>
