@@ -11,7 +11,7 @@ namespace WinMacOs.DataRepository.Repositories
 {
     public class UnitOfWork : RepositoryBase, IUnitOfWork, IDisposable
     {
-
+        private readonly WinMacDbContext _context;
         private string _INSERT_UPDATE_PG = String.Empty;
         public string INSERT_UPDATE_PG { get
             {
@@ -19,7 +19,7 @@ namespace WinMacOs.DataRepository.Repositories
             }
             set
             {
-                DbContext.INSERT_UPDATE_PG = value;
+                _context.INSERT_UPDATE_PG = value;
                 _INSERT_UPDATE_PG = value;
             }
         }
@@ -32,7 +32,7 @@ namespace WinMacOs.DataRepository.Repositories
         //    {
         //        if (this._SrtRepo == null)
         //        {
-        //            this._SrtRepo = new SrtRepository(DbContext);
+        //            this._SrtRepo = new SrtRepository(_context);
         //        }
         //        return this._SrtRepo;
         //    }
@@ -47,7 +47,7 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._F090_ドキュメント管理ファイル == null)
                 {
-                    this._F090_ドキュメント管理ファイル = new F090Repository(DbContext);
+                    this._F090_ドキュメント管理ファイル = new F090Repository(_context);
                 }
                 return this._F090_ドキュメント管理ファイル;
             }
@@ -62,7 +62,7 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._F093_一時添付ファイル == null)
                 {
-                    this._F093_一時添付ファイル = new F093Repository(DbContext);
+                    this._F093_一時添付ファイル = new F093Repository(_context);
                 }
                 return this._F093_一時添付ファイル;
             }
@@ -77,7 +77,7 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._S018_ドキュメント定義 == null)
                 {
-                    this._S018_ドキュメント定義 = new S018Repository(DbContext);
+                    this._S018_ドキュメント定義 = new S018Repository(_context);
                 }
                 return this._S018_ドキュメント定義;
             }
@@ -92,7 +92,7 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._M015_業者ユーザマスタ == null)
                 {
-                    this._M015_業者ユーザマスタ = new M015Repository(DbContext);
+                    this._M015_業者ユーザマスタ = new M015Repository(_context);
                 }
                 return this._M015_業者ユーザマスタ;
             }
@@ -107,7 +107,7 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._S016_メッセージマスタ == null)
                 {
-                    this._S016_メッセージマスタ = new S016Repository(DbContext);
+                    this._S016_メッセージマスタ = new S016Repository(_context);
                 }
                 return this._S016_メッセージマスタ;
             }
@@ -122,26 +122,27 @@ namespace WinMacOs.DataRepository.Repositories
             {
                 if (this._F140_ログイン認証ファイル == null)
                 {
-                    this._F140_ログイン認証ファイル = new F140Repository(DbContext);
+                    this._F140_ログイン認証ファイル = new F140Repository(_context);
                 }
                 return this._F140_ログイン認証ファイル;
             }
         }
         #endregion
 
-        public UnitOfWork(WinMacDbContext context): base(context)
+        public UnitOfWork(WinMacDbContext context)
         {
+            _context = context;
         }
 
         DbContextTransaction dbContextTransaction = null;
         public async Task BeginTransactionAsync()
         {
-            dbContextTransaction = await DbContext.Database.BeginTransactionAsync();
+            dbContextTransaction = await _context.Database.BeginTransactionAsync();
         }
 
         public async Task SaveChangesAsync()
         {
-            await DbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             if (dbContextTransaction != null)
             {
                 dbContextTransaction.Commit();
@@ -151,7 +152,7 @@ namespace WinMacOs.DataRepository.Repositories
 
         public void Dispose()
         {
-            DbContext.Dispose();
+            _context.Dispose();
             dbContextTransaction?.Dispose();
         }
     }

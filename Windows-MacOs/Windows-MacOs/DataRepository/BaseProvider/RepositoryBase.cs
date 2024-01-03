@@ -6,6 +6,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+
+
 using WinMacOs.Utility.SystemModels;
 using System.Data.Entity;
 using WinMacOs.DataRepository.Dapper;
@@ -17,6 +19,8 @@ using System.Data.Entity.Infrastructure;
 using WinMacOs.DataRepository.Utilities;
 using System.Data.SqlClient;
 using WinMacOs.Utility.Utils;
+using System.Diagnostics;
+using WinMacOs.Utility.EntityFramework.Query;
 
 namespace WinMacOs.DataRepository.BaseProvider
 {
@@ -36,6 +40,7 @@ namespace WinMacOs.DataRepository.BaseProvider
         {
             get
             {
+                //DBServerProvider.GetDbContextConnection<TEntity>(DefaultDbContext);
                 return DefaultDbContext;
             }
         }
@@ -103,67 +108,171 @@ namespace WinMacOs.DataRepository.BaseProvider
         {
             return DBSet.AnyAsync(predicate);
         }
+
         public virtual List<TFind> Find<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class
         {
-            return EFContext.Set<TFind>().Where(predicate).ToList();
+            return FindAsIQueryable(predicate).ToList();
         }
-
-        public virtual Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class
+        public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
-            return FindAsIQueryable<TFind>(predicate).FirstOrDefaultAsync();
+            try
+            {
+                return FindAsIQueryable(predicate).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate)
+        public virtual List<TEntity> Find(
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy
+            )
         {
-            return FindAsIQueryable<TEntity>(predicate).FirstOrDefaultAsync();
+            try
+            {
+                return FindAsIQueryable(predicate, orderBy).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<List<TFind>> FindAsync<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class
+        public async virtual Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class
         {
-            return FindAsIQueryable<TFind>(predicate).ToListAsync();
+            try
+            {
+                return await FindAsIQueryable<TFind>(predicate).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        public async virtual Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate)
         {
-            return FindAsIQueryable(predicate).ToListAsync();
+            try
+            {
+                return await FindAsIQueryable<TEntity>(predicate).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<TEntity> FindFirstAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<List<TFind>> FindAsync<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class
         {
-            return FindAsIQueryable(predicate).FirstOrDefaultAsync();
+            try
+            {
+                return await FindAsIQueryable<TFind>(predicate).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        public async virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return FindAsIQueryable(predicate).Select(selector).ToListAsync();
+            try
+            {
+                return await FindAsIQueryable(predicate).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<List<T>> FindAsync<T>(
+        public async virtual Task<TEntity> FindFirstAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            try
+            {
+                return await FindAsIQueryable(predicate).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        {
+            try
+            {
+                return await FindAsIQueryable(predicate).Select(selector).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<List<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
+            )
+        {
+            try
+            {
+                return await FindAsIQueryable(predicate, orderBy).ToListAsync<TEntity>();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<List<T>> FindAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
             )
         {
-            return FindAsIQueryable(predicate, orderBy).Select(selector).ToListAsync();
+            try
+            {
+                return await FindAsIQueryable(predicate, orderBy).Select(selector).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        public async virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
         {
-            var query = FindAsIQueryable(predicate).Select(selector);
-            var data = query.FirstOrDefaultAsync();
-            return data;
+            try
+            {
+                var query = FindAsIQueryable(predicate).Select(selector);
+                var data = query.FirstOrDefaultAsync();
+                return await data;
+            }
+            catch (Exception ex)
+            {
+                StackTrace str = new StackTrace();
+                throw ex;
+            }
         }
 
-        public virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+        public async virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null)
         {
-            var query = FindAsIQueryable(predicate, orderBy).Select(selector);
-            var data = query.FirstOrDefaultAsync();
-            return data;
+            try
+            {
+                var query = FindAsIQueryable(predicate, orderBy).Select(selector);
+                var data = query.FirstOrDefaultAsync();
+                return await data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-
-        
 
         #region FindAsIQueryable
 
@@ -205,19 +314,46 @@ namespace WinMacOs.DataRepository.BaseProvider
             Func<Source, Expression<Func<TEntity, bool>>> predicate)
             where Source : class
         {
-            return FindAsIQueryable(sources, predicate).ToList();
+            try
+            {
+                return FindAsIQueryable(sources, predicate).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public virtual List<TResult> Find<Source, TResult>(IEnumerable<Source> sources,
               Func<Source, Expression<Func<TEntity, bool>>> predicate,
               Expression<Func<TEntity, TResult>> selector)
               where Source : class
         {
-            return FindAsIQueryable(sources, predicate).Select(selector).ToList();
+            try
+            {
+                return FindAsIQueryable(sources, predicate).Select(selector).ToList();
+            }
+            catch (Exception ex)
+            {
+                Expression<Func<TEntity, bool>> resultPredicate = x => 1 == 2;
+                foreach (Source source in sources)
+                {
+                    Expression<Func<TEntity, bool>> expression = predicate(source);
+                    resultPredicate = (resultPredicate).Or<TEntity>((expression));
+                }
+                throw ex;
+            }
         }
 
         public virtual List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
         {
-            return DBSet.Where(predicate).Select(selector).ToList();
+            try
+            {
+                return DBSet.Where(predicate).Select(selector).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         /// <summary>
         /// Get All
@@ -230,15 +366,6 @@ namespace WinMacOs.DataRepository.BaseProvider
         }
 
         /// <summary>
-        /// 单表查询
-        /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
-        {
-            return FindAsIQueryable(predicate).ToList();
-        }
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="predicate"></param>
@@ -247,12 +374,19 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <returns></returns>
         public virtual TEntity FindFirst(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null)
         {
-            return FindAsIQueryable(predicate, orderBy).FirstOrDefault();
+            try
+            {
+                return FindAsIQueryable(predicate, orderBy).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty)
+        public IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty)
         {
-            return DbContext.Set<TEntity>().Include(incluedProperty);
+            return (IIncludableQueryable<TEntity, TProperty>)DBSet.AsQueryable().Include(incluedProperty);
         }
 
         /// <summary>
@@ -305,17 +439,38 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         public virtual List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult, bool returnRowCount = true)
         {
-            return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy, returnRowCount).Select(selectorResult).ToList();
+            try
+            {
+                return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy, returnRowCount).Select(selectorResult).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public List<TEntity> QueryByPage(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, bool returnRowCount = true)
         {
-            return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy, returnRowCount).ToList();
+            try
+            {
+                return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public virtual List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult = null)
         {
-            return IQueryablePage<TEntity>(pageIndex, pagesize, out _, predicate, orderBy).Select(selectorResult).ToList();
+            try
+            {
+                return IQueryablePage<TEntity>(pageIndex, pagesize, out int rowcount, predicate, orderBy).Select(selectorResult).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -562,19 +717,20 @@ namespace WinMacOs.DataRepository.BaseProvider
                  ? string.Join(",", keys)
                  : $"'{string.Join("','", keys)}'";
 
-            string sql = $"DELETE FROM {entityType.GetEntityTableName() } where {tKey} in ({joinKeys});";
+            string sql = $"DELETE FROM {entityType.GetEntityTableName()} where {tKey} in ({joinKeys});";
             if (delList)
             {
                 Type detailType = entityType.GetCustomAttribute<EntityAttribute>().DetailTable?[0];
                 if (detailType != null)
-                    sql += $"DELETE FROM {detailType.GetEntityTableName()} where {tKey} in ({joinKeys});";
+                    sql = sql + $"DELETE FROM {detailType.GetEntityTableName()} where {tKey} in ({joinKeys});";
             }
             return ExecuteSqlCommand(sql);
         }
 
         private TEntity SetCommonParam(TEntity entitie, bool isInsert = false)
         {
-            if (entitie is BaseEntity baseEntity)
+            BaseEntity baseEntity = entitie as BaseEntity;
+            if (baseEntity != null)
             {
                 if (isInsert)
                 {
@@ -607,7 +763,8 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         private IEnumerable<TEntity> SetCommonParam(IEnumerable<TEntity> entities, bool isInsert = false)
         {
-            if (entities is IList<TEntity> listEntity)
+            var listEntity = entities as IList<TEntity>;
+            if (listEntity != null)
             {
                 for (int i = 0; i < listEntity.Count; i++)
                 {
@@ -622,7 +779,6 @@ namespace WinMacOs.DataRepository.BaseProvider
         {
             entities = SetCommonParam(entities, true);
             return DBSet.AddRangeAsync(entities);
-            
         }
 
         public virtual Task AddRangeAsync(IEnumerable<TEntity> entities)
@@ -648,7 +804,7 @@ namespace WinMacOs.DataRepository.BaseProvider
             return AddRangeAsync(new List<TEntity>() { entities }, properties?.GetExpressionProperty());
         }
 
-        public Task AddRangeAsync(IEnumerable<TEntity> entities, string[] properties)
+        public Task AddRangeAsync(IEnumerable<TEntity> entities, string[] properties, bool saveChanges = false)
         {
             entities = SetCommonParam(entities, true);
             if (properties != null && entities.First() is BaseEntity)
@@ -713,27 +869,41 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         public virtual int ExecuteSqlCommand(string sql, params SqlParameter[] sqlParameters)
         {
-            return DbContext.Database.ExecuteSqlCommand(sql, sqlParameters);
+            try
+            {
+                return DbContext.Database.ExecuteSqlCommand(sql, sqlParameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public virtual List<TEntity> FromSql(string sql, params SqlParameter[] sqlParameters)
         {
-            return DBSet.SqlQuery(sql, sqlParameters).ToList();
+            try
+            {
+                return DBSet.SqlQuery(sql, sqlParameters).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        ///// <summary>
-        ///// 执行sql
-        ///// 使用方式 FormattableString sql=$"select * from xx where name ={xx} and pwd={xx1} "，
-        ///// FromSqlInterpolated内部处理sql注入的问题，直接在{xx}写对应的值即可
-        ///// 注意：sql必须 select * 返回所有TEntity字段，
-        ///// </summary>
-        ///// <param name="formattableString"></param>
-        ///// <returns></returns>
-        //public virtual IQueryable<TEntity> FromSqlInterpolated([NotNull] FormattableString sql)
-        //{
-        //    //DBSet.FromSqlInterpolated(sql).Select(x => new { x,xxx}).ToList();
-        //    return DBSet.FromSqlInterpolated(sql);
-        //}
+        /// <summary>
+        /// 执行sql
+        /// 使用方式 FormattableString sql=$"select * from xx where name ={xx} and pwd={xx1} "，
+        /// FromSqlInterpolated内部处理sql注入的问题，直接在{xx}写对应的值即可
+        /// 注意：sql必须 select * 返回所有TEntity字段，
+        /// </summary>
+        /// <param name="formattableString"></param>
+        /// <returns></returns>
+        public virtual IQueryable<TEntity> FromSqlInterpolated([NotNull] FormattableString sql)
+        {
+            //DBSet.FromSqlInterpolated(sql).Select(x => new { x,xxx}).ToList();
+            return DBSet.SqlQuery(sql.Format).AsQueryable();
+        }
 
         /// <summary>
         /// 取消上下文跟踪
@@ -807,7 +977,15 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         public virtual int ExecuteSqlCommand(string sql, params SqlParameter[] sqlParameters)
         {
-            return DbContext.Database.ExecuteSqlCommand(sql, sqlParameters);
+            try
+            {
+                return DbContext.Database.ExecuteSqlCommand(sql, sqlParameters);
+            }
+            catch (Exception ex)
+            {
+                string strParam = Newtonsoft.Json.JsonConvert.SerializeObject(sqlParameters);
+                throw ex;
+            }
         }
     }
 }

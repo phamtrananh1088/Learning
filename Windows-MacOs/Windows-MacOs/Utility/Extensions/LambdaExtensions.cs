@@ -313,17 +313,17 @@ namespace WinMacOs.Utility.Extensions
         /// <param name="queryable"></param>
         /// <param name="orderBySelector">string=排序的字段,bool=true降序/false升序</param>
         /// <returns></returns>
-        public static IQueryable<TEntity> GetIQueryableOrderBy<TEntity>(this IQueryable<TEntity> queryable, Dictionary<string, QueryOrderBy> orderBySelector)
+        public static IQueryable<TEntity> GetIQueryableOrderBy<TEntity>(this IQueryable<TEntity> source, Dictionary<string, QueryOrderBy> orderBySelector)
         {
             string[] orderByKeys = orderBySelector.Select(x => x.Key).ToArray();
-            if (orderByKeys == null || orderByKeys.Length == 0) return queryable;
+            if (orderByKeys == null || orderByKeys.Length == 0) return source;
 
             IOrderedQueryable<TEntity> queryableOrderBy = null;
             //  string orderByKey = orderByKeys[^1];
             string orderByKey = orderByKeys[orderByKeys.Length - 1];
             queryableOrderBy = orderBySelector[orderByKey] == QueryOrderBy.Desc
-                ? queryableOrderBy = queryable.OrderByDescending(orderByKey.GetExpression<TEntity>())
-                : queryable.OrderBy(orderByKey.GetExpression<TEntity>());
+                ? queryableOrderBy = source.OrderByDescending(orderByKey.GetExpression<TEntity>())
+                : source.OrderBy(orderByKey.GetExpression<TEntity>());
 
             for (int i = orderByKeys.Length - 2; i >= 0; i--)
             {

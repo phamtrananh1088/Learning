@@ -58,30 +58,30 @@ namespace WinMacOs.Business.Services.Reafs_T
                 }
 
                 //[社員ID]より[M003_社員マスタ]から社員情報を取得
-                M015_業者ユーザマスタ user2 = await repository.M015_業者ユーザマスタ
-                    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName);
                 M015_業者ユーザマスタ user = await repository.M015_業者ユーザマスタ
-                    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName,
-                                    user1 => new M015_業者ユーザマスタ()
-                                    {
-                                        会社コード = user1.会社コード,
-                                        業者コード = user1.業者コード,
-                                        業者コード枝番 = user1.業者コード枝番,
-                                        ユーザーＩＤ = user1.ユーザーＩＤ,
-                                        ユーザー種別 = user1.ユーザー種別,
-                                        ユーザー名 = user1.ユーザー名,
-                                        部署等 = user1.部署等,
-                                        メールアドレス = user1.メールアドレス,
-                                        利用期間開始 = user1.利用期間開始,
-                                        利用期間終了 = user1.利用期間終了,
-                                        パスワード変換 = user1.パスワード変換,
-                                        パスワード期限開始 = user1.パスワード期限開始,
-                                        パスワード期限終了 = user1.パスワード期限終了,
-                                        親ＩＤ = user1.親ＩＤ,
-                                        新規区分 = user1.新規区分,
-                                        削除区分 = user1.削除区分,
-                                        ソルト値 = user1.ソルト値,
-                                    });
+                    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName);
+                //M015_業者ユーザマスタ user = await repository.M015_業者ユーザマスタ
+                //    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName,
+                //                    user1 => new M015_業者ユーザマスタ()
+                //                    {
+                //                        会社コード = user1.会社コード,
+                //                        業者コード = user1.業者コード,
+                //                        業者コード枝番 = user1.業者コード枝番,
+                //                        ユーザーＩＤ = user1.ユーザーＩＤ,
+                //                        ユーザー種別 = user1.ユーザー種別,
+                //                        ユーザー名 = user1.ユーザー名,
+                //                        部署等 = user1.部署等,
+                //                        メールアドレス = user1.メールアドレス,
+                //                        利用期間開始 = user1.利用期間開始,
+                //                        利用期間終了 = user1.利用期間終了,
+                //                        パスワード変換 = user1.パスワード変換,
+                //                        パスワード期限開始 = user1.パスワード期限開始,
+                //                        パスワード期限終了 = user1.パスワード期限終了,
+                //                        親ＩＤ = user1.親ＩＤ,
+                //                        新規区分 = user1.新規区分,
+                //                        削除区分 = user1.削除区分,
+                //                        ソルト値 = user1.ソルト値,
+                //                    });
 
                 //if (ResponseMsg.ListResponseMsg is null)
                 //{
@@ -146,10 +146,18 @@ namespace WinMacOs.Business.Services.Reafs_T
                     取引先名 = str取引先名,
                     reafsWRTFlg = loginInfo.reafsWRTFlg
                 };
-                //社員tokenを登録
+                //
+                List<F140_ログイン認証ファイル> f140a = repository.F140_ログイン認証ファイル
+                    .Find(x => x.ログインID == user.ユーザーＩＤ);
+                List<F140_ログイン認証ファイル> f140 = repository.F140_ログイン認証ファイル
+                    .Find(x => x.ログインID == user.ユーザーＩＤ,
+                                    order => new Dictionary<object, QueryOrderBy>()
+                                    {
+                                        { order.UPDATE_TIME, QueryOrderBy.Desc }
+                                    });
+
                 List<F140_ログイン認証ファイル> f140s = await repository.F140_ログイン認証ファイル
                     .FindAsync(x => x.ログインID == user.ユーザーＩＤ,
-                                    f140s1 => f140s1,
                                     order => new Dictionary<object, QueryOrderBy>()
                                     {
                                         { order.UPDATE_TIME, QueryOrderBy.Desc }
@@ -160,7 +168,7 @@ namespace WinMacOs.Business.Services.Reafs_T
                 {
                     f140s.Add(new F140_ログイン認証ファイル
                     {
-                        連番 = (int)repository.DapperContext.ExecuteScalar("SELECT NEXT VALUE FOR SEQ_ログイン認証連番", null),
+                        連番 = (int)(long)repository.DapperContext.ExecuteScalar("SELECT NEXT VALUE FOR SEQ_ログイン認証連番", null),
                         ログインID = user.ユーザーＩＤ,
                         Token = token,
                         INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),

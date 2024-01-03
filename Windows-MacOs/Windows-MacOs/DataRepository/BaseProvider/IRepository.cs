@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
@@ -8,8 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using WinMacOs.DataRepository.Dapper;
 using WinMacOs.DataRepository.EFDbContext;
+using WinMacOs.Utility.EntityFramework.Query;
 using WinMacOs.Utility.Enums;
 using WinMacOs.Utility.SystemModels;
+using static Dapper.SqlMapper;
 
 namespace WinMacOs.DataRepository.BaseProvider
 {
@@ -40,9 +43,30 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <summary>
         /// 通过条件查询数据
         /// </summary>
-        /// <param name="where"></param>
+        /// <param name="predicate"></param>
         /// <returns></returns>
-        List<TEntity> Find(Expression<Func<TEntity, bool>> where);
+        List<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+
+        /// <summary>
+        /// 根据条件，返回查询的类
+        /// </summary>
+        /// <typeparam name="TFind"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        List<TFind> Find<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate">where条件</param>
+        /// <param name="orderBy">排序字段,数据格式如:
+        ///  orderBy = x => new Dictionary<object, bool>() {
+        ///          { x.BalconyName,QueryOrderBy.Asc},
+        ///          { x.TranCorpCode1,QueryOrderBy.Desc}
+        ///         };
+        /// </param>
+        /// <returns></returns>
+        List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy);
 
         /// <summary>
         /// 
@@ -59,18 +83,6 @@ namespace WinMacOs.DataRepository.BaseProvider
         TEntity FindFirst(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null);
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="predicate">where条件</param>
-        /// <param name="orderBy">排序字段,数据格式如:
-        ///  orderBy = x => new Dictionary<object, bool>() {
-        ///          { x.BalconyName,QueryOrderBy.Asc},
-        ///          { x.TranCorpCode1,QueryOrderBy.Desc}
-        ///         };
-        /// </param>
-        /// <returns></returns>
-        IQueryable<TEntity> FindAsIQueryable(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null);
-        /// <summary>
         /// 通过条件查询数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -78,16 +90,6 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <param name="selector">返回类型如:Find(x => x.UserName == loginInfo.userName, p => new { uname = p.UserName });</param>
         /// <returns></returns>
         List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
-
-
-
-        /// <summary>
-        /// 根据条件，返回查询的类
-        /// </summary>
-        /// <typeparam name="TFind"></typeparam>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
-        List<TFind> Find<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
 
         Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
 
@@ -98,7 +100,13 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
+        Task<List<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy
+            );
+
         Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
+
         Task<List<T>> FindAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
@@ -135,6 +143,20 @@ namespace WinMacOs.DataRepository.BaseProvider
             where Source : class;
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="predicate">where条件</param>
+        /// <param name="orderBy">排序字段,数据格式如:
+        ///  orderBy = x => new Dictionary<object, bool>() {
+        ///          { x.BalconyName,QueryOrderBy.Asc},
+        ///          { x.TranCorpCode1,QueryOrderBy.Desc}
+        ///         };
+        /// </param>
+        /// <returns></returns>
+        IQueryable<TEntity> FindAsIQueryable(Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null);
+
+        /// <summary>
         /// 多条件查询
         /// </summary>
         /// <typeparam name="Source"></typeparam>
@@ -153,7 +175,7 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         Task<bool> ExistsAsync<TExists>(Expression<Func<TExists, bool>> predicate) where TExists : class;
 
-        IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty);
+        IIncludableQueryable<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> incluedProperty);
         /// <summary>
         /// 
         /// </summary>
@@ -274,15 +296,15 @@ namespace WinMacOs.DataRepository.BaseProvider
 
         List<TEntity> FromSql(string sql, params SqlParameter[] sqlParameters);
 
-        ///// <summary>
-        ///// 执行sql
-        ///// 使用方式 FormattableString sql=$"select * from xx where name ={xx} and pwd={xx1} "，
-        ///// FromSqlInterpolated内部处理sql注入的问题，直接在{xx}写对应的值即可
-        ///// 注意：sql必须 select * 返回所有TEntity字段，
-        ///// </summary>
-        ///// <param name="formattableString"></param>
-        ///// <returns></returns>
-        //IQueryable<TEntity> FromSqlInterpolated([System.Diagnostics.CodeAnalysis.NotNull] FormattableString sql);
+        /// <summary>
+        /// 执行sql
+        /// 使用方式 FormattableString sql=$"select * from xx where name ={xx} and pwd={xx1} "，
+        /// FromSqlInterpolated内部处理sql注入的问题，直接在{xx}写对应的值即可
+        /// 注意：sql必须 select * 返回所有TEntity字段，
+        /// </summary>
+        /// <param name="formattableString"></param>
+        /// <returns></returns>
+        IQueryable<TEntity> FromSqlInterpolated([System.Diagnostics.CodeAnalysis.NotNull] FormattableString sql);
 
 
         /// <summary>
