@@ -100,8 +100,8 @@ namespace WinMacOs.Utility.Extensions
         /// <returns></returns>
         public static Expression<Func<T, TKey>> GetExpression<T, TKey>(this string propertyName, ParameterExpression parameter)
         {
-            if (typeof(TKey).Name == "Object")
-                return Expression.Lambda<Func<T, TKey>>(Expression.Convert(Expression.Property(parameter, propertyName), typeof(object)), parameter);
+            //if (typeof(TKey).Name == "Object")
+            //    return Expression.Lambda<Func<T, TKey>>(Expression.Convert(Expression.Property(parameter, propertyName), typeof(object)), parameter);
             return Expression.Lambda<Func<T, TKey>>(Expression.Property(parameter, propertyName), parameter);
         }
         /// <summary>

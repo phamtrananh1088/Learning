@@ -30,6 +30,9 @@ namespace WinMacOs.Controllers
             Service = service;
         }
 
-        
+        protected internal new JsonResult Json(object data)
+        {
+            return Json(data, null, null, JsonRequestBehavior.AllowGet);
+        }
     }
 }

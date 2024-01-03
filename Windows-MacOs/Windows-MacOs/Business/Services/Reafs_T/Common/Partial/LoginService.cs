@@ -146,15 +146,6 @@ namespace WinMacOs.Business.Services.Reafs_T
                     取引先名 = str取引先名,
                     reafsWRTFlg = loginInfo.reafsWRTFlg
                 };
-                //
-                List<F140_ログイン認証ファイル> f140a = repository.F140_ログイン認証ファイル
-                    .Find(x => x.ログインID == user.ユーザーＩＤ);
-                List<F140_ログイン認証ファイル> f140 = repository.F140_ログイン認証ファイル
-                    .Find(x => x.ログインID == user.ユーザーＩＤ,
-                                    order => new Dictionary<object, QueryOrderBy>()
-                                    {
-                                        { order.UPDATE_TIME, QueryOrderBy.Desc }
-                                    });
 
                 List<F140_ログイン認証ファイル> f140s = await repository.F140_ログイン認証ファイル
                     .FindAsync(x => x.ログインID == user.ユーザーＩＤ,
