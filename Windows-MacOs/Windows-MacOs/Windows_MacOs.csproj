@@ -288,12 +288,16 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Business\Filters\AuthorizationResponse.cs" />
+    <Compile Include="Business\Filters\JWTAuthorizeAttribute.cs" />
     <Compile Include="Business\IServices\Manager\ICanvasService.cs" />
     <Compile Include="Business\IServices\Manager\Partial\ICanvasService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ILoginService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\Partial\ILoginService.cs" />
+    <Compile Include="Business\IServices\Reafs_T\Common\TD00001\ITD00001Service.cs" />
+    <Compile Include="Business\IServices\Reafs_T\Common\TD00001\Partial\ITD00001Service.cs" />
     <Compile Include="Business\IServices\Reafs_W\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_W\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ICommonService.cs" />
@@ -304,6 +308,10 @@
     <Compile Include="Business\Services\Reafs_T\Common\LoginService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\Partial\CommonService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\Partial\LoginService.cs" />
+    <Compile Include="Business\Services\Reafs_T\Common\TD00001\TD00001Service.cs" />
+    <Compile Include="Business\Services\Reafs_T\Common\TD00001\Partial\TD00001Service.cs" />
+    <Compile Include="Controllers\Reafs_T\Common\TD00001\TD00001Controller.cs" />
+    <Compile Include="Controllers\Reafs_T\Common\TD00001\Partial\TD00001Controller.cs" />
     <Compile Include="Business\Services\Reafs_W\Common\CommonService.cs" />
     <Compile Include="Business\Services\Reafs_W\Common\Partial\CommonService.cs" />
     <Compile Include="Business\Services\System\Partial\Sys_LogService.cs" />
@@ -363,6 +371,7 @@
     <Compile Include="Utility\Extensions\DatabaseExtensions.cs" />
     <Compile Include="Utility\Extensions\DbSetExtensions.cs" />
     <Compile Include="Utility\Extensions\FileExtensions.cs" />
+    <Compile Include="Utility\Extensions\IDependency.cs" />
     <Compile Include="Utility\Optimization\EntityFramework\DatabaseExtensions.cs" />
     <Compile Include="DataRepository\IRepositories\IUnitOfWork.cs" />
     <Compile Include="DataRepository\IRepositories\Unit\ISrtRepository.cs" />

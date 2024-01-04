@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Practices.Unity;
+using WinMacOs.Utility.Extensions;
 
 namespace WinMacOs.DataRepository.AutofacManager
 {
@@ -16,7 +17,7 @@ namespace WinMacOs.DataRepository.AutofacManager
             //配置ファイルを初期化
             //AppSetting.Init(services, configuration);
 
-            //Type baseType = typeof(IDependency);
+            Type baseType = typeof(IDependency);
             var compilationLibrary = DependencyContext.Default
                                                       .RuntimeLibraries
                                                       .Where(x => !x.Serviceable && x.Type == "project")

@@ -10,6 +10,7 @@ using WinMacOs.DataRepository.Repositories;
 using Reafs_TServices = WinMacOs.Business.Services.Reafs_T;
 using Reafs_WServices = WinMacOs.Business.Services.Reafs_W;
 using ManagerServices = WinMacOs.Business.Services.Manager;
+using WinMacOs.DataRepository.AutofacManager;
 
 namespace WinMacOs
 {
@@ -34,7 +35,10 @@ namespace WinMacOs
             container.RegisterType<Reafs_TIServices.ILoginService, Reafs_TServices.LoginService>();
             container.RegisterType<Reafs_WIServices.ICommonService, Reafs_WServices.CommonService>();
             container.RegisterType<ManagerIServices.ICanvasService, ManagerServices.CanvasService>();
+            container.RegisterType<Reafs_TIServices.ITD00001Service, Reafs_TServices.TD00001Service>();
             container.RegisterType<IUnitOfWork, UnitOfWork>();
+
+            //container.AddModule();
             return container;
         }
     }

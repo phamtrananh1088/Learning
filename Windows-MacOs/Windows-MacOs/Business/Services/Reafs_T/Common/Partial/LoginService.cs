@@ -59,29 +59,27 @@ namespace WinMacOs.Business.Services.Reafs_T
 
                 //[社員ID]より[M003_社員マスタ]から社員情報を取得
                 M015_業者ユーザマスタ user = await repository.M015_業者ユーザマスタ
-                    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName);
-                //M015_業者ユーザマスタ user = await repository.M015_業者ユーザマスタ
-                //    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName,
-                //                    user1 => new M015_業者ユーザマスタ()
-                //                    {
-                //                        会社コード = user1.会社コード,
-                //                        業者コード = user1.業者コード,
-                //                        業者コード枝番 = user1.業者コード枝番,
-                //                        ユーザーＩＤ = user1.ユーザーＩＤ,
-                //                        ユーザー種別 = user1.ユーザー種別,
-                //                        ユーザー名 = user1.ユーザー名,
-                //                        部署等 = user1.部署等,
-                //                        メールアドレス = user1.メールアドレス,
-                //                        利用期間開始 = user1.利用期間開始,
-                //                        利用期間終了 = user1.利用期間終了,
-                //                        パスワード変換 = user1.パスワード変換,
-                //                        パスワード期限開始 = user1.パスワード期限開始,
-                //                        パスワード期限終了 = user1.パスワード期限終了,
-                //                        親ＩＤ = user1.親ＩＤ,
-                //                        新規区分 = user1.新規区分,
-                //                        削除区分 = user1.削除区分,
-                //                        ソルト値 = user1.ソルト値,
-                //                    });
+                    .FindFirstAsync(x => x.ユーザーＩＤ == loginInfo.userName,
+                                    user1 => new
+                                    {
+                                        user1.会社コード,
+                                        user1.業者コード,
+                                        user1.業者コード枝番,
+                                        user1.ユーザーＩＤ,
+                                        user1.ユーザー種別,
+                                        user1.ユーザー名,
+                                        user1.部署等,
+                                        user1.メールアドレス,
+                                        user1.利用期間開始,
+                                        user1.利用期間終了,
+                                        user1.パスワード変換,
+                                        user1.パスワード期限開始,
+                                        user1.パスワード期限終了,
+                                        user1.親ＩＤ,
+                                        user1.新規区分,
+                                        user1.削除区分,
+                                        user1.ソルト値,
+                                    });
 
                 //if (ResponseMsg.ListResponseMsg is null)
                 //{
@@ -132,19 +130,19 @@ namespace WinMacOs.Business.Services.Reafs_T
                 responseContent.Data = new
                 {
                     token,
-                    会社コード = user.会社コード,
-                    業者コード = user.業者コード,
-                    業者コード枝番 = user.業者コード枝番,
-                    ユーザーＩＤ = user.ユーザーＩＤ,
-                    ユーザー種別 = user.ユーザー種別,
-                    ユーザー名 = user.ユーザー名,
-                    部署等 = user.部署等,
-                    メールアドレス = user.メールアドレス,
-                    親ＩＤ = user.親ＩＤ,
-                    新規区分 = user.新規区分,
+                    user.会社コード,
+                    user.業者コード,
+                    user.業者コード枝番,
+                    user.ユーザーＩＤ,
+                    user.ユーザー種別,
+                    user.ユーザー名,
+                    user.部署等,
+                    user.メールアドレス,
+                    user.親ＩＤ,
+                    user.新規区分,
                     listMessage = ResponseMsg.ListResponseMsg,
                     取引先名 = str取引先名,
-                    reafsWRTFlg = loginInfo.reafsWRTFlg
+                    loginInfo.reafsWRTFlg
                 };
 
                 List<F140_ログイン認証ファイル> f140s = await repository.F140_ログイン認証ファイル
@@ -159,7 +157,7 @@ namespace WinMacOs.Business.Services.Reafs_T
                 {
                     f140s.Add(new F140_ログイン認証ファイル
                     {
-                        連番 = (int)(long)repository.DapperContext.ExecuteScalar("SELECT NEXT VALUE FOR SEQ_ログイン認証連番", null),
+                        連番 = (int)repository.DapperContext.ExecuteScalar("SELECT NEXT VALUE FOR SEQ_ログイン認証連番", null),
                         ログインID = user.ユーザーＩＤ,
                         Token = token,
                         INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
@@ -239,7 +237,7 @@ namespace WinMacOs.Business.Services.Reafs_T
                     return responseContent.Error("Tokenは期限切れました。");
 
                 string userId = UserContext.Current.ログインID;
-                userInfo = await repository.M015_業者ユーザマスタ.FindFirstAsync(x => x.ユーザーＩＤ == userId,
+                userInfo = await repository.M015_業者ユーザマスタ.FindTFirstAsync(x => x.ユーザーＩＤ == userId,
                                                            user => new UserInfo()
                                                            {
                                                                ログインID = userId,
@@ -454,7 +452,7 @@ namespace WinMacOs.Business.Services.Reafs_T
 
                 rst = repository.DapperContext.ExcuteNonQuery(sql.ToString(), new
                 {
-                    会社コード = user.会社コード,
+                    user.会社コード,
                     ユーザーＩＤ = loginInfo.userName,
                     UPDATE_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     UPDATE_PG = loginInfo.reafsWRTFlg,

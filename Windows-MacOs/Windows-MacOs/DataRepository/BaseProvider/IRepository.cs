@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -85,12 +86,14 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <summary>
         /// 通过条件查询数据
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">a anonymous type/an another type project from TEntity</typeparam>
+        /// <see cref="https://stackoverflow.com/questions/5325797/the-entity-cannot-be-constructed-in-a-linq-to-entities-query"/>
         /// <param name="predicate">查询条件</param>
         /// <param name="selector">返回类型如:Find(x => x.UserName == loginInfo.userName, p => new { uname = p.UserName });</param>
         /// <returns></returns>
-        List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
+        List<T> FindT<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T: class;
 
+        List<TEntity> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
         Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
 
         Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate);
@@ -105,20 +108,37 @@ namespace WinMacOs.DataRepository.BaseProvider
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy
             );
 
-        Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
+        Task<List<T>> FindTAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
+        Task<List<TEntity>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
 
-        Task<List<T>> FindAsync<T>(
+        Task<List<T>> FindTAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
             );
-
-        Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
-        Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+        Task<List<TEntity>> FindAsync<T>(
+            Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
             );
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T">a anonymous type/an another type project from TEntity</typeparam>
+        /// <see cref="https://stackoverflow.com/questions/5325797/the-entity-cannot-be-constructed-in-a-linq-to-entities-query"/>
+        /// <param name="predicate"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        Task<T> FindTFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
+        Task<TEntity> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
+        Task<T> FindTFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, T>> selector,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
+            );
+        Task<TEntity> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, T>> selector,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
+            );
         /// <summary>
         /// 多条件查询
         /// </summary>
@@ -137,9 +157,9 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <param name="predicate">生成的查询条件</param>
         /// <param name="selector">自定义返回结果</param>
         /// <returns></returns>
-        List<TResult> Find<Source, TResult>(IEnumerable<Source> sources,
+        List<T> Find<Source, T>(IEnumerable<Source> sources,
             Func<Source, Expression<Func<TEntity, bool>>> predicate,
-            Expression<Func<TEntity, TResult>> selector)
+            Expression<Func<TEntity, T>> selector)
             where Source : class;
 
         /// <summary>
@@ -192,9 +212,13 @@ namespace WinMacOs.DataRepository.BaseProvider
         ///         };
         /// <param name="selectorResult">查询返回的对象</param>
         /// <returns></returns>
-        List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, TResult>> selectorResult, bool returnRowCount = true);
+        List<T> QueryTByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true);
 
-        List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult = null);
+        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true);
+
+        List<T> QueryTByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null);
+        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null);
+
         /// <summary>
         /// 
         /// </summary>

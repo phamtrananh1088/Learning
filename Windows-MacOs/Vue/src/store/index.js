@@ -16,7 +16,7 @@ function getUserInfo (state) {
 function defKey (key) {
   return key + appSubfix
 }
-const appSubfix = webconfig.spa_folder === '/Reafs_W/' ? 'W' : webconfig.spa_folder === '/Reafs_R_Web/' ? 'R_Web' : ''
+const appSubfix = webconfig.spa_folder === '/Reafs_W/' ? 'W' : webconfig.spa_folder === '/Reafs_R_Web/' ? 'R_Web' : webconfig.spa_folder === '/Reafs_T/' ? 'T' : ''
 const keys = { USER: defKey('user') }
 const appSetting = {
   PAGEDATA: defKey('pageData'),

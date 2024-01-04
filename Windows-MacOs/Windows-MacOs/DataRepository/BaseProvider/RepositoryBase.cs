@@ -21,6 +21,9 @@ using System.Data.SqlClient;
 using WinMacOs.Utility.Utils;
 using System.Diagnostics;
 using WinMacOs.Utility.EntityFramework.Query;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
+using System.Numerics;
 
 namespace WinMacOs.DataRepository.BaseProvider
 {
@@ -200,11 +203,28 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
         }
 
-        public async virtual Task<List<T>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        public async virtual Task<List<T>> FindTAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
         {
             try
             {
                 return await FindAsIQueryable(predicate).Select(selector).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<List<TEntity>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        {
+            try
+            {
+                var query = FindTAsync(predicate, selector);
+                if (query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<List<TEntity>>(System.Text.Json.JsonSerializer.Serialize(await query));
             }
             catch (Exception ex)
             {
@@ -227,7 +247,7 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
         }
 
-        public async virtual Task<List<T>> FindAsync<T>(
+        public async virtual Task<List<T>> FindTAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
@@ -243,7 +263,28 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
         }
 
-        public async virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        public async virtual Task<List<TEntity>> FindAsync<T>(
+            Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, T>> selector,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
+            )
+        {
+            try
+            {
+                var query = FindTAsync(predicate, selector, orderBy);
+                if (query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<List<TEntity>>(System.Text.Json.JsonSerializer.Serialize(await query));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<T> FindTFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class
         {
             try
             {
@@ -253,12 +294,29 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
             catch (Exception ex)
             {
-                StackTrace str = new StackTrace();
+                _ = new StackTrace();
                 throw ex;
             }
         }
 
-        public async virtual Task<T> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+        public async virtual Task<TEntity> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class
+        {
+            try
+            {
+                var query = FindTFirstAsync(predicate, selector);
+                if(query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<TEntity>(System.Text.Json.JsonSerializer.Serialize(await query));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async virtual Task<T> FindTFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null)
         {
@@ -267,6 +325,26 @@ namespace WinMacOs.DataRepository.BaseProvider
                 var query = FindAsIQueryable(predicate, orderBy).Select(selector);
                 var data = query.FirstOrDefaultAsync();
                 return await data;
+            }
+            catch (Exception ex)
+            {
+                _ = new StackTrace();
+                throw ex;
+            }
+        }
+
+        public async virtual Task<TEntity> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
+            Expression<Func<TEntity, T>> selector,
+            Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null)
+        {
+            try
+            {
+                var query = FindTFirstAsync(predicate, selector, orderBy);
+                if (query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<TEntity>(System.Text.Json.JsonSerializer.Serialize(await query));
             }
             catch (Exception ex)
             {
@@ -323,9 +401,9 @@ namespace WinMacOs.DataRepository.BaseProvider
                 throw ex;
             }
         }
-        public virtual List<TResult> Find<Source, TResult>(IEnumerable<Source> sources,
+        public virtual List<T> Find<Source, T>(IEnumerable<Source> sources,
               Func<Source, Expression<Func<TEntity, bool>>> predicate,
-              Expression<Func<TEntity, TResult>> selector)
+              Expression<Func<TEntity, T>> selector)
               where Source : class
         {
             try
@@ -344,7 +422,7 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
         }
 
-        public virtual List<T> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)
+        public virtual List<T> FindT<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class
         {
             try
             {
@@ -355,6 +433,17 @@ namespace WinMacOs.DataRepository.BaseProvider
                 throw ex;
             }
         }
+
+        public List<TEntity> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class
+        {
+            var value = FindT(predicate, selector).ToList();
+            if (value == null)
+            {
+                return null;
+            }
+            return System.Text.Json.JsonSerializer.Deserialize<List<TEntity>>(System.Text.Json.JsonSerializer.Serialize(value));
+        }
+
         /// <summary>
         /// Get All
         /// </summary>
@@ -437,11 +526,28 @@ namespace WinMacOs.DataRepository.BaseProvider
                 .Take(pagesize);
         }
 
-        public virtual List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult, bool returnRowCount = true)
+        public virtual List<T> QueryTByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true)
         {
             try
             {
                 return IQueryablePage<TEntity>(pageIndex, pagesize, out rowcount, predicate, orderBy, returnRowCount).Select(selectorResult).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public virtual List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true)
+        {
+            try
+            {
+                var query = QueryTByPage(pageIndex, pagesize, out rowcount, predicate, orderBy, selectorResult, returnRowCount);
+                if (query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<List<TEntity>>(System.Text.Json.JsonSerializer.Serialize(query));
             }
             catch (Exception ex)
             {
@@ -461,11 +567,29 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
         }
 
-        public virtual List<TResult> QueryByPage<TResult>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, TResult>> selectorResult = null)
+        public virtual List<T> QueryTByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null)
         {
             try
             {
                 return IQueryablePage<TEntity>(pageIndex, pagesize, out int rowcount, predicate, orderBy).Select(selectorResult).ToList();
+            }
+            catch (Exception ex)
+            {
+                _ = new StackTrace();
+                throw ex;
+            }
+        }
+
+        public virtual List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null)
+        {
+            try
+            {
+                var query = QueryTByPage(pageIndex, pagesize, out int rowcount, predicate, orderBy, selectorResult);
+                if (query == null)
+                {
+                    return null;
+                }
+                return System.Text.Json.JsonSerializer.Deserialize<List<TEntity>>(System.Text.Json.JsonSerializer.Serialize(query));
             }
             catch (Exception ex)
             {
@@ -983,7 +1107,7 @@ namespace WinMacOs.DataRepository.BaseProvider
             }
             catch (Exception ex)
             {
-                string strParam = Newtonsoft.Json.JsonConvert.SerializeObject(sqlParameters);
+                _ = Newtonsoft.Json.JsonConvert.SerializeObject(sqlParameters);
                 throw ex;
             }
         }
