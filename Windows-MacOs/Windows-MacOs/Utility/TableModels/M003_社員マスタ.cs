@@ -26,68 +26,68 @@ namespace WinMacOs.Utility.TableModels
         public string 社員名 { get; set; } = String.Empty;
 
         [Display(Name = "社員名(姓)")]
-        [Column("社員名(姓)", TypeName = "NVARCHAR(40)")]
+        [Column("社員名(姓)")]
         [Editable(true)]
         public string 社員名_姓 { get; set; } = String.Empty;
 
         [Display(Name = "社員名(名)")]
-        [Column("社員名(名)", TypeName = "NVARCHAR(40)")]
+        [Column("社員名(名)")]
         [Editable(true)]
         public string 社員名_名 { get; set; } = String.Empty;
         public string 社員名カナ { get; set; } = String.Empty;
 
         [Display(Name = "社員名カナ(姓)")]
-        [Column("社員名カナ(姓)", TypeName = "NVARCHAR(40)")]
+        [Column("社員名カナ(姓)")]
         [Editable(true)]
         public string 社員名カナ_姓 { get; set; } = String.Empty;
 
         [Display(Name = "社員名カナ(名)")]
-        [Column("社員名カナ(名)", TypeName = "NVARCHAR(40)")]
+        [Column("社員名カナ(名)")]
         [Editable(true)]
         public string 社員名カナ_名 { get; set; } = String.Empty;
         public string 社員名アルファベット { get; set; } = String.Empty;
 
         [Display(Name = "社員名アルファベット(姓)")]
-        [Column("社員名アルファベット(姓)", TypeName = "NVARCHAR(50)")]
+        [Column("社員名アルファベット(姓)")]
         [Editable(true)]
         public string 社員名アルファベット_姓 { get; set; } = String.Empty;
 
         [Display(Name = "社員名アルファベット(名)")]
-        [Column("社員名アルファベット(名)", TypeName = "NVARCHAR(50)")]
+        [Column("社員名アルファベット(名)")]
         [Editable(true)]
         public string 社員名アルファベット_名 { get; set; } = String.Empty;
 
         public string 表示社員名 { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名(姓)")]
-        [Column("表示社員名(姓)", TypeName = "NVARCHAR(40)")]
+        [Column("表示社員名(姓)")]
         [Editable(true)]
         public string 表示社員名_姓 { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名(名)")]
-        [Column("表示社員名(名)", TypeName = "NVARCHAR(40)")]
+        [Column("表示社員名(名)")]
         [Editable(true)]
         public string 表示社員名_名 { get; set; } = String.Empty;
         public string 表示社員名カナ { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名カナ(姓)")]
-        [Column("表示社員名カナ(姓)", TypeName = "NVARCHAR(40)")]
+        [Column("表示社員名カナ(姓)")]
         [Editable(true)]
         public string 表示社員名カナ_姓 { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名カナ(名)")]
-        [Column("表示社員名カナ(名)", TypeName = "NVARCHAR(40)")]
+        [Column("表示社員名カナ(名)")]
         [Editable(true)]
         public string 表示社員名カナ_名 { get; set; } = String.Empty;
         public string 表示社員名アルファベット { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名アルファベット(姓)")]
-        [Column("表示社員名アルファベット(姓)", TypeName = "NVARCHAR(50)")]
+        [Column("表示社員名アルファベット(姓)")]
         [Editable(true)]
         public string 表示社員名アルファベット_姓 { get; set; } = String.Empty;
 
         [Display(Name = "表示社員名アルファベット(名)")]
-        [Column("表示社員名アルファベット(名)", TypeName = "NVARCHAR(50)")]
+        [Column("表示社員名アルファベット(名)")]
         [Editable(true)]
         public string 表示社員名アルファベット_名 { get; set; } = String.Empty;
         public string 生年月日 { get; set; } = String.Empty;
@@ -122,7 +122,7 @@ namespace WinMacOs.Utility.TableModels
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Column("VERSION", TypeName = "ROWVERSION")]
-        public string VERSION { get; set; }
+        public byte[] VERSION { get; set; }
         public string 承認メール受信フラグ { get; set; } = "0";
         public string 経理処理会社区分 { get; set; } = "0";
         public string Token { get; set; }

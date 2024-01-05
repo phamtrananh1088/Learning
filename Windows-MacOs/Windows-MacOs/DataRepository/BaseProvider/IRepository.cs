@@ -51,10 +51,10 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <summary>
         /// 根据条件，返回查询的类
         /// </summary>
-        /// <typeparam name="TFind"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        List<TFind> Find<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
+        List<T> Find<T>(Expression<Func<T, bool>> predicate) where T : class;
 
         /// <summary>
         /// 
@@ -94,11 +94,11 @@ namespace WinMacOs.DataRepository.BaseProvider
         List<T> FindT<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T: class;
 
         List<TEntity> Find<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
-        Task<TFind> FindAsyncFirst<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
+        Task<T> FindFirstAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
 
-        Task<TEntity> FindAsyncFirst(Expression<Func<TEntity, bool>> predicate);
-
-        Task<List<TFind>> FindAsync<TFind>(Expression<Func<TFind, bool>> predicate) where TFind : class;
+        Task<List<T>> FindAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+        T FindTFirst<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
+        TEntity FindFirst<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
         Task<TEntity> FindFirstAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
@@ -108,19 +108,19 @@ namespace WinMacOs.DataRepository.BaseProvider
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy
             );
 
-        Task<List<T>> FindTAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
-        Task<List<TEntity>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector);
+        Task<List<T>> FindTAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector)where T : class;
+        Task<List<TEntity>> FindAsync<T>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, T>> selector) where T : class;
 
         Task<List<T>> FindTAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-            );
+            ) where T : class;
         Task<List<TEntity>> FindAsync<T>(
             Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-            );
+            ) where T : class;
         /// <summary>
         /// 
         /// </summary>
@@ -134,11 +134,11 @@ namespace WinMacOs.DataRepository.BaseProvider
         Task<T> FindTFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-            );
+            ) where T : class;
         Task<TEntity> FindFirstAsync<T>(Expression<Func<TEntity, bool>> predicate,
             Expression<Func<TEntity, T>> selector,
             Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy = null
-            );
+            ) where T : class;
         /// <summary>
         /// 多条件查询
         /// </summary>
@@ -160,7 +160,7 @@ namespace WinMacOs.DataRepository.BaseProvider
         List<T> Find<Source, T>(IEnumerable<Source> sources,
             Func<Source, Expression<Func<TEntity, bool>>> predicate,
             Expression<Func<TEntity, T>> selector)
-            where Source : class;
+            where Source : class where T : class;
 
         /// <summary>
         /// 
@@ -212,12 +212,12 @@ namespace WinMacOs.DataRepository.BaseProvider
         ///         };
         /// <param name="selectorResult">查询返回的对象</param>
         /// <returns></returns>
-        List<T> QueryTByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true);
+        List<T> QueryTByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true) where T : class;
 
-        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true);
+        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBySelector, Expression<Func<TEntity, T>> selectorResult, bool returnRowCount = true) where T : class;
 
-        List<T> QueryTByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null);
-        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null);
+        List<T> QueryTByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null) where T : class;
+        List<TEntity> QueryByPage<T>(int pageIndex, int pagesize, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, Expression<Func<TEntity, T>> selectorResult = null) where T : class;
 
         /// <summary>
         /// 
@@ -235,7 +235,7 @@ namespace WinMacOs.DataRepository.BaseProvider
         /// <returns></returns>
         List<TEntity> QueryByPage(int pageIndex, int pagesize, out int rowcount, Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, bool returnRowCount = true);
 
-        IQueryable<TFind> IQueryablePage<TFind>(int pageIndex, int pagesize, out int rowcount, Expression<Func<TFind, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, bool returnRowCount = true) where TFind : class;
+        IQueryable<T> IQueryablePage<T>(int pageIndex, int pagesize, out int rowcount, Expression<Func<T, bool>> predicate, Expression<Func<TEntity, Dictionary<object, QueryOrderBy>>> orderBy, bool returnRowCount = true) where T : class;
 
 
         IQueryable<TEntity> IQueryablePage(IQueryable<TEntity> queryable, int pageIndex, int pagesize, out int rowcount, Dictionary<string, QueryOrderBy> orderBy, bool returnRowCount = true);

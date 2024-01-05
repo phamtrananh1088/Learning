@@ -96,7 +96,7 @@ namespace WinMacOs.Business.Services.Reafs_T
 
             M015_業者ユーザマスタ M015 = await repository.M015_業者ユーザマスタ
                     .FindFirstAsync(x => x.ユーザーＩＤ == LoginInfo.userName,
-                    M015a => new M015_業者ユーザマスタ()
+                    M015a => new
                     {
                         ユーザーＩＤ = M015a.ユーザーＩＤ,
                         親ＩＤ = M015a.親ＩＤ,

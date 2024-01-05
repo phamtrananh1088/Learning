@@ -4,6 +4,7 @@ using System.Text;
 
 namespace WinMacOs.Utility.DomainModels
 {
+    [Serializable]
     public class UserInfo
     {
         public string ログインID { get; set; }
@@ -14,6 +15,7 @@ namespace WinMacOs.Utility.DomainModels
 
     }
 
+    [Serializable]
     public class MultiToken
     {
         public int 連番 { get; set; }

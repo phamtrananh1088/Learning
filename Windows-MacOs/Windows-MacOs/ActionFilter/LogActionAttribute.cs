@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using WinMacOs.DataRepository.DBManager;
 using WinMacOs.DataRepository.Utilities;
+using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Extensions;
 using WinMacOs.Utility.Utils;
 
@@ -18,7 +19,7 @@ namespace WinMacOs.ActionFilter
         private void WriteLog(ActionExecutingContext context, string parameters)
         {
             UserContext userContext = UserContext.Current;
-            string 社員ID = userContext.社員ID ?? userContext.ログインID;
+            string ログインID = userContext.ログインID;
             string host = userContext.ClientHost;
             Task.Factory.StartNew(() =>
             {
@@ -73,7 +74,7 @@ namespace WinMacOs.ActionFilter
                     処理コメント = action,
                     INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     INSERT_HOST = host,
-                    INSERT_ID = 社員ID,
+                    INSERT_ID = ログインID,
                     パラメータ = parameters
                 });
             });
@@ -82,7 +83,7 @@ namespace WinMacOs.ActionFilter
         public static void WriteError(string message, string parameters, string pInsertPG = "")// ハノイ側修正2023/10/03　STEP2_W　課題管理表№400：「ログ出力処理の機能拡張依頼」
         {
             UserContext userContext = UserContext.Current;
-            string 社員ID = userContext.社員ID ?? userContext.ログインID;
+            string ログインID = userContext.ログインID;
             string host = userContext.ClientHost;
             Task.Factory.StartNew(() =>
             {
@@ -151,7 +152,7 @@ namespace WinMacOs.ActionFilter
                     INSERT_TIME = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
                     INSERT_PG = pInsertPG,// ハノイ側修正2023/10/03　STEP2_W　課題管理表№400：「ログ出力処理の機能拡張依頼」
                     INSERT_HOST = host,
-                    INSERT_ID = 社員ID
+                    INSERT_ID = ログインID
                 });
             });
         }
