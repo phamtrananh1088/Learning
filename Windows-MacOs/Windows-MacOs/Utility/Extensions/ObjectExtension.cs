@@ -549,6 +549,17 @@ namespace WinMacOs.Utility.Extensions
             }
         }
 
+        public static object FromBytes(this byte[] bi)
+        {
+            if (bi == null)
+                return null;
+            var bf = new BinaryFormatter();
+            using (var ms = new MemoryStream(bi))
+            {
+                return bf.Deserialize(ms);
+            }
+        }
+
         public static object ToObject(this byte[] source)
         {
             using (var memStream = new MemoryStream())

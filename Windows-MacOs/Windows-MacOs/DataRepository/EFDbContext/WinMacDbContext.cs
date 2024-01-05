@@ -38,6 +38,8 @@ namespace WinMacOs.DataRepository.EFDbContext
         {
             modelBuilder.Entity<Srt>()
              .HasKey(c => new { c.JI_NO });
+            modelBuilder.Entity<M003_社員マスタ>()
+             .HasKey(c => new { c.社員ID });
             modelBuilder.Entity<M015_業者ユーザマスタ>()
             .HasKey(c => new { c.業者コード, c.業者コード枝番, c.ユーザーＩＤ });
             modelBuilder.Entity<S016_メッセージマスタ>()

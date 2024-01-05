@@ -17,55 +17,68 @@ namespace WinMacOs.Business.Business.Filters
 {
     public class JWTAuthorizeAttribute : AuthorizeAttribute
     {
+        private static readonly string replaceTokenPath = "/api/User/replaceToken";
+        private static readonly string replaceTokenPath_T = "/api/Reafs_T/replaceToken";
         public JWTAuthorizeAttribute() : base()
         {
         }
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            if (filterContext.ActionDescriptor.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length > 0)
+            if (filterContext == null)
             {
-                ////固定Token（期限なし）を使用されたら、tokenの正しさと存在チェック
-                //if (filterContext.Filters
-                //    .Where(item => item is IFixedTokenFilter)
-                //    .FirstOrDefault() is IFixedTokenFilter tokenFilter)
-                //{
-                //    tokenFilter.OnAuthorization(context);
-                //    return;
-                //}
-                //匿名及びtokenが持ってくる場合は、ユーザーのIDをキャシュに保存して、UserHelper中にユーザー情報は取得できることを保証する
-                if (!filterContext.HttpContext.User.Identity.IsAuthenticated
-                    && !string.IsNullOrEmpty(filterContext.HttpContext.Request.Headers[AppSetting.TokenHeaderName]))
+                throw new ArgumentNullException("filterContext");
+            }
+
+            //if (OutputCacheAttribute.IsChildActionCacheActive(filterContext))
+            //{
+            //    throw new InvalidOperationException("AuthorizeAttribute_CannotUseWithinChildActionCache");
+            //}
+            //匿名及びtokenが持ってくる場合は、ユーザーのIDをキャシュに保存して、UserHelper中にユーザー情報は取得できることを保証する
+            if (!filterContext.HttpContext.User.Identity.IsAuthenticated
+                && !string.IsNullOrEmpty(filterContext.HttpContext.Request.Headers[AppSetting.TokenHeaderName]))
+            {
+                filterContext.AddIdentity();
+            }
+            if (!filterContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true) && !filterContext.ActionDescriptor.ControllerDescriptor.IsDefined(typeof(AllowAnonymousAttribute), inherit: true))
+            {
+                if (AuthorizeCore(filterContext.HttpContext))
                 {
-                    filterContext.AddIdentity();
+                    return;
                 }
-                return;
+                else
+                {
+                    HandleUnauthorizedRequest(filterContext);
+                }
             }
+        }
 
-            if (!filterContext.HttpContext.User.Identity.IsAuthenticated)
+        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        {
+            if(!base.AuthorizeCore(httpContext))
             {
-                Console.Write($"IsAuthenticated:{filterContext.HttpContext.User.Identity.IsAuthenticated}," +
+                Console.Write($"IsAuthenticated:{httpContext.User.Identity.IsAuthenticated}," +
                     $"userToken{UserContext.Current.Token}");
-
-                filterContext.Unauthorized("タイムアウトしましたので、手動で再ログインしてください。");
-                return;
+                return false;
             }
 
-            DateTime expDate = ((ClaimsIdentity)filterContext.HttpContext.User.Identity).FindFirst(x => x.Type == JwtRegisteredClaimNames.Exp)
-                .Value.GetTimeStampToDate();
+            DateTime expDate = JwtHelper.GetExp(httpContext.Request.Headers[AppSetting.TokenHeaderName]);
 
             if (expDate < DateTime.Now)
             {
-                filterContext.Unauthorized("タイムアウトしましたので、手動で再ログインしてください。");
-                return;
+                return false;
             }
             //tokenをリフレッシュ
             //ハノイ側修正2022/12/01　課題管理表№35：「2022/12/01依頼分」「タイムアウト設定時間リセット機能を有効にしてください。」
-            if ((expDate - DateTime.Now).TotalMinutes < AppSetting.ExpMinutes / 3 && filterContext.HttpContext.Request.Path != replaceTokenPath && filterContext.HttpContext.Request.Path != replaceTokenPath_T)
+            if ((expDate - DateTime.Now).TotalMinutes < AppSetting.ExpMinutes / 3 && httpContext.Request.Path != replaceTokenPath && httpContext.Request.Path != replaceTokenPath_T)
             {
-                filterContext.HttpContext.Response.Headers.Add("reafs_exp", "1");
+                httpContext.Response.Headers.Add("reafs_exp", "1");
             }
+            return true;
         }
-        private static readonly string replaceTokenPath = "/api/User/replaceToken";
-        private static readonly string replaceTokenPath_T = "/api/Reafs_T/replaceToken";
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            filterContext.Unauthorized("タイムアウトしましたので、手動で再ログインしてください。");
+        }
     }
 }

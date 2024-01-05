@@ -4,7 +4,6 @@ using System.Text;
 
 namespace WinMacOs.Utility.CacheManager
 {
-
     public interface ICacheService : IDisposable
     {
         /// <summary>
@@ -85,4 +84,6 @@ namespace WinMacOs.Utility.CacheManager
         /// <returns></returns>
         string Get(string key);
     }
+
+
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Security.Twitter.Messages;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -71,8 +72,8 @@ namespace WinMacOs.Utility.Utils
         /// <returns></returns>
         public static DateTime GetExp(string jwtStr)
         {
-            var jwtHandler = new JwtSecurityTokenHandler();
-            JwtSecurityToken jwtToken = jwtHandler.ReadJwtToken(jwtStr);
+            string token = jwtStr.Replace("Bearer ", "");
+            JwtSecurityToken jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             DateTime expDate = (jwtToken.Payload[JwtRegisteredClaimNames.Exp] ?? 0).GetInt().GetTimeStampToDate();
             return expDate;
@@ -85,7 +86,7 @@ namespace WinMacOs.Utility.Utils
         {
             try
             {
-                string token = jwtStr.Split(" ")[1];
+                string token = jwtStr.Replace("Bearer ", "");
                 return new JwtSecurityTokenHandler().ReadJwtToken(token).Id;
             }
             catch

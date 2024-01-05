@@ -1,14 +1,17 @@
-﻿/*
+﻿
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WinMacOs.Utility.Extensions;
 
 namespace WinMacOs.Utility.CacheManager
 {
-    public class MemoryCacheService : ICacheService
+    public class DistributedCacheService : ICacheService
     {
-        protected IMemoryCache _cache;
-        public MemoryCacheService(IMemoryCache cache)
+        protected IDistributedCache _cache;
+        public DistributedCacheService(IDistributedCache cache)
         {
             _cache = cache;
 
@@ -44,7 +47,7 @@ namespace WinMacOs.Utility.CacheManager
             {
                 throw new ArgumentNullException(nameof(value));
             }
-            _cache.Set(key, value);
+            _cache.Set(key, value.ToBytes());
             return Exists(key);
         }
         public bool Add(string key, string value, int expireSeconds = -1, bool isSliding = false)
@@ -61,8 +64,8 @@ namespace WinMacOs.Utility.CacheManager
         /// <returns></returns>
         public bool Add(string key, object value, TimeSpan expiresSliding, TimeSpan expiressAbsoulte)
         {
-            _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
+            _cache.Set(key, value.ToBytes(),
+                    new DistributedCacheEntryOptions()
                     .SetSlidingExpiration(expiresSliding)
                     .SetAbsoluteExpiration(expiressAbsoulte)
                     );
@@ -80,13 +83,13 @@ namespace WinMacOs.Utility.CacheManager
         public bool Add(string key, object value, TimeSpan expiresIn, bool isSliding = false)
         {
             if (isSliding)
-                _cache.Set(key, value,
-                    new MemoryCacheEntryOptions()
+                _cache.Set(key, value.ToBytes(),
+                    new DistributedCacheEntryOptions()
                     .SetSlidingExpiration(expiresIn)
                     );
             else
-                _cache.Set(key, value,
-                new MemoryCacheEntryOptions()
+                _cache.Set(key, value.ToBytes(),
+                new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(expiresIn)
                 );
 
@@ -97,14 +100,14 @@ namespace WinMacOs.Utility.CacheManager
             if (expireSeconds != -1)
             {
                 _cache.Set(key,
-                    value,
-                    new MemoryCacheEntryOptions()
+                    value.ToBytes(),
+                    new DistributedCacheEntryOptions()
                     .SetSlidingExpiration(new TimeSpan(0, 0, expireSeconds))
                     );
             }
             else
             {
-                _cache.Set(key, value);
+                _cache.Set(key, value.ToBytes());
             }
 
             return true;
@@ -157,9 +160,20 @@ namespace WinMacOs.Utility.CacheManager
 
             keys.ToList().ForEach(item => _cache.Remove(item));
         }
+
+        public void Refresh(string key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            _cache.Refresh(key);
+
+            return;
+        }
         public string Get(string key)
         {
-            return _cache.Get(key)?.ToString();
+            return _cache.Get(key)?.FromBytes().ToString();
         }
         /// <summary>
         /// キャシュ取得
@@ -172,17 +186,16 @@ namespace WinMacOs.Utility.CacheManager
             {
                 throw new ArgumentNullException(nameof(key));
             }
-            return _cache.Get(key) as T;
+            return _cache.Get(key).FromBytes() as T;
         }
 
         public void Dispose()
         {
             if (_cache != null)
-                _cache.Dispose();
+                _cache = null;
             GC.SuppressFinalize(this);
         }
 
 
     }
 }
-*/

@@ -228,7 +228,6 @@ namespace WinMacOs.Business.Services.Reafs_T
             try
             {
                 string requestToken = HttpContext.Current.Request.Headers[AppSetting.TokenHeaderName];
-                requestToken = requestToken?.Replace("Bearer ", "");
 
                 //if (UserContext.Current.Token != requestToken) 
                 //    return responseContent.Error("Tokenは無効になりました。");

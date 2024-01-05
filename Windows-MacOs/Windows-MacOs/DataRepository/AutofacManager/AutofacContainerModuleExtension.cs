@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
-using Microsoft.Practices.Unity;
+using Unity;
 using WinMacOs.Utility.Extensions;
 
 namespace WinMacOs.DataRepository.AutofacManager
 {
     public static class AutofacContainerModuleExtension
     {
-        public static void AddModule(this IUnityContainer container)
+        public static void AddModule(this UnityContainer container)
         {
             //services.AddMemoryCache();
 

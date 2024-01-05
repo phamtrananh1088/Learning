@@ -79,7 +79,12 @@ namespace WinMacOs.Business.Business.Filters
 
             //ログインIDをコンテキストに保存する。定義対象はAddScoped形でコンテキストにDIする。
             var claims = new Claim[] { new Claim(JwtRegisteredClaimNames.Jti, _userId) };
-            context.HttpContext.User.Identity.CopyFrom(new ClaimsIdentity(claims));
+            context.HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity(claims, Enum.GetName(typeof(AuthenticationTypes), AuthenticationTypes.Basic)));
         }
+    }
+    internal enum AuthenticationTypes
+    {
+        Basic,
+        Federation
     }
 }
