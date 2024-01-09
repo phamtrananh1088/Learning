@@ -32,9 +32,10 @@ namespace WinMacOs
             // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<Reafs_TIServices.ICommonService, Reafs_TServices.CommonService>();
             container.RegisterType<Reafs_TIServices.ILoginService, Reafs_TServices.LoginService>();
+            container.RegisterType<Reafs_TIServices.ITD00001Service, Reafs_TServices.TD00001Service>();
             container.RegisterType<Reafs_WIServices.ICommonService, Reafs_WServices.CommonService>();
             container.RegisterType<ManagerIServices.ICanvasService, ManagerServices.CanvasService>();
-            container.RegisterType<Reafs_TIServices.ITD00001Service, Reafs_TServices.TD00001Service>();
+            container.RegisterType<ManagerIServices.ISQLCompareService, ManagerServices.SQLCompareService>();
             container.RegisterType<IUnitOfWork, UnitOfWork>();
 
             container.RegisterType<ICacheService, DistributedCacheService>(new SingletonLifetimeManager());

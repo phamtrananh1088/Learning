@@ -1,0 +1,28 @@
+﻿@model WinMacOs.Models.Manager.SQLCompare.SQLTableModel
+@{
+    Layout = null;
+    var idx = ViewBag.idx;
+    var index = ViewBag.index;
+}
+
+<tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
+    <td class="text-left">
+        @Html.DisplayFor(model => model.Type)<br />
+    </td>
+    <td class="text-right">
+        @Html.DisplayFor(model => model.SchemaName)<br />
+    </td>
+    <td class="text-right">
+        @Html.DisplayFor(model => model.TableName)<br />
+    </td>
+    <td class="text-center">
+        @Html.CheckBoxFor(model => model.Selected, htmlAttributes: new { @value = "01" })
+    </td>
+   
+    <td class="text-left">
+        @Html.DisplayFor(model => model.TableName)<br />
+    </td>
+    <td class="text-left">
+        @Html.DisplayFor(model => model.SchemaName)<br />
+    </td
+</tr>

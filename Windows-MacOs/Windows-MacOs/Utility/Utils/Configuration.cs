@@ -28,6 +28,12 @@ namespace WinMacOs.Utility.Utils
             get { return _connection.DbConnectionString; }
         }
 
+        public static string GetDbConnectionString(string key)
+        {
+            string strcon = ConfigurationManager.ConnectionStrings[key].ConnectionString;
+            var connectionString = new System.Data.SqlClient.SqlConnectionStringBuilder(strcon);
+            return new Connection { DBType = "SqlServer", CommandTimeout = connectionString.ConnectTimeout, DbConnectionString = connectionString.ConnectionString }.DbConnectionString;
+        }
         public static int CommandTimeout
         {
             get { return _connection.CommandTimeout; }

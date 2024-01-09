@@ -16,7 +16,7 @@ using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.DataRepository.Utilities;
 using WinMacOs.Models;
 using WinMacOs.Models.Enums;
-using WinMacOs.Models.Manager.Canvas;
+using WinMacOs.Models.Manager.SQLCompare;
 using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Extensions;
 using WinMacOs.Utility.PInvoke.CommonModels;
@@ -27,11 +27,11 @@ using WinMacOs.Utility.Utils;
 
 namespace WinMacOs.Controllers.Manager
  {
-    [RoutePrefix("manager/canvas")]
-    public partial class CanvasController
+    [RoutePrefix("manager/SQLCompare")]
+    public partial class SQLCompareController
     {
-        public CanvasController(
-               ICanvasService loginService
+        public SQLCompareController(
+               ISQLCompareService loginService
               )
           : base(loginService)
         {
@@ -41,14 +41,8 @@ namespace WinMacOs.Controllers.Manager
         [Route("index")]
         public async Task<ActionResult> Index()
         {
-            CanvasModel model = await Service.GetCanvasModel();
+            SQLCompareModel model = await Service.GetSQLCompareModel();
             return View(model);
-        }
-
-        [HttpPost, Route("DrawLine"), AllowAnonymous]
-        public async Task<ActionResult> DrawLine()
-        {
-            return Json(await Service.DrawLine());
         }
 
     }

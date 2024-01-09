@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using WinMacOs.DataRepository.BaseProvider;
-using WinMacOs.DataRepository.Dapper;
-using WinMacOs.Models.Manager.Canvas;
+using WinMacOs.Models.Manager.SQLCompare;
 
 namespace WinMacOs.Business.IServices.Manager
 {
-    public partial interface ICanvasService<T,T1> : IService where T : ISqlDapper where T1 : ISqlDapper
+    public partial interface ISQLCompareService : IService
     {
         
     }
