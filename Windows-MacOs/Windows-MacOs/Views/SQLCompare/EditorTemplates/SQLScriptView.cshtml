@@ -1,0 +1,109 @@
+﻿@model WinMacOs.Models.Manager.SQLCompare.SQLCompareModel
+
+<div class="scroll" style="position: relative;">
+    <table class="datatable">
+        <thead class="frezze-header border-bt-violet-0">
+            <tr>
+                <td class="w10 text-left tab-active" rowspan="2">SQL view</td>
+                <td class="w10 text-left" rowspan="2">Summary view</td>
+                <td class="w30 text-right" rowspan="2">@Html.DisplayFor(model => model.Source)<i class="fa-solid fa-table-cells"></i></td>
+                <td class="w5 text-center" rowspan="2"><i class="fas fa-arrow-right"></i></td>
+                <td class="w30 text-left" rowspan="2"><i class="fa-solid fa-table-cells"></i>@Html.DisplayFor(model => model.Target)</td>
+                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-down"></i>Next</td>
+                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-up"></i>Previous</td>
+                <td class="w10 text-right" rowspan="2"><i class="fa-solid fa-gear"></i>&nbsp;<i class="fa-solid fa-expand"></i>&nbsp;<i class="fa-solid fa-circle-question"></i>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="w10"></td>
+                <td class="w10"></td>
+                <td class="w30"></td>
+                <td class="w5"></td>
+                <td class="w30"></td>
+                <td class="w10"></td>
+                <td class="w10"></td>
+                <td class="w10"></td>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int index = -2; int idx = 0; }
+            <tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
+                <td colspan="3" class="text-left">
+                    <span>@Html.DisplayFor(model => model.SQLScript)</span>
+                </td>
+                <td class="text-center">
+                    <i class="fas fa-arrow-right fa-xs color-green-0"></i>
+                </td>
+                <td colspan="4" class="text-left">
+                    <span>@Html.DisplayFor(model => model.SQLScript)</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var torihikiuploadfile = new TorihikiUploadFile({
+            dropArea: $('#dropArea'),
+            fileSizeLimit: 10485760,
+            submit: async function (fileUpload) {
+                if (!fileUpload[0]) {
+                    TorihikiUtils.hideLoading();
+                    return;
+                }
+
+                TorihikiUtils.saveCurrentData($('form')[0]);
+                if (fileUpload && fileUpload.length > 0) {
+                    var file = await TorihikiUtils.dataUrlToBase64(fileUpload[0])
+                    var data = {
+                        base64File: file,
+                        orgFileName: fileUpload[0].name,
+                        TORI_CD: $('#TORI_CD').val(),
+                        KEN_NO: $('#KEN_NO').val(),
+                        KEN_KAI: $('#KEN_KAI').val()
+                    }
+                    TorihikiUtils.ajaxEx({
+                        url: uploadAttachedFile,
+                        data: data,
+                        success: function (data) {
+                            $('#sqlview').html(data);
+                        },
+                        complete: function () {
+                            TorihikiUtils.hideLoading();
+                        }
+                    });
+                }
+            },
+            fileExtension: ".xlsx, .docx, .pptx, .pdf"
+        });
+
+        $('.btn-remove-attach').process({
+            showConfirm: true,
+            confirmMessage: '添付ファイルを削除します。よろしいですか？',
+            needCheck: false,
+            submit: function () {
+                TorihikiUtils.saveCurrentData($('form')[0]);
+                TorihikiUtils.ajaxEx({
+                    url: removeAttachedFile,
+                    data: {
+                        TORI_CD: $('#TORI_CD').val(),
+                        KEN_NO: $('#KEN_NO').val(),
+                        KEN_KAI: $('#KEN_KAI').val(),
+                        KEN_FILE_NO: $(`#AttachedFiles_${$(this)[0].index}__KEN_FILE_NO`).val()
+                    },
+                    success: function (data) {
+                        $('#listAttachedFilemeisai').html(data);
+                    },
+                    complete: function () {
+                        TorihikiUtils.hideLoading();
+                    }
+                });
+                //TorihikiUtils.reload();
+            }
+        });
+    });
+</script>
+<style>
+    .is-dragover {
+        margin-bottom: 20px;
+    }
+</style>

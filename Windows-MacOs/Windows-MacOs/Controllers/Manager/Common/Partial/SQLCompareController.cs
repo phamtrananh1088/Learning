@@ -45,5 +45,19 @@ namespace WinMacOs.Controllers.Manager
             return View(model);
         }
 
+
+        /// <summary>
+        /// GetSQLScript.
+        /// </summary>
+        /// <param name="tableName">tableName.</param>
+        /// <returns>ActionResult.</returns>
+        [Route("")]
+        [Route("GetSQLScript")]
+        public async Task<ActionResult> GetSQLScript(string schemaName, string tableName)
+        {
+            SQLCompareModel model = await Service.GetSQLScript(schemaName, tableName);
+            return PartialView("EditorTemplates//SQLScriptView", model);
+        }
+
     }
 }

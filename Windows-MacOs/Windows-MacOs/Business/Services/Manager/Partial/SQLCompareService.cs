@@ -17,6 +17,7 @@ using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace WinMacOs.Business.Services.Manager
 {
@@ -27,7 +28,23 @@ namespace WinMacOs.Business.Services.Manager
         {
             var tableSource = await GetAllTables(dapperSource);
             var tableTarget = await GetAllTables(dapperTarger);
-            var data = new SQLCompareModel() { SQLTables = tableSource };
+            var data = new SQLCompareModel() {
+                SQLTables = tableSource,
+                Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
+                Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource
+            };
+            return data;
+        }
+
+        public async Task<SQLCompareModel> GetSQLScript(string schemaName, string tableName)
+        {
+            var table = await GetTable(dapperSource, schemaName, tableName);
+            var data = new SQLCompareModel()
+            {
+                Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
+                Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource,
+                SQLScript = table.GetSQL()
+            };
             return data;
         }
 
@@ -45,6 +62,30 @@ namespace WinMacOs.Business.Services.Manager
 
                 var data = await dapper.QueryListAsync<SQLTableModel>(sqlbuilder.ToString(), new {});
                 return data.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { }
+        }
+
+        private async Task<SQLTableModel> GetTable(ISqlDapper dapper, string schemaName, string tableName)
+        {
+            try
+            {
+                StringBuilder sqlbuilder = new StringBuilder();
+                sqlbuilder.AppendLine("SELECT  ");
+                sqlbuilder.AppendLine("       ob.name AS TableName ");
+                sqlbuilder.AppendLine("     , sc.name AS SchemaName ");
+                sqlbuilder.AppendLine("  FROM sys.all_objects ob");
+                sqlbuilder.AppendLine("  JOIN sys.schemas sc ON ob.schema_id = sc.schema_id");
+                sqlbuilder.AppendLine(" WHERE ob.[type] = 'u' ORDER BY ob.name");
+                sqlbuilder.AppendLine(" AND ob.name = @tableName");
+                sqlbuilder.AppendLine(" WHERE sc.name = @schemaName");
+
+                var data = await dapper.QueryFirstAsync<SQLTableModel>(sqlbuilder.ToString(), new { schemaName, tableName });
+                return data;
             }
             catch (Exception ex)
             {

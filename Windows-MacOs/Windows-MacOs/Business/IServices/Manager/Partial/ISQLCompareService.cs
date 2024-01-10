@@ -12,5 +12,6 @@ namespace WinMacOs.Business.IServices.Manager
     public partial interface ISQLCompareService
     {
        Task<SQLCompareModel> GetSQLCompareModel();
+       Task<SQLCompareModel> GetSQLScript(string schemaName, string tableName);
     }
 }

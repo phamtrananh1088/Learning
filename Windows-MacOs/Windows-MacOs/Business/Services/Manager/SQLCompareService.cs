@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
 using WinMacOs.Business.IServices.Manager;
@@ -17,12 +19,16 @@ namespace WinMacOs.Business.Services.Manager
     {
         ISqlDapper dapperSource;
         ISqlDapper dapperTarger;
+        DbConnectionStringBuilder connectionStringBuilderSource;
+        DbConnectionStringBuilder connectionStringBuilderTarget;
         public SQLCompareService(IUnitOfWork repository)
              : base(repository)
         {
             Init(repository);
             DBServerProvider.SetConnection("Compare_Source", AppSetting.GetDbConnectionString("Compare_Source"));
             DBServerProvider.SetConnection("Compare_Target", AppSetting.GetDbConnectionString("Compare_Target"));
+            connectionStringBuilderSource = new SqlConnectionStringBuilder(AppSetting.GetDbConnectionString("Compare_Source"));
+            connectionStringBuilderTarget = new SqlConnectionStringBuilder(AppSetting.GetDbConnectionString("Compare_Target"));
             dapperSource = DBServerProvider.GetSqlDapper("Compare_Source");
             dapperTarger = DBServerProvider.GetSqlDapper("Compare_Target");
         }

@@ -17,7 +17,9 @@ namespace WinMacOs.Models.Manager.SQLCompare
         [UIHint("SQLTables")]
         public List<SQLTableModel> SQLTables { get; set; }
 
-        internal List<SQLCompareModel> History { get; set; }
+        public string Source { get; set; }
+        public string Target { get; set; }
+        public string SQLScript { get; set; }
 
     }
 }

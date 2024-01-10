@@ -1,23 +1,23 @@
 ﻿@model List<WinMacOs.Models.Manager.SQLCompare.SQLTableModel>
 
-<div class="row scroll" style="position: relative;">
-    <table class="datatable" style="min-width: 1150px">
-        <thead>
+<div class="scroll" style="position: relative; max-height:314px;">
+    <table class="datatable">
+        <thead class="frezze-header border-bt-violet-0">
             <tr>
-                <th class="w20 text-left" rowspan="2">Type</th>
-                <th class="w20 text-right" rowspan="2">Owner</th>
-                <th class="w30 text-right" rowspan="2">Object Name</th>
-                <th class="w5 text-center" rowspan="2"><input type="checkbox" id="checkbox1"></th>
-                <th class="w30 text-left" rowspan="2">Object Name</th>
-                <th class="w20 text-left" colspan="2">Owner</th>
+                <td class="w10 text-left" rowspan="2">Type</td>
+                <td class="w5 text-right" rowspan="2">Owner</td>
+                <td class="w30 text-right" rowspan="2">Object Name</td>
+                <td class="w10 text-center" rowspan="2"><input type="checkbox" id="checkbox1"></td>
+                <td class="w30 text-left" rowspan="2">Object Name</td>
+                <td class="w15 text-left" rowspan="2">Owner</td>
             </tr>
             <tr>
-                <th class="w20"></th>
-                <th class="w20"></th>
-                <th class="w30"></th>
-                <th class="w5"></th>
-                <th class="w30"></th>
-                <th class="w20"></th>
+                <td class="w10"></td>
+                <td class="w5"></td>
+                <td class="w30"></td>
+                <td class="w10"></td>
+                <td class="w30"></td>
+                <td class="w15"></td>
             </tr>
         </thead>
         <tbody id="datalist">

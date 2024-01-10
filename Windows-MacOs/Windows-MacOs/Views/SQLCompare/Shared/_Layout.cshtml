@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @*@Scripts.Render("~/bundles/modernizr")*@
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/messages")
+    @Scripts.Render("~/bundles/fontawesome")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/common")
+    @RenderSection("Scripts", required: false)
+</head>
+<body class="no-padding">
+    <div class="container-fluid">
+        @RenderBody()
+        @RenderSection("SPAViews", required: false)
+    </div>
+</body>
+</html>

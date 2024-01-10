@@ -49,6 +49,25 @@ var sqlcompare01 = {
                 }
             }
         }
+
+        $("#listmeisai #datalist > tr").click(function () {
+            $($(this).parents().children("tr")).removeClass("active");
+            $(this).addClass("active");
+            var data = {
+                schemaName: $($(this).children('td:nth-child(2)')).text(),
+                tableName: $($(this).children('td:nth-child(3)')).text()
+            }
+            TorihikiUtils.ajaxEx({
+                url: GetSQLScript,
+                data: data,
+                success: function (data) {
+                    $('#sqlview').html(data);
+                },
+                complete: function () {
+                    TorihikiUtils.hideLoading();
+                }
+            });
+        });
     }
 }
 

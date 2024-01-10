@@ -33,7 +33,7 @@
           <SQLDebugging>False</SQLDebugging>
           <ExternalProgram>
           </ExternalProgram>
-          <StartExternalURL>https://localhost:44372/Reafs_T/Login</StartExternalURL>
+          <StartExternalURL>https://localhost:44372/manager/SQLCompare/Index</StartExternalURL>
           <StartCmdLineArguments>
           </StartCmdLineArguments>
           <StartWorkingDirectory>
