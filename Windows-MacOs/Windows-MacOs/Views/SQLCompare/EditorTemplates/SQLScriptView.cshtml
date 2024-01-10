@@ -42,68 +42,8 @@
 </div>
 <script>
     $(document).ready(function () {
-        var torihikiuploadfile = new TorihikiUploadFile({
-            dropArea: $('#dropArea'),
-            fileSizeLimit: 10485760,
-            submit: async function (fileUpload) {
-                if (!fileUpload[0]) {
-                    TorihikiUtils.hideLoading();
-                    return;
-                }
 
-                TorihikiUtils.saveCurrentData($('form')[0]);
-                if (fileUpload && fileUpload.length > 0) {
-                    var file = await TorihikiUtils.dataUrlToBase64(fileUpload[0])
-                    var data = {
-                        base64File: file,
-                        orgFileName: fileUpload[0].name,
-                        TORI_CD: $('#TORI_CD').val(),
-                        KEN_NO: $('#KEN_NO').val(),
-                        KEN_KAI: $('#KEN_KAI').val()
-                    }
-                    TorihikiUtils.ajaxEx({
-                        url: uploadAttachedFile,
-                        data: data,
-                        success: function (data) {
-                            $('#sqlview').html(data);
-                        },
-                        complete: function () {
-                            TorihikiUtils.hideLoading();
-                        }
-                    });
-                }
-            },
-            fileExtension: ".xlsx, .docx, .pptx, .pdf"
-        });
-
-        $('.btn-remove-attach').process({
-            showConfirm: true,
-            confirmMessage: '添付ファイルを削除します。よろしいですか？',
-            needCheck: false,
-            submit: function () {
-                TorihikiUtils.saveCurrentData($('form')[0]);
-                TorihikiUtils.ajaxEx({
-                    url: removeAttachedFile,
-                    data: {
-                        TORI_CD: $('#TORI_CD').val(),
-                        KEN_NO: $('#KEN_NO').val(),
-                        KEN_KAI: $('#KEN_KAI').val(),
-                        KEN_FILE_NO: $(`#AttachedFiles_${$(this)[0].index}__KEN_FILE_NO`).val()
-                    },
-                    success: function (data) {
-                        $('#listAttachedFilemeisai').html(data);
-                    },
-                    complete: function () {
-                        TorihikiUtils.hideLoading();
-                    }
-                });
-                //TorihikiUtils.reload();
-            }
-        });
     });
 </script>
 <style>
-    .is-dragover {
-        margin-bottom: 20px;
-    }
 </style>

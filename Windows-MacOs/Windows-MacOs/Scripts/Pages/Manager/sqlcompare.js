@@ -53,12 +53,13 @@ var sqlcompare01 = {
         $("#listmeisai #datalist > tr").click(function () {
             $($(this).parents().children("tr")).removeClass("active");
             $(this).addClass("active");
+            var index = $(this).index()
             var data = {
-                schemaName: $($(this).children('td:nth-child(2)')).text(),
-                tableName: $($(this).children('td:nth-child(3)')).text()
+                schemaName: $(`#SQLTables_${index}__SchemaName`).val(),
+                tableName: $(`#SQLTables_${index}__TableName`).val()
             }
             TorihikiUtils.ajaxEx({
-                url: GetSQLScript,
+                url: getSQLScript,
                 data: data,
                 success: function (data) {
                     $('#sqlview').html(data);

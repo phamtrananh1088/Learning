@@ -8,6 +8,8 @@
 <tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
     <td class="text-left">
         @Html.DisplayFor(model => model.Type)<br />
+        @Html.HiddenFor(model => model.SchemaName)
+        @Html.HiddenFor(model => model.TableName)
     </td>
     <td class="text-right">
         @Html.DisplayFor(model => model.SchemaName)<br />
