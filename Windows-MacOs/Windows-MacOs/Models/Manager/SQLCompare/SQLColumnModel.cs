@@ -19,14 +19,19 @@ namespace WinMacOs.Models.Manager.SQLCompare
         [DisplayName("Status")]
         public Status Status { get; set; }
         
-        [DisplayName("Type")]
-        public SQLTypeModel SQLTypeModel { 
-            get
-            {
-                return string.IsNullOrEmpty(SQLTypeModelRaw) ? null : System.Text.Json.JsonSerializer.Deserialize<SQLTypeModel>(SQLTypeModelRaw);
-            }
-                }
+        [DisplayName("TypeName")]
+        public string TypeName { get; set; }
 
-        public string SQLTypeModelRaw { get; set; }
+        [DisplayName("MaxLength")]
+        public int MaxLength { get; set; }
+
+        [DisplayName("Precision")]
+        public int Precision { get; set; }
+
+        [DisplayName("Scale")]
+        public int Scale { get; set; }
+
+        [DisplayName("Allow Null")]
+        public bool IsNull { get; set; }
     }
 }

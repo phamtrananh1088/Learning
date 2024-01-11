@@ -370,6 +370,7 @@
     <Compile Include="Models\Manager\Canvas\CanvasMenuModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\ModelHelper.cs" />
+    <Compile Include="Models\Manager\SQLCompare\SQLIndexModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLColumnModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLCompareModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLDefaultConstraint.cs" />

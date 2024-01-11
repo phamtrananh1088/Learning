@@ -13,8 +13,8 @@ namespace WinMacOs.Models.Manager.SQLCompare
     {
         [Required]
         [Key]
-        [DisplayName("Name")]
-        public string Name { get; set; }
+        [DisplayName("ConstraintName")]
+        public string ConstraintName { get; set; }
 
         [DisplayName("ColumnName")]
         public string ColumnName { get; set; }

@@ -28,9 +28,11 @@ namespace WinMacOs.Models.Manager.SQLCompare
         public string TableName { get; set; }
 
         public bool Selected { get; set; }
-        public string[] Key { get; set; }
+        public List<string> Keys { get; set; }
 
-        public List<SQLDefaultConstraint> Default { get; set; }
+        public List<SQLIndexModel> SQLIndexs { get; set; }
+
+        public List<SQLDefaultConstraint> SQLDefaultConstraint { get; set; }
 
         [DisplayName("Status")]
         public Status Status { get; set; }

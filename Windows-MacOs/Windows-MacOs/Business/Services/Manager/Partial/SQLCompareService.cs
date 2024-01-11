@@ -40,9 +40,25 @@ namespace WinMacOs.Business.Services.Manager
         public async Task<SQLCompareModel> GetSQLScript(string schemaName, string tableName)
         {
             var tableSource = await GetTable(dapperSource, schemaName, tableName);
+            var columnsSource = await GetAllColumns(dapperSource, schemaName, tableName);
+            var keysSource = await GetAllKeys(dapperSource, schemaName, tableName);
+            var indexsSource = await GetAllIndexs(dapperSource, schemaName, tableName);
+            var defaultConstraintsSource = await GetAllDefaultConstraints(dapperSource, schemaName, tableName);
+            tableSource.SQLColumns = columnsSource;
+            tableSource.Keys = keysSource;
+            tableSource.SQLIndexs = indexsSource;
+            tableSource.SQLDefaultConstraint = defaultConstraintsSource;
+            
             var tableTarget = await GetTable(dapperTarger, schemaName, tableName);
-            var columnssSource = await GetAllColumns(dapperSource, schemaName, tableName);
-            var columnssTarget = await GetAllColumns(dapperTarger, schemaName, tableName);
+            var columnsTarget = await GetAllColumns(dapperTarger, schemaName, tableName);
+            var keysTarget = await GetAllKeys(dapperTarger, schemaName, tableName);
+            var indexsTarget = await GetAllIndexs(dapperTarger, schemaName, tableName);
+            var defaultConstraintsTarget = await GetAllDefaultConstraints(dapperTarger, schemaName, tableName);
+            tableTarget.SQLColumns = columnsTarget;
+            tableTarget.Keys = keysTarget;
+            tableTarget.SQLIndexs = indexsTarget;
+            tableTarget.SQLDefaultConstraint = defaultConstraintsTarget;
+
             string SQLScript;
             if (tableTarget == null)
             {
@@ -118,14 +134,16 @@ namespace WinMacOs.Business.Services.Manager
         {
             try
             {
-                SQLTypeModel c = new SQLTypeModel { Name = "varchar", MaxLength= 10, IsNull = false, Precision = 0, Scale = 0 };
-                var cs = System.Text.Json.JsonSerializer.Serialize(c);
                 StringBuilder sqlbuilder = new StringBuilder();
                 sqlbuilder.AppendLine("SELECT ");
                 sqlbuilder.AppendLine("       co.name AS ColumnName ");
-                sqlbuilder.AppendLine("       ty.name + co.max_length + co.precision + co.scale + co.is_nullable AS SQLTypeModelRaw ");
+                sqlbuilder.AppendLine("     , ty.name As TypeName ");
+                sqlbuilder.AppendLine("     , co.max_length AS MaxLength ");
+                sqlbuilder.AppendLine("     , co.precision AS Precision ");
+                sqlbuilder.AppendLine("     , co.scale AS Scale ");
+                sqlbuilder.AppendLine("     , co.is_nullable AS IsNull ");
                 sqlbuilder.AppendLine("  FROM sys.all_columns co ");
-                sqlbuilder.AppendLine("  JOIN sys.types ty ON co.system_type_id = ty.system_type_id ");
+                sqlbuilder.AppendLine("  JOIN sys.types ty ON co.user_type_id = ty.user_type_id ");
                 sqlbuilder.AppendLine(" WHERE co.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
 
                 var data = await dapper.QueryListAsync<SQLColumnModel>(sqlbuilder.ToString(), new { schemaName, tableName });
@@ -138,15 +156,85 @@ namespace WinMacOs.Business.Services.Manager
             finally { }
         }
 
-        private async Task<object> GetAllDefaultConstraints(ISqlDapper dapper, string schemaName, string tableName)
+        private async Task<List<SQLDefaultConstraint>> GetAllDefaultConstraints(ISqlDapper dapper, string schemaName, string tableName)
         {
             try
             {
                 StringBuilder sqlbuilder = new StringBuilder();
-                sqlbuilder.AppendLine("SELECT * from sys.default_constraints WHERE object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
+                sqlbuilder.AppendLine("SELECT ");
+                sqlbuilder.AppendLine("       cons.name AS ConstraintName ");
+                sqlbuilder.AppendLine("     , colu.name AS ColumnName ");
+                sqlbuilder.AppendLine("     , cons.definition AS Definition ");
+                sqlbuilder.AppendLine("  FROM sys.default_constraints cons ");
+                sqlbuilder.AppendLine("  JOIN sys.all_columns colu ON cons.object_id = colu.default_object_id ");
+                sqlbuilder.AppendLine(" WHERE cons.parent_object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
+                sqlbuilder.AppendLine(" AND colu.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
 
-                var data = await dapper.QueryListAsync<object>(sqlbuilder.ToString(), new { schemaName, tableName });
-                return data;
+                var data = await dapper.QueryListAsync<SQLDefaultConstraint>(sqlbuilder.ToString(), new { schemaName, tableName });
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { }
+        }
+
+        private async Task<List<string>> GetAllKeys(ISqlDapper dapper, string schemaName, string tableName)
+        {
+            try
+            {
+                StringBuilder sqlbuilder = new StringBuilder();
+                sqlbuilder.AppendLine("SELECT Col.COLUMN_NAME AS name  ");
+                sqlbuilder.AppendLine("  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab ");
+                sqlbuilder.AppendLine("  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col ");
+                sqlbuilder.AppendLine("    ON Col.Constraint_Name = Tab.Constraint_Name ");
+                sqlbuilder.AppendLine("   AND Col.Table_Schema = Tab.Table_Schema ");
+                sqlbuilder.AppendLine("   AND Col.Table_Name = Tab.Table_Name ");
+                sqlbuilder.AppendLine(" WHERE Tab.Constraint_Type = 'PRIMARY KEY' ");
+                sqlbuilder.AppendLine("   AND col.Table_Name = @tableName ");
+                sqlbuilder.AppendLine("   AND col.Table_Schema = @schemaName ");
+
+                var data = await dapper.QueryListAsync<string>(sqlbuilder.ToString(), new { schemaName, tableName });
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { }
+        }
+
+        private async Task<List<SQLIndexModel>> GetAllIndexs(ISqlDapper dapper, string schemaName, string tableName)
+        {
+            try
+            {
+                StringBuilder sqlbuilder = new StringBuilder();
+                sqlbuilder.AppendLine("SELECT ");
+                sqlbuilder.AppendLine("       STRING_AGG(CASE inc.is_included_column ");
+                sqlbuilder.AppendLine("                    WHEN 0 THEN QUOTENAME(col.name) + CASE inc.is_descending_key WHEN 0 THEN ' ASC' ELSE ' DESC' END ");
+                sqlbuilder.AppendLine("                    ELSE NULL END ");
+                sqlbuilder.AppendLine("                 , ',') ");
+                sqlbuilder.AppendLine("                   WITHIN GROUP (ORDER BY inc.index_column_id) AS IndexColumn ");
+                sqlbuilder.AppendLine("     , STRING_AGG(CASE inc.is_included_column ");
+                sqlbuilder.AppendLine("                    WHEN 1 then QUOTENAME(col.name) ");
+                sqlbuilder.AppendLine("                    ELSE NULL END ");
+                sqlbuilder.AppendLine("                 , CONCAT(',', char(13), char(10))) ");
+                sqlbuilder.AppendLine("                   WITHIN GROUP (ORDER BY inc.index_column_id) AS IncludedColumn ");
+                sqlbuilder.AppendLine("     , ind.name AS IndexName ");
+                sqlbuilder.AppendLine("     , ind.type_desc as IndexType ");
+                sqlbuilder.AppendLine("  FROM sys.index_columns inc ");
+                sqlbuilder.AppendLine("  JOIN sys.indexes ind ");
+                sqlbuilder.AppendLine("    ON inc.object_id = ind.object_id ");
+                sqlbuilder.AppendLine("   AND inc.index_id = ind.index_id ");
+                sqlbuilder.AppendLine("  JOIN sys.all_columns col ");
+                sqlbuilder.AppendLine("    ON inc.column_id = col.column_id ");
+                sqlbuilder.AppendLine(" WHERE inc.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
+                sqlbuilder.AppendLine("   AND col.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
+                sqlbuilder.AppendLine(" GROUP BY ind.name, ind.type_desc ");
+
+                var data = await dapper.QueryListAsync<SQLIndexModel>(sqlbuilder.ToString(), new { schemaName, tableName });
+                return data.ToList();
             }
             catch (Exception ex)
             {

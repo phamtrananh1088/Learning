@@ -7,7 +7,7 @@ namespace WinMacOs.Models.Manager.SQLCompare
 {
     public static class ModelHelper
     {
-        public static readonly string[] NamingTypes = { "bit", "tinyint", "smallint", "int", "real", "bigint", "float", "smallmoney", "money", "text", "ntext", "smalldatetime", "date", "datetime", "sql_variant", "xml" };
+        public static readonly string[] NamingTypes = { "bit", "tinyint", "smallint", "int", "real", "bigint", "float", "smallmoney", "money", "text", "ntext", "smalldatetime", "date", "datetime", "sql_variant", "xml", "timestamp" };
         public static string GetSQL<T>(this T t) where T : SQLTableModel
         {
             string sql;
@@ -32,41 +32,63 @@ namespace WinMacOs.Models.Manager.SQLCompare
         public static string ColumnDefinition<T>(this T co) where T : SQLColumnModel
         {
             string length =
-                NamingTypes.Contains(co.ColumnName) ? "" :
-                co.SQLTypeModel.Precision > 0 ?
-                $"({co.SQLTypeModel.Precision}, {co.SQLTypeModel.Scale}) "
-                : co.ColumnName == "varchar" && co.SQLTypeModel.MaxLength == -1 ? "(MAX)" : $"({co.SQLTypeModel.MaxLength}) ";
-            return $"[{co.ColumnName}] [{co.SQLTypeModel.Name}] {length}{(co.SQLTypeModel.IsNull ? "NULL" : "NOT NULL")} ";
+                NamingTypes.Contains(co.TypeName) ? "" :
+                co.Precision > 0 ?
+                $"({co.Precision}, {co.Scale}) "
+                : (co.TypeName == "varchar" || co.TypeName == "nvarchar") && co.MaxLength == -1 ? "(MAX)" : $"({co.MaxLength}) ";
+            return $"\t[{co.ColumnName}] [{co.TypeName}] {length}{(co.IsNull ? "NULL" : "NOT NULL")} ";
         }
+        public static string IndexDefinition<T>(this T ind, SQLTableModel t) where T : SQLIndexModel
+        {
+            var include = string.IsNullOrEmpty(ind.IncludedColumn) ? "" : $"INCLUDE({ind.IncludedColumn})";
+            var sql = $@"SET ANSI_PADDING ON
 
+CREATE {ind.IndexType} INDEX [{ind.IndexName}] ON [{t.SchemaName}].[{t.TableName}]
+(
+{ind.IndexColumn}
+)
+{include}WITH(PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON[PRIMARY]
+";
+            return sql;
+        }
         public static string DefaultConstraintDefinition<T>(this T ct, SQLTableModel t) where T : SQLDefaultConstraint
         {
-            return $"ALTER TABLE [{t.SchemaName}].[{t.TableName}] ADD CONSTRAINT [{ct.Name}]  DEFAULT {ct.Definition} FOR [{ct.ColumnName}]";
+            return $"ALTER TABLE [{t.SchemaName}].[{t.TableName}] ADD CONSTRAINT [{ct.ConstraintName}]  DEFAULT {ct.Definition} FOR [{ct.ColumnName}]";
         }
         private static string CreateSQL<T>(T t) where T : SQLTableModel
         {
-            return $@"SET ANSI_NULLS ON
+            var columns = string.Join(",\n", t.SQLColumns.Select((c) =>
+            {
+                return c.ColumnDefinition();
+            }));
+            var keys = string.Join(",\n", t.Keys.Select(k =>
+            {
+                return $"\t[{k}] ASC";
+            }));
+            var defaultConstraints = string.Join("\n\n", t.SQLDefaultConstraint.Select((d) =>
+            {
+                return d.DefaultConstraintDefinition(t);
+            }));
+            var indexs = string.Join("\n\n", t.SQLIndexs.Select((d) =>
+            {
+                return d.IndexDefinition(t);
+            }));
+            var sql = $@"SET ANSI_NULLS ON
 
 SET QUOTED_IDENTIFIER ON
 
 CREATE TABLE [{t.SchemaName}].[{t.TableName}](
-	{string.Join(",\n", t.SQLColumns.Select((c) =>
-            {
-                return c.ColumnDefinition();
-            }))},
+{columns},
  CONSTRAINT [PK_{t.TableName}] PRIMARY KEY CLUSTERED 
 (
-	{string.Join(" ASC,\n", t.Key)}
+{keys}
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
-ALTER TABLE [dbo].[F001_受注マスタ] ADD  CONSTRAINT [DF_F001_受注マスタ_INSERT_TIME]  DEFAULT ('') FOR [INSERT_TIME]
-{string.Join("\n\n", t.Default.Select((d) =>
-            {
-                return d.DefaultConstraintDefinition(t);
-            }))}
-
+{indexs}
+{defaultConstraints}
 ";
+            return sql;
         }
         private static string UpdateSQL<T>(T t) where T : SQLTableModel
         {
