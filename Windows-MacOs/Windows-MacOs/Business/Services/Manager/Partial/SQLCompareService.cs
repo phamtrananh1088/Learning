@@ -185,15 +185,19 @@ namespace WinMacOs.Business.Services.Manager
             try
             {
                 StringBuilder sqlbuilder = new StringBuilder();
-                sqlbuilder.AppendLine("SELECT Col.COLUMN_NAME AS name  ");
-                sqlbuilder.AppendLine("  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab ");
-                sqlbuilder.AppendLine("  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col ");
-                sqlbuilder.AppendLine("    ON Col.Constraint_Name = Tab.Constraint_Name ");
-                sqlbuilder.AppendLine("   AND Col.Table_Schema = Tab.Table_Schema ");
-                sqlbuilder.AppendLine("   AND Col.Table_Name = Tab.Table_Name ");
-                sqlbuilder.AppendLine(" WHERE Tab.Constraint_Type = 'PRIMARY KEY' ");
+                sqlbuilder.AppendLine("SELECT col.COLUMN_NAME AS name  ");
+                sqlbuilder.AppendLine("  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tab ");
+                sqlbuilder.AppendLine("  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE col ");
+                sqlbuilder.AppendLine("    ON col.Constraint_Name = tab.Constraint_Name ");
+                sqlbuilder.AppendLine("  JOIN sys.all_columns co ");
+                sqlbuilder.AppendLine("    ON col.COLUMN_NAME = co.name ");
+                sqlbuilder.AppendLine("   AND col.Table_Schema = tab.Table_Schema ");
+                sqlbuilder.AppendLine("   AND col.Table_Name = tab.Table_Name ");
+                sqlbuilder.AppendLine(" WHERE tab.Constraint_Type = 'PRIMARY KEY' ");
                 sqlbuilder.AppendLine("   AND col.Table_Name = @tableName ");
                 sqlbuilder.AppendLine("   AND col.Table_Schema = @schemaName ");
+                sqlbuilder.AppendLine("   AND co.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
+                sqlbuilder.AppendLine(" ORDER BY co.column_id ");
 
                 var data = await dapper.QueryListAsync<string>(sqlbuilder.ToString(), new { schemaName, tableName });
                 return data.ToList();
@@ -212,17 +216,18 @@ namespace WinMacOs.Business.Services.Manager
                 StringBuilder sqlbuilder = new StringBuilder();
                 sqlbuilder.AppendLine("SELECT ");
                 sqlbuilder.AppendLine("       STRING_AGG(CASE inc.is_included_column ");
-                sqlbuilder.AppendLine("                    WHEN 0 THEN QUOTENAME(col.name) + CASE inc.is_descending_key WHEN 0 THEN ' ASC' ELSE ' DESC' END ");
+                sqlbuilder.AppendLine("                    WHEN 0 THEN CONCAT(CHAR(9), QUOTENAME(col.name), CASE inc.is_descending_key WHEN 0 THEN ' ASC' ELSE ' DESC' END) ");
                 sqlbuilder.AppendLine("                    ELSE NULL END ");
-                sqlbuilder.AppendLine("                 , ',') ");
-                sqlbuilder.AppendLine("                   WITHIN GROUP (ORDER BY inc.index_column_id) AS IndexColumn ");
+                sqlbuilder.AppendLine("                 , CONCAT(',', CHAR(13), CHAR(10))) ");
+                sqlbuilder.AppendLine("              WITHIN GROUP (ORDER BY inc.index_column_id) AS IndexColumn ");
                 sqlbuilder.AppendLine("     , STRING_AGG(CASE inc.is_included_column ");
                 sqlbuilder.AppendLine("                    WHEN 1 then QUOTENAME(col.name) ");
                 sqlbuilder.AppendLine("                    ELSE NULL END ");
-                sqlbuilder.AppendLine("                 , CONCAT(',', char(13), char(10))) ");
-                sqlbuilder.AppendLine("                   WITHIN GROUP (ORDER BY inc.index_column_id) AS IncludedColumn ");
+                sqlbuilder.AppendLine("                  , ',')");
+                sqlbuilder.AppendLine("              WITHIN GROUP (ORDER BY inc.index_column_id) AS IncludedColumn ");
                 sqlbuilder.AppendLine("     , ind.name AS IndexName ");
                 sqlbuilder.AppendLine("     , ind.type_desc as IndexType ");
+                sqlbuilder.AppendLine("     , ind.is_unique as IsUnique ");
                 sqlbuilder.AppendLine("  FROM sys.index_columns inc ");
                 sqlbuilder.AppendLine("  JOIN sys.indexes ind ");
                 sqlbuilder.AppendLine("    ON inc.object_id = ind.object_id ");
@@ -231,7 +236,8 @@ namespace WinMacOs.Business.Services.Manager
                 sqlbuilder.AppendLine("    ON inc.column_id = col.column_id ");
                 sqlbuilder.AppendLine(" WHERE inc.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
                 sqlbuilder.AppendLine("   AND col.object_id = OBJECT_ID(QUOTENAME(@schemaName) + '.' + QUOTENAME(@tableName),'u') ");
-                sqlbuilder.AppendLine(" GROUP BY ind.name, ind.type_desc ");
+                sqlbuilder.AppendLine("   AND ind.type_desc = 'NONCLUSTERED'");
+                sqlbuilder.AppendLine(" GROUP BY ind.name, ind.type_desc, ind.is_unique ");
 
                 var data = await dapper.QueryListAsync<SQLIndexModel>(sqlbuilder.ToString(), new { schemaName, tableName });
                 return data.ToList();

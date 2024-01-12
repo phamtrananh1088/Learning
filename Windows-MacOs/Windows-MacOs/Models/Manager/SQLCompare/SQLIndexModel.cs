@@ -21,5 +21,7 @@ namespace WinMacOs.Models.Manager.SQLCompare
 
         public string IndexType { get; set; }
 
+        public bool IsUnique { get; set; }
+
     }
 }
