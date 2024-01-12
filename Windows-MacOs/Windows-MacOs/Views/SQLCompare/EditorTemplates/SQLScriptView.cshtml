@@ -28,13 +28,13 @@
             @{ int index = -2; int idx = 0; }
             <tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
                 <td colspan="3" class="text-left">
-                    <span>@Html.DisplayFor(model => model.SQLScript)</span>
+                    <div style="width: 500px;">@Html.DisplayFor(model => model.SQLScriptSource)</div>
                 </td>
                 <td class="text-center">
                     <i class="fas fa-arrow-right fa-xs color-green-0"></i>
                 </td>
                 <td colspan="4" class="text-left">
-                    <span>@Html.DisplayFor(model => model.SQLScript)</span>
+                    <div style="width: 500px;">@Html.DisplayFor(model => model.SQLScriptTarget)</div>
                 </td>
             </tr>
         </tbody>

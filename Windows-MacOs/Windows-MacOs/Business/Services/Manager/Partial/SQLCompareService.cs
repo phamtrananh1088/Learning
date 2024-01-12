@@ -59,27 +59,31 @@ namespace WinMacOs.Business.Services.Manager
             tableTarget.SQLIndexs = indexsTarget;
             tableTarget.SQLDefaultConstraint = defaultConstraintsTarget;
 
-            string SQLScript;
+            string sQLScriptSource = "";
+            string sQLScriptTarget = "";
             if (tableTarget == null)
             {
+                sQLScriptSource = tableSource.GetSQL();
                 tableSource.Status = Status.Add;
-                SQLScript = tableSource.GetSQL();
             }
             else if (tableSource == null)
             {
+                sQLScriptTarget = tableTarget.GetSQL();
                 tableTarget.Status = Status.Delete;
-                SQLScript = tableTarget.GetSQL();
             }
             else
             {
+                sQLScriptSource = tableSource.GetSQL();
+                sQLScriptTarget = tableTarget.GetSQL();
                 tableSource.Status = Status.Update;
-                SQLScript = tableSource.GetSQL();
+                tableTarget.Status = Status.Update;
             }
             var data = new SQLCompareModel()
             {
                 Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
                 Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource,
-
+                SQLScriptSource = sQLScriptSource,
+                SQLScriptTarget = sQLScriptTarget
             };
             return data;
         }

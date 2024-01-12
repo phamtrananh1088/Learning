@@ -10,22 +10,7 @@ namespace WinMacOs.Models.Manager.SQLCompare
         public static readonly string[] NamingTypes = { "bit", "tinyint", "smallint", "int", "real", "bigint", "float", "smallmoney", "money", "text", "ntext", "smalldatetime", "date", "datetime", "sql_variant", "xml", "timestamp" };
         public static string GetSQL<T>(this T t) where T : SQLTableModel
         {
-            string sql;
-            switch (t.Status)
-            {
-                case Status.Add:
-                    sql = CreateSQL<T>(t);
-                    break;
-                case Status.Update:
-                    sql = UpdateSQL<T>(t);
-                    break;
-                case Status.Delete:
-                    sql = DeleteSQL<T>(t);
-                    break;
-                default:
-                    sql = "";
-                    break;
-            }
+            string sql = CreateSQL<T>(t);
             return sql;
         }
 
