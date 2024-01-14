@@ -40,24 +40,30 @@ namespace WinMacOs.Business.Services.Manager
         public async Task<SQLCompareModel> GetSQLScript(string schemaName, string tableName)
         {
             var tableSource = await GetTable(dapperSource, schemaName, tableName);
-            var columnsSource = await GetAllColumns(dapperSource, schemaName, tableName);
-            var keysSource = await GetAllKeys(dapperSource, schemaName, tableName);
-            var indexsSource = await GetAllIndexs(dapperSource, schemaName, tableName);
-            var defaultConstraintsSource = await GetAllDefaultConstraints(dapperSource, schemaName, tableName);
-            tableSource.SQLColumns = columnsSource;
-            tableSource.Keys = keysSource;
-            tableSource.SQLIndexs = indexsSource;
-            tableSource.SQLDefaultConstraint = defaultConstraintsSource;
+            if (tableSource != null)
+            {
+                var columnsSource = await GetAllColumns(dapperSource, schemaName, tableName);
+                var keysSource = await GetAllKeys(dapperSource, schemaName, tableName);
+                var indexsSource = await GetAllIndexs(dapperSource, schemaName, tableName);
+                var defaultConstraintsSource = await GetAllDefaultConstraints(dapperSource, schemaName, tableName);
+                tableSource.SQLColumns = columnsSource;
+                tableSource.Keys = keysSource;
+                tableSource.SQLIndexs = indexsSource;
+                tableSource.SQLDefaultConstraint = defaultConstraintsSource;
+            }
             
             var tableTarget = await GetTable(dapperTarger, schemaName, tableName);
-            var columnsTarget = await GetAllColumns(dapperTarger, schemaName, tableName);
-            var keysTarget = await GetAllKeys(dapperTarger, schemaName, tableName);
-            var indexsTarget = await GetAllIndexs(dapperTarger, schemaName, tableName);
-            var defaultConstraintsTarget = await GetAllDefaultConstraints(dapperTarger, schemaName, tableName);
-            tableTarget.SQLColumns = columnsTarget;
-            tableTarget.Keys = keysTarget;
-            tableTarget.SQLIndexs = indexsTarget;
-            tableTarget.SQLDefaultConstraint = defaultConstraintsTarget;
+            if (tableTarget != null)
+            {
+                var columnsTarget = await GetAllColumns(dapperTarger, schemaName, tableName);
+                var keysTarget = await GetAllKeys(dapperTarger, schemaName, tableName);
+                var indexsTarget = await GetAllIndexs(dapperTarger, schemaName, tableName);
+                var defaultConstraintsTarget = await GetAllDefaultConstraints(dapperTarger, schemaName, tableName);
+                tableTarget.SQLColumns = columnsTarget;
+                tableTarget.Keys = keysTarget;
+                tableTarget.SQLIndexs = indexsTarget;
+                tableTarget.SQLDefaultConstraint = defaultConstraintsTarget;
+            }
 
             string sQLScriptSource = "";
             string sQLScriptTarget = "";

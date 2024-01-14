@@ -2,158 +2,165 @@
     @model WinMacOs.Models.Manager.SQLCompare.SQLCompareModel
     ViewBag.Title = "SQL Compare";
 }
-<div class="title"><h2><i class="fa-solid fa-chevron-right"></i>SQL Compare</h2></div>
+
 <div>
-    <div class="wrapped border-bt-grey-0">
-        <div class="row">
-            <div class="col-md-12" id="listmeisai">
-                @Html.EditorFor(model => model.SQLTables)
+    <div class="row">
+        <div class="col-md-5 text-left">
+            <div style="display: inline-block">
+                <h2><i class="fa-solid fa-database"></i></h2>
+            </div>
+                <div class="text-left" style="display:inline-block">
+                    <span style="font-weight:bold">
+                        @Html.DisplayFor(model => model.Source)
+                    </span>
+                    <br />
+                    <span>
+                        @Html.DisplayFor(model => model.Source)
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="text-right">
+                    Selected
+                    <br />
+                    <span style="font-weight:900;">0 of 3</span>
+                </div>
+            </div>
+            <div class="col-md-1" style="padding-right: 0px; padding-left: 0px;">
+                <div class="arrow" style="margin-top: 6px; height: 42px; padding-left: 6px; padding-top: 6px;">
+                    <i class="fas fa-arrow-right fa-xs"></i>Deploy...
+                </div>
+            </div>
+            <div class="col-md-5 text-right arrow2" style="background-color: blue;">
+                <div style="display: inline-block">
+                    <h2><i class="fa-solid fa-database"></i></h2>
+                </div>
+                <div class="text-right" style="display: inline-block">
+                    <span style="font-weight:bold">
+                        @Html.DisplayFor(model => model.Target)
+                    </span>
+                    <br />
+                    <span>
+                        @Html.DisplayFor(model => model.Target)
+                    </span>
+                </div>
+                </div>
+            </div>
+    <div>
+        <div class="wrapped border-bt-grey-0">
+            <div class="row">
+                <div class="col-md-12" id="listmeisai">
+                    @Html.EditorFor(model => model.SQLTables)
+                </div>
             </div>
         </div>
-    </div>
-    <div class="wrapped border-bt-grey-0">
-        <div class="row">
-            <div class="col-md-12" id="sqlview">
-                @Html.Partial("EditorTemplates/SQLScriptView", Model)
-            </div>
-        </div>
-    </div>
-    <div class="wrapped border-bt-grey-0">
-        <div class="row">
-            <div class="col-md-12" id="sqlview">
-                <div class="scroll" style="position: relative;">
-                    <table class="datatable">
-                        <thead class="frezze-header border-bt-violet-0">
-                            <tr>
-                                <td class="w10 text-left tab-active" rowspan="2">SQL view</td>
-                                <td class="w10 text-left" rowspan="2">Summary view</td>
-                                <td class="w30 text-right" rowspan="2">@Html.DisplayFor(model => model.Source)<i class="fa-solid fa-table-cells"></i></td>
-                                <td class="w5 text-center" rowspan="2"><i class="fas fa-arrow-right"></i></td>
-                                <td class="w30 text-left" rowspan="2"><i class="fa-solid fa-table-cells"></i>@Html.DisplayFor(model => model.Target)</td>
-                                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-down"></i>Next</td>
-                                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-up"></i>Previous</td>
-                                <td class="w10 text-right" rowspan="2"><i class="fa-solid fa-gear"></i>&nbsp;<i class="fa-solid fa-expand"></i>&nbsp;<i class="fa-solid fa-circle-question"></i>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td class="w10"></td>
-                                <td class="w10"></td>
-                                <td class="w30"></td>
-                                <td class="w5"></td>
-                                <td class="w30"></td>
-                                <td class="w10"></td>
-                                <td class="w10"></td>
-                                <td class="w10"></td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{ int index = -2; int idx = 0; }
-                            <tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
-                                <td colspan="3" class="text-left">
-                                    <span>@Html.DisplayFor(model => model.Source)</span>
-                                </td>
-                                <td class="text-center">
-                                    <i class="fas fa-arrow-right fa-xs color-green-0"></i>
-                                </td>
-                                <td colspan="4" class="text-left">
-                                    <span>@Html.DisplayFor(model => model.Target)</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="wrapped border-bt-grey-0">
+            <div class="row">
+                <div class="col-md-12" id="sqlview">
+                    @Html.Partial("EditorTemplates/SQLScriptView", Model)
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
+    <script>
     var getSQLScript = '@Url.Action("GetSQLScript", "manager/SQLCompare")'
-</script>
-<style>
-    :root {
-        --green-0: #95DB7D;
-        --violet-0: #7160E8;
-        --black-0: #3D3D3D;
-        --black-1: #2E2E2E;
-        --grey-0: #1F1F1F;
-        --grey-1: #1D1D1D;
-        --blue-0: #264F78;
-    }
-
-    .scroll {
-        overflow: auto;
-        white-space: nowrap;
-    }
-
-    table.datatable, table.datatable2 {
-        width: 100%;
-        margin: 0;
-    }
-
-    .frezze-header {
-        position: sticky;
-        top: 0;
-        background: #2E2E2E;
-    }
-
-    .no-padding {
-        padding: 0;
-    }
-
-    .color-green-0 {
-        color: var(--green-0);
-    }
-
-    .color-violet-0 {
-        color: var(--violet-0);
-    }
-
-    .color-black-0 {
-        color: var(--black-0);
-    }
-
-    .color-black-1 {
-        color: var(--black-1);
-    }
-
-    .color-grey-0 {
-        color: var(--grey-0);
-    }
-
-    .color-grey-1 {
-        color: var(--grey-1);
-    }
-
-    .color-blue-0 {
-        color: var(--blue-0);
-    }
-
-    .border-bt-violet-0 {
-        border-bottom: 2px solid var(--violet-0);
-    }
-
-    .border-top-violet-0 {
-        border-top: 2px solid var(--violet-0);
-    }
-
-    .tab-active {
-        font-weight: bold;
-        border-top: 2px solid var(--violet-0);
-        background: #3D3D3D;
-    }
-
-    .border-bt-grey-0 {
-        border-bottom: 1px solid var(--grey-0);
-    }
-
-    i.fa-solid, i.fas {
-        margin: 0 4px;
-    }
-
-    #listmeisai #datalist > tr {
-    }
-
-        #listmeisai #datalist > tr.active {
-            background-color: var(--blue-0);
+    </script>
+    <style>
+        :root {
+            --green-0: #95DB7D;
+            --violet-0: #7160E8;
+            --black-0: #3D3D3D;
+            --black-1: #2E2E2E;
+            --grey-0: #1F1F1F;
+            --grey-1: #1D1D1D;
+            --blue-0: #264F78;
         }
-</style>
+
+        .scroll {
+            overflow: auto;
+            white-space: nowrap;
+        }
+
+        table.datatable, table.datatable2 {
+            width: 100%;
+            margin: 0;
+        }
+
+        .frezze-header {
+            position: sticky;
+            top: 0;
+            background: #2E2E2E;
+        }
+
+        .no-padding {
+            padding: 0;
+        }
+
+        .color-green-0 {
+            color: var(--green-0);
+        }
+
+        .color-violet-0 {
+            color: var(--violet-0);
+        }
+
+        .color-black-0 {
+            color: var(--black-0);
+        }
+
+        .color-black-1 {
+            color: var(--black-1);
+        }
+
+        .color-grey-0 {
+            color: var(--grey-0);
+        }
+
+        .color-grey-1 {
+            color: var(--grey-1);
+        }
+
+        .color-blue-0 {
+            color: var(--blue-0);
+        }
+
+        .border-bt-violet-0 {
+            border-bottom: 2px solid var(--violet-0);
+        }
+
+        .border-top-violet-0 {
+            border-top: 2px solid var(--violet-0);
+        }
+
+        .tab-active {
+            font-weight: bold;
+            border-top: 2px solid var(--violet-0);
+            background: #3D3D3D;
+        }
+
+        .border-bt-grey-0 {
+            border-bottom: 1px solid var(--grey-0);
+        }
+
+        i.fa-solid, i.fas {
+            margin: 0 4px;
+        }
+
+        #listmeisai #datalist > tr {
+        }
+
+            #listmeisai #datalist > tr.active {
+                background-color: var(--blue-0);
+            }
+
+        .arrow {
+            background: linear-gradient( -135deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) top right, linear-gradient( -45deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) bottom right;
+            background-size: 100% 50%;
+            background-repeat: no-repeat;
+        }
+
+        .arrow2 {
+            clip-path: polygon( 0 0, 30px 50%, 0 100%, 100% 100%, 100% 50%, 100% 0 );
+        }
+    </style>

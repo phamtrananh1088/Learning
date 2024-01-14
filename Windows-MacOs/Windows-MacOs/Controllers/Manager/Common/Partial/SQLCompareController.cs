@@ -41,6 +41,7 @@ namespace WinMacOs.Controllers.Manager
         [Route("index")]
         public async Task<ActionResult> Index()
         {
+            ViewBag.Title = "SQL Compare";
             SQLCompareModel model = await Service.GetSQLCompareModel();
             return View(model);
         }
