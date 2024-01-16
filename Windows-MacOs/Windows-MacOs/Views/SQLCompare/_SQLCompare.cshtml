@@ -15,7 +15,7 @@
                 </span>
                 <br />
                 <span>
-                    @Html.DisplayFor(model => model.Source)
+                    @Html.DisplayFor(model => model.DBNameSource)
                 </span>
             </div>
         </div>
@@ -32,17 +32,17 @@
             </div>
         </div>
         <div class="col-md-5 text-right arrow2" style="background-color: blue;">
-            <div style="display: inline-block">
-                <h2><i class="fa-solid fa-database"></i></h2>
-            </div>
             <div class="text-right" style="display: inline-block">
                 <span style="font-weight:bold">
                     @Html.DisplayFor(model => model.Target)
                 </span>
                 <br />
                 <span>
-                    @Html.DisplayFor(model => model.Target)
+                    @Html.DisplayFor(model => model.DBNameTarget)
                 </span>
+            </div>
+            <div style="display: inline-block">
+                <h2><i class="fa-solid fa-database"></i></h2>
             </div>
         </div>
     </div>

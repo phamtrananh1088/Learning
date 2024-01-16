@@ -70,6 +70,7 @@ var sqlcompare01 = {
             });
         });
 
+
         $("#btnDeploy").click(function () {
             $('#DeployModal').modal({ backdrop: 'static', keyboard: false });
         });
@@ -77,40 +78,60 @@ var sqlcompare01 = {
         $("#popMaximizeDeploy").click(function () {
             $(".modal-deploy").toggleClass("fullscreen");
             $("#popMaximizeDeploy > i").toggleClass("fa-expand fa-compress");
+            $(".modal-deploy").css("transform", 'translate(-50%, -50%)');
         });
 
         $(".modal-deploy > .title")
             .bind("drag", function (evt) {
                 console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
-                //$(".modal-deploy").css("transform", "translate(-484px, -306px);");
-                var x = evt.clientX - $(this).data("clientx");
-                var y = evt.clientY - $(this).data("clienty");
-                //console.log(evt.clientX, evt.clientY, $(this).data())
-                $(".modal-deploy").css("transform", `translate(${-484 + x}px, ${-306 + y}px)`);
+                if (evt.clientX !== 0 && evt.clientY !== 0) {
+                    var x = evt.clientX - $(this).data("clientx");
+                    var y = evt.clientY - $(this).data("clienty");
+                    var ox = $(this).data("offsetx");
+                    var oy = $(this).data("offsety");
+
+                    $(".modal-deploy").css("transform", `translate(${ox + x}px, ${oy + y}px)`);
+                }
+
                 return true;
             })
             .bind("dragend", function (evt) {
                 console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+                var x = evt.clientX - $(this).data("clientx");
+                var y = evt.clientY - $(this).data("clienty");
+                var ox = $(this).data("offsetx");
+                var oy = $(this).data("offsety");
                 $(this).data("clientx", evt.clientX);
                 $(this).data("clienty", evt.clientY);
+                $(this).data("offsetx", ox + x);
+                $(this).data("offsety", oy + y);
+
+                $(".modal-deploy").css("transform", `translate(${ox + x}px, ${oy + y}px)`);
                 return true;
             })
             .bind("dragenter", function (evt) {
-                console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
                 return true;
             })
             .bind("dragleave", function (evt) {
-                console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
                 return true;
             })
             .bind("dragover", function (evt) {
-                console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
                 return true;
             })
             .bind("dragstart", function (evt) {
                 console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
                 $(this).data("clientx", evt.clientX);
                 $(this).data("clienty", evt.clientY);
+                var d = $(".modal-deploy").css("transform").replace('matrix(', '').replace(')', '').split(', ')
+                $(this).data("offsetx", Number(d[4]));
+                $(this).data("offsety", Number(d[5]));
+                console.log($(this).data())
+                var img = new Image();
+                img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+                evt.originalEvent.dataTransfer.setDragImage(img, 0, 0);
                 return true;
             })
             .bind("drop", function (evt) {

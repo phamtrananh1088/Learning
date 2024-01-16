@@ -32,7 +32,9 @@ namespace WinMacOs.Business.Services.Manager
             {
                 SQLTables = tablesSource,
                 Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
-                Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource
+                DBNameSource = ((SqlConnectionStringBuilder)connectionStringBuilderSource).InitialCatalog,
+                Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource,
+                DBNameTarget = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).InitialCatalog,
             };
             return data;
         }

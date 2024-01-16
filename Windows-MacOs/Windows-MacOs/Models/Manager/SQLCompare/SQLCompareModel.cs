@@ -19,6 +19,9 @@ namespace WinMacOs.Models.Manager.SQLCompare
 
         public string Source { get; set; }
         public string Target { get; set; }
+
+        public string DBNameSource { get; set; }
+        public string DBNameTarget { get; set; }
         public string SQLScriptSource { get; set; }
         public string SQLScriptTarget { get; set; }
 

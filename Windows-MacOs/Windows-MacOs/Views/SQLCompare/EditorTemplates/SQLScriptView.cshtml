@@ -9,8 +9,8 @@
                 <td class="w30 text-right" rowspan="2">@Html.DisplayFor(model => model.Source)<i class="fa-solid fa-table-cells"></i></td>
                 <td class="w5 text-center" rowspan="2"><i class="fas fa-arrow-right"></i></td>
                 <td class="w30 text-left" rowspan="2"><i class="fa-solid fa-table-cells"></i>@Html.DisplayFor(model => model.Target)</td>
-                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-down"></i>Next</td>
-                <td class="w10 text-left" rowspan="2"><i class="fa-solid fa-arrow-up"></i>Previous</td>
+                <td class="w10 text-left" rowspan="2" id="btnNext"><i class="fa-solid fa-arrow-down"></i>Next</td>
+                <td class="w10 text-left" rowspan="2" id="btnPrevious"><i class="fa-solid fa-arrow-up"></i>Previous</td>
                 <td class="w10 text-right" rowspan="2"><i class="fa-solid fa-gear"></i>&nbsp;<i class="fa-solid fa-expand"></i>&nbsp;<i class="fa-solid fa-circle-question"></i>&nbsp;</td>
             </tr>
             <tr>
@@ -42,7 +42,20 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $("#btnNext").click(function () {
+            if ($("#listmeisai #datalist > tr.active").length > 0) {
+                $("#listmeisai #datalist > tr.active + tr").trigger("click");
+            } else {
+                $("#listmeisai #datalist > tr:first-child").trigger("click");
+            }
+        });
+        $("#btnPrevious").click(function () {
+            if ($("#listmeisai #datalist > tr.active").length > 0) {
+                $(`#listmeisai #datalist > tr[data-index='${$("#listmeisai #datalist > tr.active").data("index") - 1}']`).trigger("click");
+            } else {
+                $("#listmeisai #datalist > tr:last-child").trigger("click");
+            }
+        });
     });
 </script>
 <style>
