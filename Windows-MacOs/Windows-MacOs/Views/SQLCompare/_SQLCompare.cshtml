@@ -3,164 +3,306 @@
     ViewBag.Title = "SQL Compare";
 }
 
-<div>
+<div name="top-bar">
     <div class="row">
         <div class="col-md-5 text-left">
             <div style="display: inline-block">
                 <h2><i class="fa-solid fa-database"></i></h2>
             </div>
-                <div class="text-left" style="display:inline-block">
-                    <span style="font-weight:bold">
-                        @Html.DisplayFor(model => model.Source)
-                    </span>
-                    <br />
-                    <span>
-                        @Html.DisplayFor(model => model.Source)
-                    </span>
-                </div>
+            <div class="text-left" style="display:inline-block">
+                <span style="font-weight:bold">
+                    @Html.DisplayFor(model => model.Source)
+                </span>
+                <br />
+                <span>
+                    @Html.DisplayFor(model => model.Source)
+                </span>
             </div>
-            <div class="col-md-1">
-                <div class="text-right">
-                    Selected
-                    <br />
-                    <span style="font-weight:900;">0 of 3</span>
-                </div>
+        </div>
+        <div class="col-md-1">
+            <div class="text-right">
+                Selected
+                <br />
+                <span style="font-weight:900;">0 of 3</span>
             </div>
-            <div class="col-md-1" style="padding-right: 0px; padding-left: 0px;">
-                <div class="arrow" style="margin-top: 6px; height: 42px; padding-left: 6px; padding-top: 6px;">
-                    <i class="fas fa-arrow-right fa-xs"></i>Deploy...
-                </div>
+        </div>
+        <div class="col-md-1" style="padding-right: 0px; padding-left: 0px;">
+            <div id="btnDeploy" class="arrow" style="margin-top: 6px; height: 42px; padding-left: 6px; padding-top: 6px;">
+                <i class="fas fa-arrow-right fa-xs"></i>Deploy...
             </div>
-            <div class="col-md-5 text-right arrow2" style="background-color: blue;">
-                <div style="display: inline-block">
-                    <h2><i class="fa-solid fa-database"></i></h2>
-                </div>
-                <div class="text-right" style="display: inline-block">
-                    <span style="font-weight:bold">
-                        @Html.DisplayFor(model => model.Target)
-                    </span>
-                    <br />
-                    <span>
-                        @Html.DisplayFor(model => model.Target)
-                    </span>
-                </div>
-                </div>
+        </div>
+        <div class="col-md-5 text-right arrow2" style="background-color: blue;">
+            <div style="display: inline-block">
+                <h2><i class="fa-solid fa-database"></i></h2>
             </div>
-    <div>
-        <div class="wrapped border-bt-grey-0">
-            <div class="row">
-                <div class="col-md-12" id="listmeisai">
-                    @Html.EditorFor(model => model.SQLTables)
+            <div class="text-right" style="display: inline-block">
+                <span style="font-weight:bold">
+                    @Html.DisplayFor(model => model.Target)
+                </span>
+                <br />
+                <span>
+                    @Html.DisplayFor(model => model.Target)
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div name="content">
+    <div class="wrapped border-bt-grey-0">
+        <div class="row">
+            <div class="col-md-12" id="listmeisai">
+                @Html.EditorFor(model => model.SQLTables)
+            </div>
+        </div>
+    </div>
+    <div class="wrapped border-bt-grey-0">
+        <div class="row">
+            <div class="col-md-12" id="sqlview">
+                @Html.Partial("EditorTemplates/SQLScriptView", Model)
+            </div>
+        </div>
+    </div>
+</div>
+<div id="DeployModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-deploy">
+        <div draggable="true" class="flex title" data-clientx="0" data-clienty="0">
+            <h3 class="title-item" style="margin: 0;"><i class="fa-solid fa-hat-wizard"></i>DeployWinzard</h3>
+            <div>
+                <div class="button-title fullscreen" id="popMaximizeDeploy"
+                     aria-hidden="true">
+                    <i class="fa-solid fa-expand"></i>
+                    @*<i class="fa-solid fa-compress"></i>*@
+                </div>
+                <div class="button-title xmark" data-dismiss="modal" id="popCloseIcon"
+                     aria-hidden="true">
+                    <i class="fa-solid fa-xmark"></i>
                 </div>
             </div>
         </div>
-        <div class="wrapped border-bt-grey-0">
-            <div class="row">
-                <div class="col-md-12" id="sqlview">
-                    @Html.Partial("EditorTemplates/SQLScriptView", Model)
+        <hr style=" margin-top: 0;" />
+        <div class="fixed-body-token">
+            <div class="row flex" style="flex-direction: column; gap: 10px;">
+                <div class="col-md-12">
+                    <div class="tcc-cell-label title-item">ログインID</div>
+                    <div class="tcc-cell-textbox">
+                        @Html.EditorFor(model => model.Source, new { tabindex = "1", @placeholder = "", @class = "tcc-width-max", autofocus = true, maxlength = "400" })
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 15px;">
+                パスワードを忘れたログインIDを入力してください。
+            </div>
+        </div>
+        <div class="tcc-popup-fixed-footer fixed-footer-token">
+            <div class="col-md-12 center">
+                <div>
+                    <button class="btn tcc-btn-cyan" type="button" id="btnPassNoti" style="margin-bottom: 0px; min-width: 110px;" tabindex="4">OK</button>
+                    <button class="btn tcc-btn-gray" type="button" id="btnCancelPassNoti" style="margin-bottom: 0px; min-width: 110px;" tabindex="5">キャンセル</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
+</div>
+<script>
     var getSQLScript = '@Url.Action("GetSQLScript", "manager/SQLCompare")'
-    </script>
-    <style>
-        :root {
-            --green-0: #95DB7D;
-            --violet-0: #7160E8;
-            --black-0: #3D3D3D;
-            --black-1: #2E2E2E;
-            --grey-0: #1F1F1F;
-            --grey-1: #1D1D1D;
-            --blue-0: #264F78;
+</script>
+<style>
+    :root {
+        --green-0: #95DB7D;
+        --violet-0: #7160E8;
+        --black-0: #3D3D3D;
+        --black-1: #2E2E2E;
+        --grey-0: #1F1F1F;
+        --grey-1: #1D1D1D;
+        --grey-2: #A2A2A8;
+        --blue-0: #264F78;
+        --blue-1: #4179ac;
+        --blue-2: #007ACC;
+    }
+
+    .color-black-0 {
+        color: var(--black-0);
+    }
+
+    .color-black-1 {
+        color: var(--black-1);
+    }
+
+    .color-grey-0 {
+        color: var(--grey-0);
+    }
+
+    .color-grey-1 {
+        color: var(--grey-1);
+    }
+
+    .color-blue-0 {
+        color: var(--blue-0);
+    }
+
+    .scroll {
+        overflow: auto;
+        white-space: nowrap;
+    }
+
+    table.datatable, table.datatable2 {
+        width: 100%;
+        margin: 0;
+    }
+
+    .frezze-header {
+        position: sticky;
+        top: 0;
+        background: #2E2E2E;
+    }
+
+    .no-padding {
+        padding: 0;
+    }
+
+    .color-green-0 {
+        color: var(--green-0);
+    }
+
+    .color-violet-0 {
+        color: var(--violet-0);
+    }
+
+    .border-bt-violet-0 {
+        border-bottom: 2px solid var(--violet-0);
+    }
+
+    .border-top-violet-0 {
+        border-top: 2px solid var(--violet-0);
+    }
+
+    .tab-active {
+        font-weight: bold;
+        border-top: 2px solid var(--violet-0);
+        background: #3D3D3D;
+    }
+
+    .border-bt-grey-0 {
+        border-bottom: 1px solid var(--grey-0);
+    }
+
+    i.fa-solid, i.fas {
+        margin: 0 4px;
+    }
+
+    #listmeisai #datalist > tr {
+    }
+
+        #listmeisai #datalist > tr.active {
+            background-color: var(--blue-0);
         }
 
-        .scroll {
-            overflow: auto;
-            white-space: nowrap;
+    .arrow {
+        background: linear-gradient( -135deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) top right, linear-gradient( -45deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) bottom right;
+        background-size: 100% 50%;
+        background-repeat: no-repeat;
+    }
+
+    .arrow2 {
+        clip-path: polygon( 0 0, 30px 50%, 0 100%, 100% 100%, 100% 50%, 100% 0 );
+    }
+
+    .modal-deploy {
+        background-color: #f3f9ff;
+        width: 968px;
+        height: 612px;
+        padding: 0px 0px 10px 0px;
+        border: solid 1px #609ED3;
+        border-radius: 5px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+        .modal-deploy.fullscreen {
+            width: 100vw;
+            height: 100vh;
         }
 
-        table.datatable, table.datatable2 {
-            width: 100%;
+    div.button-title {
+        display: inline-block;
+        margin-top: 5px;
+        margin-right: 8px;
+    }
+
+        div.button-title > i {
+            font-size: 2rem;
             margin: 0;
         }
 
-        .frezze-header {
-            position: sticky;
-            top: 0;
-            background: #2E2E2E;
+    button.maximize, button.exit-full {
+        padding: 0;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .flex {
+        display: flex;
+    }
+
+        .flex.title {
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--blue-2);
         }
 
-        .no-padding {
-            padding: 0;
-        }
+    .title-item {
+        font-weight: bold;
+        font-size: 1.3rem;
+        padding: 0 0 0 5px;
+    }
 
-        .color-green-0 {
-            color: var(--green-0);
-        }
+    .fixed-body-token {
+        width: 75%;
+        margin: 0 auto;
+        padding-left: 12px;
+    }
 
-        .color-violet-0 {
-            color: var(--violet-0);
-        }
+    .tcc-cell-label {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        line-height: 28px;
+        padding: 0 0 0 30px;
+    }
 
-        .color-black-0 {
-            color: var(--black-0);
-        }
+    .tcc-cell-textbox, .tcc-cell-textarea {
+        text-align: left;
+        padding: 0 0 2px 2px;
+        display: -webkit-flex;
+    }
 
-        .color-black-1 {
-            color: var(--black-1);
-        }
+    .btn {
+        display: inline-block;
+        color: #ffffff;
+        font-weight: normal;
+        padding: 0 6px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin: 10px 10px 10px 10px;
+        width: 110px;
+        height: 40px;
+        line-height: 40px;
+        letter-spacing: 3px;
+        border: none;
+        border-bottom: solid 1px rgba(255,255,255,0.9);
+        box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.2);
+        font-size: 1.4rem;
+    }
 
-        .color-grey-0 {
-            color: var(--grey-0);
-        }
+    .tcc-btn-cyan {
+        background: var(--blue-1);
+        color: #FFF;
+    }
 
-        .color-grey-1 {
-            color: var(--grey-1);
-        }
-
-        .color-blue-0 {
-            color: var(--blue-0);
-        }
-
-        .border-bt-violet-0 {
-            border-bottom: 2px solid var(--violet-0);
-        }
-
-        .border-top-violet-0 {
-            border-top: 2px solid var(--violet-0);
-        }
-
-        .tab-active {
-            font-weight: bold;
-            border-top: 2px solid var(--violet-0);
-            background: #3D3D3D;
-        }
-
-        .border-bt-grey-0 {
-            border-bottom: 1px solid var(--grey-0);
-        }
-
-        i.fa-solid, i.fas {
-            margin: 0 4px;
-        }
-
-        #listmeisai #datalist > tr {
-        }
-
-            #listmeisai #datalist > tr.active {
-                background-color: var(--blue-0);
-            }
-
-        .arrow {
-            background: linear-gradient( -135deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) top right, linear-gradient( -45deg, transparent 15px, #04e6fb 15px, #65ff9a 100% ) bottom right;
-            background-size: 100% 50%;
-            background-repeat: no-repeat;
-        }
-
-        .arrow2 {
-            clip-path: polygon( 0 0, 30px 50%, 0 100%, 100% 100%, 100% 50%, 100% 0 );
-        }
-    </style>
+    .tcc-btn-gray {
+        background: var(--grey-2);
+        color: #FFF;
+    }
+</style>
