@@ -1,17 +1,17 @@
 ﻿@model WinMacOs.Models.Manager.SQLCompare.SQLCompareModel
 
-<div class="scroll" style="position: relative;">
+<div class="" style="position: relative;">
     <table class="datatable">
         <thead class="frezze-header border-bt-violet-0">
             <tr>
-                <td class="w10 text-left tab-active" rowspan="2">SQL view</td>
-                <td class="w10 text-left" rowspan="2">Summary view</td>
-                <td class="w30 text-right" rowspan="2">@Html.DisplayFor(model => model.Source)<i class="fa-solid fa-table-cells"></i></td>
+                <td class="w10 text-left btn-action tab-active" rowspan="2" id="btnTabSQLView">SQL view</td>
+                <td class="w10 text-left btn-action" rowspan="2" id="btnTabSummaryView">Summary view</td>
+                <td class="w30 text-right" rowspan="2">@Html.DisplayFor(model => model.DBNameSource)<i class="fa-solid fa-table-cells"></i></td>
                 <td class="w5 text-center" rowspan="2"><i class="fas fa-arrow-right"></i></td>
-                <td class="w30 text-left" rowspan="2"><i class="fa-solid fa-table-cells"></i>@Html.DisplayFor(model => model.Target)</td>
-                <td class="w10 text-left" rowspan="2" id="btnNext"><i class="fa-solid fa-arrow-down"></i>Next</td>
-                <td class="w10 text-left" rowspan="2" id="btnPrevious"><i class="fa-solid fa-arrow-up"></i>Previous</td>
-                <td class="w10 text-right" rowspan="2"><i class="fa-solid fa-gear"></i>&nbsp;<i class="fa-solid fa-expand"></i>&nbsp;<i class="fa-solid fa-circle-question"></i>&nbsp;</td>
+                <td class="w30 text-left" rowspan="2"><i class="fa-solid fa-table-cells"></i>@Html.DisplayFor(model => model.DBNameTarget)</td>
+                <td class="w10 text-left btn-action" rowspan="2" id="btnNext"><i class="fa-solid fa-arrow-down"></i>Next</td>
+                <td class="w10 text-left btn-action" rowspan="2" id="btnPrevious"><i class="fa-solid fa-arrow-up"></i>Previous</td>
+                <td class="w10 text-right" rowspan="2"><i class="fa-solid fa-gear btn-action"></i>&nbsp;<i class="fa-solid fa-expand btn-action"></i>&nbsp;<i class="fa-solid fa-circle-question btn-action"></i>&nbsp;</td>
             </tr>
             <tr>
                 <td class="w10"></td>
@@ -27,14 +27,14 @@
         <tbody>
             @{ int index = -2; int idx = 0; }
             <tr data-group-index="@index" data-index="@idx" data-level="0" data-shouhin="0">
-                <td colspan="3" class="w45 text-left">
-                    <div class="sql-data">@Html.DisplayFor(model => model.SQLScriptSource)</div>
+                <td colspan="3" class="w45 text-left text-top">
+                    <div class="sql-data text-prewrap">@Html.DisplayFor(model => model.SQLScriptSource)</div>
                 </td>
                 <td class="text-center">
                     <i class="fas fa-arrow-right fa-xs color-green-0"></i>
                 </td>
-                <td colspan="4" class="w45 text-left">
-                    <div class="sql-data">@Html.DisplayFor(model => model.SQLScriptTarget)</div>
+                <td colspan="4" class="w45 text-left text-top">
+                    <div class="sql-data text-prewrap">@Html.DisplayFor(model => model.SQLScriptTarget)</div>
                 </td>
             </tr>
         </tbody>
@@ -42,6 +42,16 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#btnTabSQLView").click(function () {
+            $(this).addClass("tab-active");
+            $("#btnTabSummaryView").removeClass("tab-active");
+        });
+
+        $("#btnTabSummaryView").click(function () {
+            $(this).addClass("tab-active");
+            $("#btnTabSQLView").removeClass("tab-active");
+        });
+
         $("#btnNext").click(function () {
             if ($("#listmeisai #datalist > tr.active").length > 0) {
                 $("#listmeisai #datalist > tr.active + tr").trigger("click");
@@ -49,6 +59,7 @@
                 $("#listmeisai #datalist > tr:first-child").trigger("click");
             }
         });
+
         $("#btnPrevious").click(function () {
             if ($("#listmeisai #datalist > tr.active").length > 0) {
                 $(`#listmeisai #datalist > tr[data-index='${$("#listmeisai #datalist > tr.active").data("index") - 1}']`).trigger("click");
@@ -59,10 +70,5 @@
     });
 </script>
 <style>
-    .sql-data {
-        width: 100%;
-        height: 300px;
-        overflow-y: auto;
-        text-wrap: wrap;
-    }
+
 </style>

@@ -31,31 +31,35 @@
                 <i class="fas fa-arrow-right fa-xs"></i>Deploy...
             </div>
         </div>
-        <div class="col-md-5 text-right arrow2" style="background-color: blue;">
-            <div class="text-right" style="display: inline-block">
-                <span style="font-weight:bold">
-                    @Html.DisplayFor(model => model.Target)
-                </span>
-                <br />
-                <span>
-                    @Html.DisplayFor(model => model.DBNameTarget)
-                </span>
+        <div class="col-md-5">
+            <div class="text-right arrow2" style="background-color: var(--blue-2); margin-left: -24px; ">
+                <div class="text-right" style="display: inline-block">
+                    <span style="font-weight:bold">
+                        @Html.DisplayFor(model => model.Target)
+                    </span>
+                    <br />
+                    <span>
+                        @Html.DisplayFor(model => model.DBNameTarget)
+                    </span>
+                </div>
+                <div style="display: inline-block">
+                    <h2><i class="fa-solid fa-database"></i></h2>
+                </div>
             </div>
-            <div style="display: inline-block">
-                <h2><i class="fa-solid fa-database"></i></h2>
-            </div>
+
         </div>
     </div>
 </div>
-<div name="content">
-    <div class="wrapped border-bt-grey-0">
+<div name="content" class="content col-flex">
+    <div class="wrapped border-1 scroll-y" style="flex-basis: 38%;">
         <div class="row">
             <div class="col-md-12" id="listmeisai">
                 @Html.EditorFor(model => model.SQLTables)
             </div>
         </div>
     </div>
-    <div class="wrapped border-bt-grey-0">
+    <div class="resizer-y" id="btnResizer"></div>
+    <div class="wrapped border-2 scroll-y" style="flex: 1;">
         <div class="row">
             <div class="col-md-12" id="sqlview">
                 @Html.Partial("EditorTemplates/SQLScriptView", Model)
@@ -64,11 +68,14 @@
     </div>
 </div>
 <div id="DeployModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-deploy">
+    <div class="modal-deploy dark-0">
         <div draggable="true" class="flex title" data-clientx="0" data-clienty="0">
-            <h3 class="title-item" style="margin: 0;"><i class="fa-solid fa-hat-wizard"></i>DeployWinzard</h3>
+            <h3 class="title-item" style="margin: 0;"><i class="fa-solid fa-hat-wizard"></i>Deployment</h3>
+            <div style="flex: 1; height: 20px; margin: 0 10px 0 10px;" class="bg-fa-wand-magic-sparkles">
+                @*<i class="fa-thin fa-wand-magic-sparkles"></i>*@
+            </div>
             <div>
-                <div class="button-title fullscreen" id="popMaximizeDeploy"
+                <div class="button-title" id="popMaximizeDeploy"
                      aria-hidden="true">
                     <i class="fa-solid fa-expand"></i>
                     @*<i class="fa-solid fa-compress"></i>*@
@@ -79,25 +86,40 @@
                 </div>
             </div>
         </div>
-        <hr style=" margin-top: 0;" />
-        <div class="fixed-body-token">
-            <div class="row flex" style="flex-direction: column; gap: 10px;">
-                <div class="col-md-12">
-                    <div class="tcc-cell-label title-item">ログインID</div>
-                    <div class="tcc-cell-textbox">
-                        @Html.EditorFor(model => model.Source, new { tabindex = "1", @placeholder = "", @class = "tcc-width-max", autofocus = true, maxlength = "400" })
+        <div name="top-bar">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="text-left" style="background-color: var(--grey-1); margin-right: -38px;">
+                        <div style="display: inline-block">
+                            <h2><i class="fa-solid fa-database"></i></h2>
+                        </div>
+                        <div class="text-left" style="display:inline-block">
+                            <span style="font-weight:bold">
+                                @Html.DisplayFor(model => model.Source)
+                            </span>
+                            <br />
+                            <span>
+                                @Html.DisplayFor(model => model.DBNameSource)
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style="text-align: center; padding-top: 15px;">
-                パスワードを忘れたログインIDを入力してください。
-            </div>
-        </div>
-        <div class="tcc-popup-fixed-footer fixed-footer-token">
-            <div class="col-md-12 center">
-                <div>
-                    <button class="btn tcc-btn-cyan" type="button" id="btnPassNoti" style="margin-bottom: 0px; min-width: 110px;" tabindex="4">OK</button>
-                    <button class="btn tcc-btn-gray" type="button" id="btnCancelPassNoti" style="margin-bottom: 0px; min-width: 110px;" tabindex="5">キャンセル</button>
+                <div class="col-md-6">
+                    <div class="text-right arrow2" style="background-color: var(--grey-2); margin-left: -24px; ">
+                        <div class="text-right" style="display: inline-block">
+                            <span style="font-weight:bold">
+                                @Html.DisplayFor(model => model.Target)
+                            </span>
+                            <br />
+                            <span>
+                                @Html.DisplayFor(model => model.DBNameTarget)
+                            </span>
+                        </div>
+                        <div style="display: inline-block">
+                            <h2><i class="fa-solid fa-database"></i></h2>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -107,17 +129,22 @@
     var getSQLScript = '@Url.Action("GetSQLScript", "manager/SQLCompare")'
 </script>
 <style>
+    /*root*/
     :root {
         --green-0: #95DB7D;
         --violet-0: #7160E8;
         --black-0: #3D3D3D;
         --black-1: #2E2E2E;
+        --black-2: #2D2D30;
         --grey-0: #1F1F1F;
         --grey-1: #1D1D1D;
         --grey-2: #A2A2A8;
+        --grey-3: #3F3F46;
+        --grey-4: #3E3E40;
         --blue-0: #264F78;
         --blue-1: #4179ac;
         --blue-2: #007ACC;
+        --blue-3: #55AAE4;
     }
 
     .color-black-0 {
@@ -140,10 +167,55 @@
         color: var(--blue-0);
     }
 
+    .color-green-0 {
+        color: var(--green-0);
+    }
+
+    .color-violet-0 {
+        color: var(--violet-0);
+    }
+
+    /*css*/
+    .dark-0 {
+        background-color: var(--black-2);
+    }
+
+    .content {
+        height: calc(100vh - 60px);
+    }
+
+    .col-flex {
+        display: flex;
+        flex-direction: column;
+    }
+
     .scroll {
         overflow: auto;
         white-space: nowrap;
     }
+
+    .scroll-x {
+        overflow-x: scroll;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+
+    .scroll-y {
+        overflow-x: hidden;
+        overflow-y: scroll;
+        white-space: nowrap;
+    }
+
+    .resizer-y {
+        /*background-color: var(--black-2);*/
+        cursor: n-resize;
+        /*width: 100%;*/
+        height: 6px;
+    }
+
+        .resizer-y.resizing {
+            background-color: #000;
+        }
 
     table.datatable, table.datatable2 {
         width: 100%;
@@ -160,14 +232,6 @@
         padding: 0;
     }
 
-    .color-green-0 {
-        color: var(--green-0);
-    }
-
-    .color-violet-0 {
-        color: var(--violet-0);
-    }
-
     .border-bt-violet-0 {
         border-bottom: 2px solid var(--violet-0);
     }
@@ -182,12 +246,23 @@
         background: #3D3D3D;
     }
 
-    .border-bt-grey-0 {
-        border-bottom: 1px solid var(--grey-0);
+    .wrapped.border-1 {
+        border-bottom: 1px solid var(--grey-3);
+        border-left: 1px solid var(--grey-3);
+        border-right: 1px solid var(--grey-3);
+    }
+
+    .wrapped.border-2 {
+        border: 1px solid var(--grey-3);
     }
 
     i.fa-solid, i.fas {
         margin: 0 4px;
+    }
+
+    .btn-action:hover {
+        background-color: var(--grey-4);
+        color: var(--blue-3);
     }
 
     #listmeisai #datalist > tr {
@@ -208,7 +283,6 @@
     }
 
     .modal-deploy {
-        background-color: #f3f9ff;
         width: 968px;
         height: 612px;
         padding: 0px 0px 10px 0px;
@@ -224,6 +298,11 @@
             width: 100vw;
             height: 100vh;
         }
+
+    .bg-fa-wand-magic-sparkles {
+        background-image: url( "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2216%22%20width%3D%2218%22%20viewBox%3D%220%200%20576%20512%22%3E%3C!--!Font%20Awesome%20Free%206.5.1%20by%20%40fontawesome%20-%20https%3A%2F%2Ffontawesome.com%20License%20-%20https%3A%2F%2Ffontawesome.com%2Flicense%2Ffree%20Copyright%202024%20Fonticons%2C%20Inc.--%3E%3Cpath%20stroke%3D%22white%22%20fill%3D%22white%22%20d%3D%22M234.7%2042.7L197%2056.8c-3%201.1-5%204-5%207.2s2%206.1%205%207.2l37.7%2014.1L248.8%20123c1.1%203%204%205%207.2%205s6.1-2%207.2-5l14.1-37.7L315%2071.2c3-1.1%205-4%205-7.2s-2-6.1-5-7.2L277.3%2042.7%20263.2%205c-1.1-3-4-5-7.2-5s-6.1%202-7.2%205L234.7%2042.7zM46.1%20395.4c-18.7%2018.7-18.7%2049.1%200%2067.9l34.6%2034.6c18.7%2018.7%2049.1%2018.7%2067.9%200L529.9%20116.5c18.7-18.7%2018.7-49.1%200-67.9L495.3%2014.1c-18.7-18.7-49.1-18.7-67.9%200L46.1%20395.4zM484.6%2082.6l-105%20105-23.3-23.3%20105-105%2023.3%2023.3zM7.5%20117.2C3%20118.9%200%20123.2%200%20128s3%209.1%207.5%2010.8L64%20160l21.2%2056.5c1.7%204.5%206%207.5%2010.8%207.5s9.1-3%2010.8-7.5L128%20160l56.5-21.2c4.5-1.7%207.5-6%207.5-10.8s-3-9.1-7.5-10.8L128%2096%20106.8%2039.5C105.1%2035%20100.8%2032%2096%2032s-9.1%203-10.8%207.5L64%2096%207.5%20117.2zm352%20256c-4.5%201.7-7.5%206-7.5%2010.8s3%209.1%207.5%2010.8L416%20416l21.2%2056.5c1.7%204.5%206%207.5%2010.8%207.5s9.1-3%2010.8-7.5L480%20416l56.5-21.2c4.5-1.7%207.5-6%207.5-10.8s-3-9.1-7.5-10.8L480%20352l-21.2-56.5c-1.7-4.5-6-7.5-10.8-7.5s-9.1%203-10.8%207.5L416%20352l-56.5%2021.2z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E" );*/
+        background-repeat: repeat-x;
+    }
 
     div.button-title {
         display: inline-block;
@@ -304,5 +383,19 @@
     .tcc-btn-gray {
         background: var(--grey-2);
         color: #FFF;
+    }
+
+    .text-prewrap {
+        white-space: pre-wrap;
+    }
+
+    .text-top {
+        vertical-align: top;
+    }
+
+    .sql-data {
+        width: 100%;
+        height: auto;
+        /*overflow-y: auto;*/
     }
 </style>

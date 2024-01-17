@@ -70,6 +70,36 @@ var sqlcompare01 = {
             });
         });
 
+        $("#btnResizer")
+            .bind("mousedown", function (evt) {
+                let res = mousedown(this, evt);
+                return res;
+            })
+            .bind("mousemove", function (evt) {
+                let res = mousemove(this, evt);
+                return res;
+            })
+            .bind("mouseup", function (evt) {
+                let res = mouseup(this, evt);
+                return res;
+            });
+
+        function mousedown(t, evt) {
+            console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+            $(t).addClass("resizing")
+            return true;
+        }
+
+        function mousemove(t, evt) {
+            console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+            return true;
+        }
+
+        function mouseup(t, evt) {
+            console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
+            $(t).removeClass("resizing")
+            return true;
+        }
 
         $("#btnDeploy").click(function () {
             $('#DeployModal').modal({ backdrop: 'static', keyboard: false });
@@ -80,6 +110,7 @@ var sqlcompare01 = {
             $("#popMaximizeDeploy > i").toggleClass("fa-expand fa-compress");
             $(".modal-deploy").css("transform", 'translate(-50%, -50%)');
         });
+
 
         $(".modal-deploy > .title")
             .bind("drag", function (evt) {
@@ -109,18 +140,6 @@ var sqlcompare01 = {
                 $(".modal-deploy").css("transform", `translate(${ox + x}px, ${oy + y}px)`);
                 return true;
             })
-            .bind("dragenter", function (evt) {
-                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
-                return true;
-            })
-            .bind("dragleave", function (evt) {
-                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
-                return true;
-            })
-            .bind("dragover", function (evt) {
-                //console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
-                return true;
-            })
             .bind("dragstart", function (evt) {
                 console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
                 $(this).data("clientx", evt.clientX);
@@ -133,11 +152,7 @@ var sqlcompare01 = {
                 img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
                 evt.originalEvent.dataTransfer.setDragImage(img, 0, 0);
                 return true;
-            })
-            .bind("drop", function (evt) {
-                console.log(evt.type, evt.clientX, evt.clientY, evt.pageX, evt.pageY, evt.offsetX, evt.offsetY);
-                return true;
-            })
+            });
 
     },
     start: function () {

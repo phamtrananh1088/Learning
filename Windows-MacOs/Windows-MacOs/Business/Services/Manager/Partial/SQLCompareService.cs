@@ -89,7 +89,9 @@ namespace WinMacOs.Business.Services.Manager
             var data = new SQLCompareModel()
             {
                 Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
+                DBNameSource = ((SqlConnectionStringBuilder)connectionStringBuilderSource).InitialCatalog,
                 Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource,
+                DBNameTarget = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).InitialCatalog,
                 SQLScriptSource = sQLScriptSource,
                 SQLScriptTarget = sQLScriptTarget
             };
