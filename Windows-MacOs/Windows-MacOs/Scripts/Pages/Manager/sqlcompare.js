@@ -1,39 +1,46 @@
 var sqlcompare01 = {
+    // Declaration
+    Data: class {
+        #targetProxy = undefined;
+        #data = {};
+
+        constructor(data) {
+            this.#targetProxy = new Proxy(this, {
+                set: function (target, key, value) {
+                    var changeEvent = new CustomEvent("datachange", { detail: { property: key, oldValue: target.#data[`#${key}`], newValue: value } });
+                    // Dispatch the event.
+                    target.#data[`#${key}`] = value;
+                    document.dispatchEvent(changeEvent);
+                    return true;
+                }
+            });
+            for (const property in data) {
+                this.#data[`#${property}`] = data[property]
+                this.#targetProxy[property] = data[property]
+            }
+        }
+
+        get countRowSelected() {
+            return this.#data["#countRowSelected"]
+        };
+        set countRowSelected(v) {
+            this.#targetProxy.countRowSelected = v;
+        };
+
+    },
+    _data: {
+        countRowSelected: 0
+    }
+    , data: undefined,
 
     init: function () {
         let self = this;
-
-        // 再検索判断
         //self.research = TorihikiUtils.initPageSession(sessionKey);
-
-        // イベント設定
         this.setEvent();
         this.start();
     },
     setEvent: function () {
-
-        //let self = this;
-
-        //// 戻るボタン
-        //$('#btnReturn').process({
-        //    showConfirm: false,
-        //    submit: function () {
-        //        location.replace(TorihikiUtils.getHistoryPage());
-        //    }
-        //});
-
-        //$('#btnKakunin').process({
-        //    showConfirm: false,
-        //    submit: function () {
-        //        var sChuNo = $('#CHU_NO').val();
-        //        var iChuKai = $('#CHU_KAI').val();
-        //        var iJotaiKbn = $('#JOTAI_KBN').val();
-        //        var sChuYmd = $('#CHU_YMD').val();
-
-        //        TorihikiUtils.saveCurrentData($('form')[0]);
-        //        TorihikiUtils.pageRedirect({ action: 'chumon02', sChuNo: sChuNo, iChuKai: iChuKai, iJotaiKbn: iJotaiKbn, sChuYmd: sChuYmd });
-        //    }
-        //});
+        var self = this;
 
         $("#checkbox1").click(function () {
             checkAll(this);
@@ -49,7 +56,10 @@ var sqlcompare01 = {
                 }
             }
         }
-
+        $("#listmeisai #datalist > tr input[data-name='check']").change(function () {
+            var countRowSelected = $("#listmeisai #datalist > tr input[data-name='check']:checked").length;
+            self.data.countRowSelected = countRowSelected;
+        });
         $("#listmeisai #datalist > tr").click(function () {
             $($(this).parents().children("tr")).removeClass("active");
             $(this).addClass("active");
@@ -153,10 +163,44 @@ var sqlcompare01 = {
                 evt.originalEvent.dataTransfer.setDragImage(img, 0, 0);
                 return true;
             });
-
+        $(".row.dep-row").click(function () {
+            var key = $(this).data("index");
+            $($(this).parents().children("div.dep-row")).filter(function (i, k) {
+                return $(k).data("index") > key;
+            }).removeClass("active");
+            $(this).addClass("active");
+            $(".dep-right").removeClass("active");
+            $(`.dep-right[data-index='${key}']`).addClass("active");
+            switch (key) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
+            }
+        });
+        $("#btnDepNext").click(function () {
+            var key = $(".row.dep-row.active").last().data("index");
+            $(`.row.dep-row[data-index='${key + 1}']`).click();
+        });
+        $("#btnDepBack").click(function () {
+            var key = $(".row.dep-row.active").last().data("index");
+            $(`.row.dep-row[data-index='${key - 1}']`).click();
+        });
+        $("#btnDepCancel").click(function () {
+            $("#popCloseIcon").click();
+        });
+        $(document).bind("datachange", function (evt) {
+            $(`*[data-bind='data.${evt.detail.property}']`).text(evt.detail.newValue);
+        });
     },
     start: function () {
         $("#btnDeploy").click();
+        $(".row.dep-row[data-index='1']").click();
+        this.data = new this.Data(this._data);
     }
 }
 

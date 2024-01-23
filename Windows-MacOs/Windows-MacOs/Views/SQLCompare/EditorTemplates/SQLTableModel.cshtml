@@ -18,7 +18,7 @@
         @Html.DisplayFor(model => model.TableName)<br />
     </td>
     <td class="text-center">
-        @Html.CheckBoxFor(model => model.Selected, htmlAttributes: new { @value = "01" })
+        @Html.CheckBoxFor(model => model.Selected, htmlAttributes: new { @value = "01", @data_name = "check" })
     </td>
    
     <td class="text-left">
@@ -26,5 +26,5 @@
     </td>
     <td class="text-left">
         @Html.DisplayFor(model => model.SchemaName)<br />
-    </td
+    </td>
 </tr>
