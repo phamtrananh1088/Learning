@@ -21,15 +21,22 @@ var sqlcompare01 = {
         }
 
         get countRowSelected() {
-            return this.#data["#countRowSelected"]
+            return this.#data["#countRowSelected"];
         };
         set countRowSelected(v) {
             this.#targetProxy.countRowSelected = v;
         };
 
+        get objectsSelected() {
+            return this.#data["#objectsSelected"];
+        };
+        set objectsSelected(v) {
+            this.#targetProxy.objectsSelected = v;
+        };
     },
     _data: {
-        countRowSelected: 0
+        countRowSelected: 0,
+        objectsSelected: []
     }
     , data: undefined,
 
@@ -57,13 +64,26 @@ var sqlcompare01 = {
             }
         }
         $("#listmeisai #datalist > tr input[data-name='check']").change(function () {
-            var countRowSelected = $("#listmeisai #datalist > tr input[data-name='check']:checked").length;
-            self.data.countRowSelected = countRowSelected;
+            var li = $("#listmeisai #datalist > tr input[data-name='check']:checked");
+            var countRowSelected = li.length;
+            self.data.countRowSelected = countRowSelected
+
+            var objectsSelected = [];
+            for (var i = 0; i < countRowSelected; i++) {
+                var index = $(li[i]).data("index")
+                var data = {
+                    key: index,
+                    schemaName: $(`#SQLTables_${index}__SchemaName`).val(),
+                    tableName: $(`#SQLTables_${index}__TableName`).val()
+                }
+                objectsSelected.push(data);
+            }
+            self.data.objectsSelected = objectsSelected;
         });
         $("#listmeisai #datalist > tr").click(function () {
             $($(this).parents().children("tr")).removeClass("active");
             $(this).addClass("active");
-            var index = $(this).index()
+            var index = $(this).data("index")
             var data = {
                 schemaName: $(`#SQLTables_${index}__SchemaName`).val(),
                 tableName: $(`#SQLTables_${index}__TableName`).val()
@@ -194,7 +214,16 @@ var sqlcompare01 = {
             $("#popCloseIcon").click();
         });
         $(document).bind("datachange", function (evt) {
-            $(`*[data-bind='data.${evt.detail.property}']`).text(evt.detail.newValue);
+            if (Array.isArray(evt.detail.newValue)) {
+                var li = [];
+                evt.detail.newValue.map((v) => {
+                    li.push(`<div key="${v.key}">[${v.schemaName}].[${v.tableName}]</div>`)
+                });
+                $(`*[data-bind='data.${evt.detail.property}']`).html(li.join(""));
+            } else {
+                $(`*[data-bind='data.${evt.detail.property}']`).text(evt.detail.newValue);
+            }
+            
         });
     },
     start: function () {

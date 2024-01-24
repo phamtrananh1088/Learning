@@ -153,8 +153,8 @@ i.fa-solid, i.fas {
 }
 
 .modal-deploy {
-    width: 968px;
-    height: 612px;
+    width: 1150px;
+    height: 730px;
     padding: 0px 0px 10px 0px;
     border: solid 1px #609ED3;
     border-radius: 5px;
@@ -318,6 +318,7 @@ button.maximize, button.exit-full {
 
 .dep-content {
     padding: 20px;
+    font-size: .8rem;
 }
 
 

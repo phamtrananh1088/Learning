@@ -18,7 +18,7 @@
         @Html.DisplayFor(model => model.TableName)<br />
     </td>
     <td class="text-center">
-        @Html.CheckBoxFor(model => model.Selected, htmlAttributes: new { @value = "01", @data_name = "check" })
+        @Html.CheckBoxFor(model => model.Selected, htmlAttributes: new { @value = "01", @data_name = "check", @data_index=@idx })
     </td>
    
     <td class="text-left">
