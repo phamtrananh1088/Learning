@@ -28,9 +28,11 @@ namespace WinMacOs.Business.Services.Manager
         {
             var tablesSource = await GetAllTables(dapperSource);
             var tablesTarget = await GetAllTables(dapperTarger);
+            var dependenciesSource = await GetDependencies(dapperSource);
             var data = new SQLCompareModel()
             {
                 SQLTables = tablesSource,
+                SQLDependencies = dependenciesSource,
                 Source = ((SqlConnectionStringBuilder)connectionStringBuilderSource).DataSource,
                 DBNameSource = ((SqlConnectionStringBuilder)connectionStringBuilderSource).InitialCatalog,
                 Target = ((SqlConnectionStringBuilder)connectionStringBuilderTarget).DataSource,
@@ -53,7 +55,7 @@ namespace WinMacOs.Business.Services.Manager
                 tableSource.SQLIndexs = indexsSource;
                 tableSource.SQLDefaultConstraint = defaultConstraintsSource;
             }
-            
+
             var tableTarget = await GetTable(dapperTarger, schemaName, tableName);
             if (tableTarget != null)
             {
@@ -96,6 +98,46 @@ namespace WinMacOs.Business.Services.Manager
                 SQLScriptTarget = sQLScriptTarget
             };
             return data;
+        }
+
+        public async Task<string> GetSQLCreateObject(string type, string schemaName, string name)
+        {
+            string sql = "";
+            if (type.ToUpper().Trim() == "U")
+            {
+                SQLCompareModel model = await GetSQLScript(schemaName, name);
+                sql = !string.IsNullOrEmpty(model.SQLScriptSource) ? model.SQLScriptSource : model.SQLScriptTarget;
+            }
+            else if (type.ToUpper().Trim() == "P" || type.ToUpper().Trim() == "FN")
+            {
+                var sqlSource = await GetSQLObjectDefinition(dapperSource, type, schemaName, name);
+                var sqlTarget = await GetSQLObjectDefinition(dapperTarger, type, schemaName, name);
+                sql = !string.IsNullOrEmpty(sqlSource) ? sqlSource : sqlTarget;
+            }
+            return sql;
+        }
+
+        private async Task<string> GetSQLObjectDefinition(ISqlDapper dapper, string type, string schemaName, string name)
+        {
+            try
+            {
+                StringBuilder sqlbuilder = new StringBuilder();
+                sqlbuilder.AppendLine("SELECT  ");
+                sqlbuilder.AppendLine("       Object_definition(ob.object_id) sql ");
+                sqlbuilder.AppendLine("  FROM sys.all_objects ob ");
+                sqlbuilder.AppendLine("  JOIN sys.schemas sc ON ob.schema_id = sc.schema_id ");
+                sqlbuilder.AppendLine(" WHERE ob.[type] = @type ");
+                sqlbuilder.AppendLine("   AND ob.name = @name ");
+                sqlbuilder.AppendLine("   AND sc.name = @schemaName ");
+
+                var data = await dapper.QueryFirstAsync<string>(sqlbuilder.ToString(), new { type, schemaName, name });
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { }
         }
 
         private async Task<List<SQLTableModel>> GetAllTables(ISqlDapper dapper)
@@ -254,6 +296,34 @@ namespace WinMacOs.Business.Services.Manager
                 sqlbuilder.AppendLine(" GROUP BY ind.name, ind.type_desc, ind.is_unique ");
 
                 var data = await dapper.QueryListAsync<SQLIndexModel>(sqlbuilder.ToString(), new { schemaName, tableName });
+                return data.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally { }
+        }
+
+        private async Task<List<SQLDependencyModel>> GetDependencies(ISqlDapper dapper)
+        {
+            try
+            {
+                StringBuilder sqlbuilder = new StringBuilder();
+                sqlbuilder.AppendLine("SELECT DISTINCT ");
+                sqlbuilder.AppendLine("       ob.type Type ");
+                sqlbuilder.AppendLine("     , sc.name SchemaName ");
+                sqlbuilder.AppendLine("     , ob.name Name ");
+                sqlbuilder.AppendLine("     , ob2.type DepType ");
+                sqlbuilder.AppendLine("     , sc2.name DepSchemaName ");
+                sqlbuilder.AppendLine("     , ob2.name DepName ");
+                sqlbuilder.AppendLine("  FROM sys.sysdepends dep ");
+                sqlbuilder.AppendLine("  JOIN sys.all_objects ob ON dep.id = ob.object_id ");
+                sqlbuilder.AppendLine("  JOIN sys.schemas sc ON ob.schema_id = sc.schema_id ");
+                sqlbuilder.AppendLine("  JOIN sys.all_objects ob2 ON dep.depid = ob2.object_id ");
+                sqlbuilder.AppendLine("  JOIN sys.schemas sc2 ON ob2.schema_id = sc2.schema_id ");
+
+                var data = await dapper.QueryListAsync<SQLDependencyModel>(sqlbuilder.ToString(), new { });
                 return data.ToList();
             }
             catch (Exception ex)

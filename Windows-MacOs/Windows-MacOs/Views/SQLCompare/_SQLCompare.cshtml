@@ -3,7 +3,7 @@
     ViewBag.Title = "SQL Compare";
 }
 
-<div name="top-bar">
+<div name="top-bar" class="top-bar">
     <div class="row">
         <div class="col-md-4 text-left">
             <div style="display: inline-block">
@@ -86,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <div name="top-bar">
+        <div name="top-bar" class="top-bar">
             <div class="row">
                 <div class="col-md-6">
                     <div class="text-left" style="background-color: var(--grey-1); margin-right: -38px;">
@@ -226,12 +226,13 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div>Objects selected for deployment</div>
                                 <div data-bind="data.objectsSelected"></div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dependencies</div>
+                                @Html.EditorFor(model => model.SQLDependencies)
                             </div>
                             <div class="col-md-5">
                                 <div>Referencing or referenced by</div>

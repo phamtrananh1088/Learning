@@ -46,6 +46,13 @@
 }
 
 /*css*/
+body {
+    font-size: .8rem;
+}
+
+.top-bar {
+    font-size: 1rem;
+}
 .dark-0 {
     background-color: var(--black-2);
 }
@@ -153,8 +160,9 @@ i.fa-solid, i.fas {
 }
 
 .modal-deploy {
-    width: 1150px;
-    height: 730px;
+    width: 1280px;
+    height: 760px;
+    max-height: calc(100vh - 50px);
     padding: 0px 0px 10px 0px;
     border: solid 1px #609ED3;
     border-radius: 5px;
@@ -167,6 +175,7 @@ i.fa-solid, i.fas {
     .modal-deploy.fullscreen {
         width: 100vw;
         height: 100vh;
+        max-height: 100vh;
     }
 
 .dot-bar {
@@ -231,7 +240,7 @@ button.maximize, button.exit-full {
 
 .title-item {
     font-weight: bold;
-    font-size: 1.3rem;
+    font-size: .8rem;
     padding: 0 0 0 5px;
 }
 
@@ -324,6 +333,7 @@ button.maximize, button.exit-full {
 
 .dep-left {
     padding-left: 15px;
+    font-size: .8rem;
 }
 
 .dep-join {
@@ -395,7 +405,7 @@ button.maximize, button.exit-full {
     line-height: 28px;
     border-radius: 1px;
     padding: 0 2px;
-    font-size: 1rem;
+    font-size: .8rem;
 }
 
 .btn1 {
@@ -408,7 +418,21 @@ button.maximize, button.exit-full {
 
 .dep-right {
     display: none;
+    font-size: .7rem;
 }
     .dep-right.active {
         display: initial;
     }
+
+@media screen and (max-width: 1280px) {
+    .modal-deploy {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 768px) {
+    .scroll-y {
+        overflow-x: scroll;
+        overflow-y: scroll;
+        white-space: nowrap;
+    }
+}

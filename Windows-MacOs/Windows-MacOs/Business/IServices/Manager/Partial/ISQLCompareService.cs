@@ -13,5 +13,6 @@ namespace WinMacOs.Business.IServices.Manager
     {
        Task<SQLCompareModel> GetSQLCompareModel();
        Task<SQLCompareModel> GetSQLScript(string schemaName, string tableName);
+       Task<string> GetSQLCreateObject(string type, string schemaName, string name);
     }
 }

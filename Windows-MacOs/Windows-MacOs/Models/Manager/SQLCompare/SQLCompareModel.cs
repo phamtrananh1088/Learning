@@ -16,6 +16,11 @@ namespace WinMacOs.Models.Manager.SQLCompare
         /// </summary>
         [UIHint("SQLTables")]
         public List<SQLTableModel> SQLTables { get; set; }
+        /// <summary>
+        ///SQLTable.
+        /// </summary>
+        [UIHint("SQLDependencies")]
+        public List<SQLDependencyModel> SQLDependencies { get; set; }
 
         public string Source { get; set; }
         public string Target { get; set; }

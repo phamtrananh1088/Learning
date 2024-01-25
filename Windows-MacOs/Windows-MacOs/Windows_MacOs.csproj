@@ -374,6 +374,7 @@
     <Compile Include="Models\Manager\SQLCompare\SQLColumnModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLCompareModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLDefaultConstraint.cs" />
+    <Compile Include="Models\Manager\SQLCompare\SQLDependencyModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLTableModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLTypeModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\StatusEnum.cs" />
@@ -684,6 +685,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\SQLCompare\EditorTemplates\SQLScriptView.cshtml" />
+    <Content Include="Views\SQLCompare\EditorTemplates\SQLDependencies.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

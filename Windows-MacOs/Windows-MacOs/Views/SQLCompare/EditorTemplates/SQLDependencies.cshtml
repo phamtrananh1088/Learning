@@ -1,0 +1,14 @@
+﻿@model List<WinMacOs.Models.Manager.SQLCompare.SQLDependencyModel>
+
+@for (int i = 0; i < Model.Count(); i++)
+{
+
+    var name = $"[{Html.DisplayFor(model => Model[i].SchemaName)}],[{Html.DisplayFor(model => Model[i].Name)}]";
+    var depname = $"[{@Html.DisplayFor(model => Model[i].DepSchemaName)}].[{@Html.DisplayFor(model => Model[i].DepName)}]";
+    <a target="_blank" href="@Url.Action("GetSQLCreateObject","manager/SQLCompare", new { type=Model[i].Type, schemaName = Model[i].SchemaName, name = Model[i].Name })"><i class="fa-solid fa-arrow-left"></i>@name</a>
+    <span class="center">
+        @depname
+    </span>
+    <br />
+}
+

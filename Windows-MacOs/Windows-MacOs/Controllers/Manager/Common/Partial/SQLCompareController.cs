@@ -52,12 +52,27 @@ namespace WinMacOs.Controllers.Manager
         /// </summary>
         /// <param name="tableName">tableName.</param>
         /// <returns>ActionResult.</returns>
-        [Route("")]
         [Route("GetSQLScript")]
         public async Task<ActionResult> GetSQLScript(string schemaName, string tableName)
         {
             SQLCompareModel model = await Service.GetSQLScript(schemaName, tableName);
             return PartialView("EditorTemplates//SQLScriptView", model);
+        }
+
+        /// <summary>
+        /// GetSQLCreateObject.
+        /// </summary>
+        /// <param name="type">type.</param>
+        /// <param name="schemaName">schemaName.</param>
+        /// <param name="name">name.</param>
+        /// <returns>ActionResult.</returns>
+        [Route("GetSQLCreateObject")]
+        [HttpGet]
+        public async Task<ActionResult> GetSQLCreateObject(string type, string schemaName, string name)
+        {
+            string model = await Service.GetSQLCreateObject(type, schemaName, name);
+           
+            return File(Encoding.UTF8.GetBytes(model), "text/plain", $"[{schemaName}].[{name}].sql");
         }
 
     }
