@@ -94,7 +94,7 @@ namespace WinMacOs.Controllers.Manager
         {
             string model = await Service.GetSQLCreateObject(type, schemaName, name);
             //return Content(model, "text/plain", Encoding.UTF8);
-            return PartialView("~/Views/Viewer/EditorTemplates/ViewFile.cshtml", Content(model, "text/plain", Encoding.UTF8));
+            return PartialView("~/Views/Viewer/EditorTemplates/ViewFile.cshtml", new Models.Viewer.MimeContentResultModel() { Content = model,ContentType = "text/plain", ContentEncoding = Encoding.UTF8, FileName = $"[{schemaName}].[{name}].sql" });
         }
     }
 }

@@ -387,6 +387,7 @@
     <Compile Include="Models\Manager\SQLCompare\StatusEnum.cs" />
     <Compile Include="Models\Manager\SQLCompare\StepEnum.cs" />
     <Compile Include="Models\MenuModel.cs" />
+    <Compile Include="Models\Viewer\MimeContentResultModel.cs" />
     <Compile Include="Resources\Messages.Designer.cs" />
     <Compile Include="Utility\Attributes\Check\MaxLengthExAttribute.cs" />
     <Compile Include="Models\LoginUser.cs" />

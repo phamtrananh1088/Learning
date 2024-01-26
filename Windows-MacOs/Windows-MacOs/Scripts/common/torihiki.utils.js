@@ -8673,6 +8673,40 @@ var TorihikiUtils = {
             TorihikiUtils.hideLoading();
         }
     },
+
+    downloadNormal: function (blob, fileName) {
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        return true
+    },
+
+    saveFileDownload: async function (data, fileName, contentType = '') {
+        let blob = data
+        if (contentType !== '') {
+            blob = TorihikiUtils.base64ToBlob(data, contentType)
+        }
+        if (window.location.protocol == 'https:') {
+            const fileHandle = await window.showSaveFilePicker({
+                suggestedName: fileName
+            }).catch(ex => {
+                return TorihikiUtils.downloadNormal(blob, fileName)
+            })
+            if (fileHandle) {
+                const fileStream = await fileHandle.createWritable()
+                await fileStream.write(blob)
+                await fileStream.close()
+                return true
+            }
+            return false
+        } else {
+            return TorihikiUtils.downloadNormal(blob, fileName)
+        }
+    },
     /**
      * 印刷プレビュー（サーバ戻る結果はバイナリ）
      * @param {any} options
