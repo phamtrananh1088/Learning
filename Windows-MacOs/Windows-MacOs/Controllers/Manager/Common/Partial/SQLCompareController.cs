@@ -26,14 +26,14 @@ using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 
 namespace WinMacOs.Controllers.Manager
- {
+{
     [RoutePrefix("manager/SQLCompare")]
     public partial class SQLCompareController
     {
         public SQLCompareController(
-               ISQLCompareService loginService
+               ISQLCompareService service
               )
-          : base(loginService)
+          : base(service)
         {
         }
 
@@ -70,10 +70,31 @@ namespace WinMacOs.Controllers.Manager
         [HttpGet]
         public async Task<ActionResult> GetSQLCreateObject(string type, string schemaName, string name)
         {
-            string model = await Service.GetSQLCreateObject(type, schemaName, name);
-           
-            return File(Encoding.UTF8.GetBytes(model), "text/plain", $"[{schemaName}].[{name}].sql");
+            if (AppSetting.ViewerFileDownload)
+            {
+                return RedirectToAction("Index", "viewer", new { file = Url.Action("ViewFile", "manager/SQLCompare", new { type, schemaName, name }) });
+            }
+            else
+            {
+                string model = await Service.GetSQLCreateObject(type, schemaName, name);
+                return File(Encoding.UTF8.GetBytes(model), "text/plain", $"[{schemaName}].[{name}].sql");
+            }
         }
 
+        /// <summary>
+        /// ViewFile.
+        /// </summary>
+        /// <param name="type">type.</param>
+        /// <param name="schemaName">schemaName.</param>
+        /// <param name="name">name.</param>
+        /// <returns>ActionResult.</returns>
+        [Route("ViewFile")]
+        [HttpGet]
+        public async Task<ActionResult> ViewFile(string type, string schemaName, string name)
+        {
+            string model = await Service.GetSQLCreateObject(type, schemaName, name);
+            //return Content(model, "text/plain", Encoding.UTF8);
+            return PartialView("~/Views/Viewer/EditorTemplates/ViewFile.cshtml", Content(model, "text/plain", Encoding.UTF8));
+        }
     }
 }

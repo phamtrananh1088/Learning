@@ -76,12 +76,19 @@ namespace WinMacOs.Utility.Utils
             }
         }
 
-        public static string TokenHeaderName = "Authorization";
+        public static readonly string TokenHeaderName = "Authorization";
 
         public static int TokenCount { 
          get
             {
                 return (ConfigurationManager.AppSettings["TokenCount"] ?? "5").GetInt();
+            }
+        }
+        public static bool ViewerFileDownload
+        {
+            get
+            {
+                return string.IsNullOrEmpty(ConfigurationManager.AppSettings["ViewerFileDownload"]) ? false : Convert.ToBoolean(ConfigurationManager.AppSettings["ViewerFileDownload"]);
             }
         }
 

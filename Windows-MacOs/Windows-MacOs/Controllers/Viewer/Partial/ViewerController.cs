@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WinMacOs.ActionFilter;
-using WinMacOs.Business.IServices.Manager;
+using WinMacOs.Business.IServices.Viewer;
 using WinMacOs.DataRepository.IRepositories;
 using WinMacOs.DataRepository.Utilities;
 using WinMacOs.Models;
 using WinMacOs.Models.Enums;
-using WinMacOs.Models.Manager.Canvas;
+using WinMacOs.Models.Manager.SQLCompare;
 using WinMacOs.Utility.DomainModels;
 using WinMacOs.Utility.Extensions;
 using WinMacOs.Utility.PInvoke.CommonModels;
@@ -25,13 +25,13 @@ using WinMacOs.Utility.SystemModels;
 using WinMacOs.Utility.TableModels;
 using WinMacOs.Utility.Utils;
 
-namespace WinMacOs.Controllers.Manager
- {
-    [RoutePrefix("manager/canvas")]
-    public partial class CanvasController
+namespace WinMacOs.Controllers.Viewer
+{
+    [RoutePrefix("viewer")]
+    public partial class ViewerController
     {
-        public CanvasController(
-               ICanvasService service
+        public ViewerController(
+               IViewerService service
               )
           : base(service)
         {
@@ -41,14 +41,8 @@ namespace WinMacOs.Controllers.Manager
         [Route("index")]
         public async Task<ActionResult> Index()
         {
-            CanvasModel model = await Service.GetCanvasModel();
-            return View(model);
-        }
-
-        [HttpPost, Route("DrawLine"), AllowAnonymous]
-        public async Task<ActionResult> DrawLine()
-        {
-            return Json(await Service.DrawLine());
+            ViewBag.Title = "Viewer";
+            return await Task.Run(()=> View());
         }
 
     }

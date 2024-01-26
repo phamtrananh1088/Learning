@@ -44,9 +44,14 @@ namespace WinMacOs
                         "~/Scripts/Pages/manager/canvas.js"));
             bundles.Add(new ScriptBundle("~/bundles/manager/sqlcompare").Include(
                         "~/Scripts/Pages/manager/sqlcompare.js"));
+            bundles.Add(new ScriptBundle("~/bundles/viewer").Include(
+                       "~/Scripts/Pages/viewer/viewer.js"));
 
             bundles.Add(new StyleBundle("~/css/manager/sqlcompare").Include(
                  "~/Content/pages/manager/sqlcompare.css"));
+            bundles.Add(new StyleBundle("~/css/viewer").Include(
+                "~/Content/pages/viewer/viewer.css"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(

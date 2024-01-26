@@ -75,6 +75,7 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -312,6 +313,8 @@
     <Compile Include="Business\IServices\Reafs_W\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\ICommonService.cs" />
     <Compile Include="Business\IServices\Reafs_T\Common\Partial\ICommonService.cs" />
+    <Compile Include="Business\IServices\Viewer\IViewerService.cs" />
+    <Compile Include="Business\IServices\Viewer\Partial\IViewerService.cs" />
     <Compile Include="Business\Services\Manager\CanvasService.cs" />
     <Compile Include="Business\Services\Manager\Partial\CanvasService.cs" />
     <Compile Include="Business\Services\Manager\Partial\SQLCompareService.cs" />
@@ -322,6 +325,8 @@
     <Compile Include="Business\Services\Reafs_T\Common\Partial\LoginService.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\TD00001\TD00001Service.cs" />
     <Compile Include="Business\Services\Reafs_T\Common\TD00001\Partial\TD00001Service.cs" />
+    <Compile Include="Business\Services\Viewer\Partial\ViewerService.cs" />
+    <Compile Include="Business\Services\Viewer\ViewerService.cs" />
     <Compile Include="Controllers\Manager\Common\Partial\SQLCompareController.cs" />
     <Compile Include="Controllers\Manager\Common\SQLCompareController.cs" />
     <Compile Include="Controllers\Reafs_T\Common\TD00001\TD00001Controller.cs" />
@@ -343,6 +348,8 @@
     <Compile Include="Controllers\Reafs_T\Common\Partial\LoginController.cs" />
     <Compile Include="Controllers\Reafs_T\Partial\Reafs_TController.cs" />
     <Compile Include="Controllers\Reafs-W\Reafs_WController.cs" />
+    <Compile Include="Controllers\Viewer\Partial\ViewerController.cs" />
+    <Compile Include="Controllers\Viewer\ViewerController.cs" />
     <Compile Include="DataRepository\AutofacManager\AutofacContainerModule.cs" />
     <Compile Include="DataRepository\AutofacManager\AutofacContainerModuleExtension.cs" />
     <Compile Include="DataRepository\BaseProvider\IRepository.cs" />
@@ -474,6 +481,7 @@
     <Compile Include="Utility\Utils\Credentials.cs" />
     <Compile Include="Utility\Utils\DataBaseType.cs" />
     <Compile Include="Utility\Utils\EntityAttribute.cs" />
+    <Compile Include="Utility\Utils\JapaneseConverter.cs" />
     <Compile Include="Utility\Utils\JwtHelper.cs" />
     <Compile Include="Utility\Utils\PassWordHelper.cs" />
     <Compile Include="Utility\Utils\RouteUtils.cs" />
@@ -492,6 +500,7 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Pages\Manager\sqlcompare.css" />
+    <Content Include="Content\Pages\Viewer\viewer.css" />
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -564,6 +573,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\Pages\Manager\sqlcompare.js" />
     <Content Include="Scripts\Pages\Manager\canvas.js" />
+    <Content Include="Scripts\Pages\Viewer\viewer.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
@@ -686,6 +696,11 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\SQLCompare\EditorTemplates\SQLScriptView.cshtml" />
     <Content Include="Views\SQLCompare\EditorTemplates\SQLDependencies.cshtml" />
+    <Content Include="Views\Viewer\Shared\_Layout.cshtml" />
+    <Content Include="Views\Viewer\Index.cshtml" />
+    <Content Include="Views\Viewer\_ViewStart.cshtml" />
+    <Content Include="Views\Viewer\_Viewer.cshtml" />
+    <Content Include="Views\Viewer\EditorTemplates\ViewFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
