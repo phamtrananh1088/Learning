@@ -46,6 +46,11 @@
 }
 
 /*css*/
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
 body {
     font-size: .8rem;
 }
@@ -408,13 +413,29 @@ button.maximize, button.exit-full {
 }
 
 .btn.small {
-    margin: 1px;
+    margin: 2px 2px;
     height: 30px;
     letter-spacing: normal;
     line-height: 28px;
     border-radius: 1px;
     padding: 0 2px;
     font-size: .8rem;
+}
+
+.btn.tiny {
+    margin: 2px 1px;
+    min-width: 16px;
+    height: 22px;
+    letter-spacing: normal;
+    line-height: 18px;
+    border-radius: 2px;
+    padding: 2px 6px 0;
+    font-size: .6rem;
+    box-shadow: none;
+}
+.toolbarButton {
+    width: 28px;
+    height: 28px;
 }
 
 .btn1 {
@@ -424,6 +445,10 @@ button.maximize, button.exit-full {
 .btn2 {
     background: var(--grey-2);
 }
+
+    .btn2.bg-transparent:hover {
+        background: var(--grey-2) !important;
+    }
 
 .dep-right {
     display: none;

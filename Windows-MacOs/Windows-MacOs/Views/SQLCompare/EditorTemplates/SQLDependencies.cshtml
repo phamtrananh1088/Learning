@@ -5,7 +5,21 @@
 
     var name = $"[{Html.DisplayFor(model => Model[i].SchemaName)}],[{Html.DisplayFor(model => Model[i].Name)}]";
     var depname = $"[{@Html.DisplayFor(model => Model[i].DepSchemaName)}].[{@Html.DisplayFor(model => Model[i].DepName)}]";
-    <a target="_blank" href="@Url.Action("GetSQLCreateObject","manager/SQLCompare", new { type=Model[i].Type, schemaName = Model[i].SchemaName, name = Model[i].Name })"><i class="fa-solid fa-arrow-left"></i>@name</a>
+    <a target="_blank" href="@Url.Action("GetSQLCreateObject","manager/SQLCompare", new { type=Model[i].Type, schemaName = Model[i].SchemaName, name = Model[i].Name })">
+        @if (Model[i].Type.ToUpper().Trim() == "P")
+        {
+            <i class="fa-solid fa-pen-to-square"></i>
+        }
+        else if (Model[i].Type.ToUpper().Trim() == "FN")
+        {
+            <i class="fa-solid fa-pen-fancy"></i>
+        }
+        else
+        {
+            <i class="fa-solid fa-table"></i>
+        }
+        @name
+    </a>
     <span class="center">
         @depname
     </span>

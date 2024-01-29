@@ -33,10 +33,17 @@ var sqlcompare01 = {
         set objectsSelected(v) {
             this.#targetProxy.objectsSelected = v;
         };
+        get depAllDependencies() {
+            return this.#data["#depAllDependencies"];
+        };
+        set depAllDependencies(v) {
+            this.#targetProxy.depAllDependencies = v;
+        };
     },
     _data: {
         countRowSelected: 0,
-        objectsSelected: []
+        objectsSelected: [],
+        depAllDependencies: false
     }
     , data: undefined,
 
@@ -225,6 +232,10 @@ var sqlcompare01 = {
         $("#btnDepCancel").click(function () {
             $("#popCloseIcon").click();
         });
+
+        $("#chkdepAllDependencies").click(function () {
+            self.data.depAllDependencies = this.checked
+        });
         $(document).bind("datachange", function (evt) {
             if (Array.isArray(evt.detail.newValue)) {
                 var li = [];
@@ -232,10 +243,14 @@ var sqlcompare01 = {
                     li.push(`<div key="${v.key}">[${v.SchemaName}].[${v.Name}]</div>`)
                 });
                 $(`*[data-bind='data.${evt.detail.property}']`).html(li.join(""));
+            } else if ($(`*[data-bind='data.${evt.detail.property}']`).prop('nodeName') === 'input') {
+                if ($(`*[data-bind='data.${evt.detail.property}']`).prop('type') === 'checkbox') {
+                    $(`*[data-bind='data.${evt.detail.property}']`).prop('checked', evt.detail.newValue);
+                }
             } else {
                 $(`*[data-bind='data.${evt.detail.property}']`).text(evt.detail.newValue);
             }
-            
+
         });
     },
     start: function () {
