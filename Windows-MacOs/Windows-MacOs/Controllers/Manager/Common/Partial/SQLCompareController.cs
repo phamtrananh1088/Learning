@@ -60,6 +60,19 @@ namespace WinMacOs.Controllers.Manager
         }
 
         /// <summary>
+        /// GetSQLDependencies.
+        /// </summary>
+        /// <param name="SQLObjects">List<SQLObjectModel>.</param>
+        /// <returns>ActionResult.</returns>
+        [Route("GetSQLDependencies")]
+        [HttpPost]
+        public async Task<ActionResult> GetSQLDependencies(List<SQLObjectModel> SQLObjects)
+        {
+            List<SQLDependencyModel> model = await Service.GetSQLDependencies(SQLObjects);
+            return PartialView("EditorTemplates//SQLDependencies", model);
+        }
+
+        /// <summary>
         /// GetSQLCreateObject.
         /// </summary>
         /// <param name="type">type.</param>

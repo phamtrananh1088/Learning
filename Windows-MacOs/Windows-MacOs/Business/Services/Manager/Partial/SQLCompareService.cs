@@ -100,6 +100,12 @@ namespace WinMacOs.Business.Services.Manager
             return data;
         }
 
+        public async Task<List<SQLDependencyModel>> GetSQLDependencies(List<SQLObjectModel> SQLObjects)
+        {
+            var data = SQLObjects == null ? new List<SQLDependencyModel>() : (await GetDependencies(dapperSource)).Where(x => SQLObjects.Any(y => y.Name == x.Name && y.SchemaName == x.SchemaName) || SQLObjects.Any(y => y.Name == x.DepName && y.SchemaName == x.DepSchemaName)).ToList();
+            return data;
+        }
+
         public async Task<string> GetSQLCreateObject(string type, string schemaName, string name)
         {
             string sql = "";

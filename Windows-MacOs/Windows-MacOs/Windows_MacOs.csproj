@@ -382,6 +382,7 @@
     <Compile Include="Models\Manager\SQLCompare\SQLCompareModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLDefaultConstraint.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLDependencyModel.cs" />
+    <Compile Include="Models\Manager\SQLCompare\SQLObjectModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLTableModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\SQLTypeModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\StatusEnum.cs" />

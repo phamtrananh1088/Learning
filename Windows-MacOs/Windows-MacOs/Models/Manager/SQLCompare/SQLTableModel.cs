@@ -15,7 +15,7 @@ namespace WinMacOs.Models.Manager.SQLCompare
         {
             get
             {
-                return "Table";
+                return "U ";
             }
         }
         [Required]

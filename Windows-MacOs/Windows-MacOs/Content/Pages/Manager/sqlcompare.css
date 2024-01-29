@@ -53,6 +53,7 @@ body {
 .top-bar {
     font-size: 1rem;
 }
+
 .dark-0 {
     background-color: var(--black-2);
 }
@@ -324,12 +325,16 @@ button.maximize, button.exit-full {
     column-gap: 11px;
 }
 
-
 .dep-content {
     padding: 20px;
     font-size: .8rem;
+    max-height: 100%;
 }
 
+    .dep-content #rowSQLDependencies {
+        height: 56vh;
+        overflow-y: scroll;
+    }
 
 .dep-left {
     padding-left: 15px;
@@ -383,15 +388,19 @@ button.maximize, button.exit-full {
     border: 1px solid #413e3e3d;
     padding: 0 4px;
 }
+
 .dep-input-grwap .flex > div:first-child {
     flex-basis: 100px;
 }
+
 .dep-input-grwap {
     margin-top: 4px;
 }
+
 .details {
     margin-left: 4px;
 }
+
 .dep-footer {
     background-color: var(--grey-2);
     height: 34px;
@@ -420,6 +429,7 @@ button.maximize, button.exit-full {
     display: none;
     font-size: .7rem;
 }
+
     .dep-right.active {
         display: initial;
     }
@@ -429,6 +439,7 @@ button.maximize, button.exit-full {
         width: 100%;
     }
 }
+
 @media screen and (max-width: 768px) {
     .scroll-y {
         overflow-x: scroll;

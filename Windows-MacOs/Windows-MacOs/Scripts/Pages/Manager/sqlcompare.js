@@ -73,8 +73,9 @@ var sqlcompare01 = {
                 var index = $(li[i]).data("index")
                 var data = {
                     key: index,
-                    schemaName: $(`#SQLTables_${index}__SchemaName`).val(),
-                    tableName: $(`#SQLTables_${index}__TableName`).val()
+                    Type: "U ",
+                    SchemaName: $(`#SQLTables_${index}__SchemaName`).val(),
+                    Name: $(`#SQLTables_${index}__TableName`).val()
                 }
                 objectsSelected.push(data);
             }
@@ -133,6 +134,7 @@ var sqlcompare01 = {
 
         $("#btnDeploy").click(function () {
             $('#DeployModal').modal({ backdrop: 'static', keyboard: false });
+            $(".row.dep-row[data-index='1']").click();
         });
 
         $("#popMaximizeDeploy").click(function () {
@@ -195,6 +197,16 @@ var sqlcompare01 = {
                 case 1:
                     break;
                 case 2:
+                    TorihikiUtils.ajaxEx({
+                        url: getSQLDependencies,
+                        data: { SQLObjects: self.data.objectsSelected },
+                        success: function (data) {
+                            $('#SQLDependencies').html(data);
+                        },
+                        complete: function () {
+                            TorihikiUtils.hideLoading();
+                        }
+                    });
                     break;
                 case 3:
                     break;
@@ -217,7 +229,7 @@ var sqlcompare01 = {
             if (Array.isArray(evt.detail.newValue)) {
                 var li = [];
                 evt.detail.newValue.map((v) => {
-                    li.push(`<div key="${v.key}">[${v.schemaName}].[${v.tableName}]</div>`)
+                    li.push(`<div key="${v.key}">[${v.SchemaName}].[${v.Name}]</div>`)
                 });
                 $(`*[data-bind='data.${evt.detail.property}']`).html(li.join(""));
             } else {
