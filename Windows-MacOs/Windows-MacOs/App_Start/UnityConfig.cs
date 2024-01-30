@@ -17,6 +17,8 @@ using System.Reflection;
 using Unity.Lifetime;
 using Microsoft.Extensions.Caching.Distributed;
 using WinMacOs.Utility.CacheManager.Sevice;
+using WinMacOs.Business.IServices.Dual;
+using WinMacOs.Business.Services.Dual;
 
 namespace WinMacOs
 {
@@ -36,6 +38,8 @@ namespace WinMacOs
             container.RegisterType<Reafs_WIServices.ICommonService, Reafs_WServices.CommonService>();
             container.RegisterType<ManagerIServices.ICanvasService, ManagerServices.CanvasService>();
             container.RegisterType<ManagerIServices.ISQLCompareService, ManagerServices.SQLCompareService>();
+            container.RegisterType<IDualService, DualService>();
+            container.RegisterType<IEnDualService, EnDualService>();
             container.RegisterType<IUnitOfWork, UnitOfWork>();
 
             container.RegisterType<ICacheService, DistributedCacheService>(new SingletonLifetimeManager());

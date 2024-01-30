@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Dual";
+}
+
+<div name="content" class="content col-flex">
+    <div class="wrapped border-1" id="toolbarContainer" style="flex: 0;">
+        <div class="flex title" style="height: 100%;">
+            <div class="dot-bar bg-fa-wand-magic-sparkles">
+            </div>
+            <a class="btn btn2 tiny bg-transparent toolbarButton" href="javascript:void(0)" id="btnOpen"><i class="fa-solid fa-floppy-disk"></i></a>
+        </div>
+    </div>
+    <div class="resizer-y" id="btnResizer"></div>
+    <div class="wrapped border-2 scroll-y" style="flex: 1;">
+        <div class="row">
+            <div class="col-md-12" id="viewdata">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var indexUrl = '@Url.Action("index", "dual/en")'
+    $(document).ready(function () {
+        $("#btnOpen").click(function () {
+            TorihikiUtils.ajaxEx({
+                method: 'get',
+                url: indexUrl,
+                data: null,
+                success: function (data) {
+                    $('#viewdata').html(data);
+                },
+                complete: function () {
+                    TorihikiUtils.hideLoading();
+                }
+            });
+        });
+
+    });
+</script>
+<style>
+</style>
+

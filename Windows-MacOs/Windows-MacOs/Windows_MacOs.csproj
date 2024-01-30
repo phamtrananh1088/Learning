@@ -299,6 +299,10 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Business\Filters\AuthorizationResponse.cs" />
     <Compile Include="Business\Filters\JWTAuthorizeAttribute.cs" />
+    <Compile Include="Business\IServices\Dual\En\IEnDualService.cs" />
+    <Compile Include="Business\IServices\Dual\En\Partial\IEnDualService.cs" />
+    <Compile Include="Business\IServices\Dual\IDualService.cs" />
+    <Compile Include="Business\IServices\Dual\Partial\IDualService.cs" />
     <Compile Include="Business\IServices\Manager\ICanvasService.cs" />
     <Compile Include="Business\IServices\Manager\ISQLCompareService.cs" />
     <Compile Include="Business\IServices\Manager\Partial\ICanvasService.cs" />
@@ -315,6 +319,10 @@
     <Compile Include="Business\IServices\Reafs_T\Common\Partial\ICommonService.cs" />
     <Compile Include="Business\IServices\Viewer\IViewerService.cs" />
     <Compile Include="Business\IServices\Viewer\Partial\IViewerService.cs" />
+    <Compile Include="Business\Services\Dual\En\EnDualService.cs" />
+    <Compile Include="Business\Services\Dual\En\Partial\EnDualService.cs" />
+    <Compile Include="Business\Services\Dual\Partial\DualService.cs" />
+    <Compile Include="Business\Services\Dual\DualService.cs" />
     <Compile Include="Business\Services\Manager\CanvasService.cs" />
     <Compile Include="Business\Services\Manager\Partial\CanvasService.cs" />
     <Compile Include="Business\Services\Manager\Partial\SQLCompareService.cs" />
@@ -327,6 +335,10 @@
     <Compile Include="Business\Services\Reafs_T\Common\TD00001\Partial\TD00001Service.cs" />
     <Compile Include="Business\Services\Viewer\Partial\ViewerService.cs" />
     <Compile Include="Business\Services\Viewer\ViewerService.cs" />
+    <Compile Include="Controllers\Dual\En\EnDualController.cs" />
+    <Compile Include="Controllers\Dual\En\Partial\EnDualController.cs" />
+    <Compile Include="Controllers\Dual\Partial\DualController.cs" />
+    <Compile Include="Controllers\Dual\DualController.cs" />
     <Compile Include="Controllers\Manager\Common\Partial\SQLCompareController.cs" />
     <Compile Include="Controllers\Manager\Common\SQLCompareController.cs" />
     <Compile Include="Controllers\Reafs_T\Common\TD00001\TD00001Controller.cs" />
@@ -374,6 +386,7 @@
     <Compile Include="DataRepository\Repositories\Unit\S016Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\S018Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\SrtRepository.cs" />
+    <Compile Include="Models\Dual\En\EnDualModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasMenuModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\ModelHelper.cs" />
@@ -501,6 +514,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Pages\Dual\dual.css" />
+    <Content Include="Content\Pages\Dual\En\en.css" />
     <Content Include="Content\Pages\Manager\sqlcompare.css" />
     <Content Include="Content\Pages\Viewer\viewer.css" />
     <Content Include="Content\Site.css" />
@@ -573,6 +588,8 @@
     <Content Include="Scripts\knockout.validation.min.js" />
     <Content Include="Scripts\master\GetMessages.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Pages\Dual\En\en.js" />
+    <Content Include="Scripts\Pages\Dual\dual.js" />
     <Content Include="Scripts\Pages\Manager\sqlcompare.js" />
     <Content Include="Scripts\Pages\Manager\canvas.js" />
     <Content Include="Scripts\Pages\Viewer\viewer.js" />
@@ -703,6 +720,11 @@
     <Content Include="Views\Viewer\_ViewStart.cshtml" />
     <Content Include="Views\Viewer\_Viewer.cshtml" />
     <Content Include="Views\Viewer\EditorTemplates\ViewFile.cshtml" />
+    <Content Include="Views\Dual\EditorTemplates\En.cshtml" />
+    <Content Include="Views\Dual\Shared\_Layout.cshtml" />
+    <Content Include="Views\Dual\_Dual.cshtml" />
+    <Content Include="Views\Dual\_ViewStart.cshtml" />
+    <Content Include="Views\Dual\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
