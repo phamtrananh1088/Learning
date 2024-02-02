@@ -1,0 +1,91 @@
+﻿@model WinMacOs.Models.Manager.Canvas.CanvasMenuModel
+@{
+    Layout = null;
+    var idx = ViewBag.idx;
+    var id = ViewBag.id;
+    var index = ViewBag.index;
+}
+<tr>
+    <td class="is-centered menu" style="position:relative;" data-group-index="@index" data-index="@idx">
+        <div class="row" style="column-gap: 20px; margin-left: 15px; margin-right: 15px;">
+            <div id="menu-@id" class="menuName">
+                @Html.DisplayFor(model => model.MenuName)
+            </div>
+            <div class="shortcut">
+                @Html.DisplayFor(model => model.ShortCutView)
+            </div>
+        </div>
+        <nav id="nav-@id">
+            <div class="listMenu">
+                @if (Model.SubMenus != null)
+                {
+                    @Html.EditorFor(model => model.SubMenus, new { idx = idx, id = id })
+                }
+            </div>
+        </nav>
+    </td>
+</tr>
+<script>
+    $(document).ready(function () {
+        var btn1 = document.getElementById(`menu-@id`);
+        var nav = document.getElementById(`nav-@id`);
+        var cover = document.getElementById('cover');
+
+        btn1.addEventListener('click', () => {
+            btn1.classList.toggle('open-menu');
+            nav.classList.toggle('open-menu');
+            cover.classList.toggle("open-cover");
+        });
+
+
+        $(document).mouseup(function (e) {
+            if ($(e.target).closest(".open-menu").length === 0) {
+                if (nav.classList.contains("open-menu")) {
+                    btn1.classList.toggle('open-menu');
+                    nav.classList.toggle('open-menu');
+                    cover.classList.toggle("open-cover");
+                }
+            }
+        });
+
+    });
+</script>
+<style>
+    .menu {
+        border: none;
+        cursor: pointer;
+        color: #fff;
+    }
+
+        .menu:hover {
+            background-color: #15539e;
+        }
+
+    .menuName {
+        text-align: left;
+    }
+
+    .shortcut {
+        text-align: right;
+        flex-grow: 1;
+    }
+
+    .menuName.open-menu {
+        color: #3584bc;
+    }
+
+    .menu nav.open-menu {
+        width: auto;
+    }
+
+    .menu > nav {
+        position: absolute;
+        z-index: 100;
+        top: 25px;
+        left: 0;
+        overflow-x: hidden;
+        text-align: left;
+        width: 0;
+        transition: .5s;
+    }
+</style>

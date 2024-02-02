@@ -42,6 +42,8 @@ namespace WinMacOs
             // View JS
             bundles.Add(new ScriptBundle("~/bundles/manager/canvas").Include(
                         "~/Scripts/Pages/manager/canvas.js"));
+            bundles.Add(new ScriptBundle("~/bundles/manager/notebookelementary").Include(
+                       "~/Scripts/Pages/manager/notebookelementary.js"));
             bundles.Add(new ScriptBundle("~/bundles/manager/sqlcompare").Include(
                         "~/Scripts/Pages/manager/sqlcompare.js"));
             bundles.Add(new ScriptBundle("~/bundles/viewer").Include(
@@ -50,7 +52,9 @@ namespace WinMacOs
                        "~/Scripts/Pages/dual/dual.js"));
             bundles.Add(new ScriptBundle("~/bundles/dual/en").Include(
                        "~/Scripts/Pages/dual/en/en.js"));
-
+            // CSS
+            bundles.Add(new StyleBundle("~/css/manager/notebookelementary").Include(
+                 "~/Content/pages/manager/notebookelementary.css"));
             bundles.Add(new StyleBundle("~/css/manager/sqlcompare").Include(
                  "~/Content/pages/manager/sqlcompare.css"));
             bundles.Add(new StyleBundle("~/css/viewer").Include(

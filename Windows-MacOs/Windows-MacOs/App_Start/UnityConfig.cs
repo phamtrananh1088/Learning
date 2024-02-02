@@ -37,6 +37,7 @@ namespace WinMacOs
             container.RegisterType<Reafs_TIServices.ITD00001Service, Reafs_TServices.TD00001Service>();
             container.RegisterType<Reafs_WIServices.ICommonService, Reafs_WServices.CommonService>();
             container.RegisterType<ManagerIServices.ICanvasService, ManagerServices.CanvasService>();
+            container.RegisterType<ManagerIServices.INoteBookElementaryService, ManagerServices.NoteBookElementaryService>();
             container.RegisterType<ManagerIServices.ISQLCompareService, ManagerServices.SQLCompareService>();
             container.RegisterType<IDualService, DualService>();
             container.RegisterType<IEnDualService, EnDualService>();

@@ -1,0 +1,49 @@
+﻿@{
+    @model WinMacOs.Models.Manager.NoteBookElementary.NoteBookElementaryModel
+    ViewBag.Title = "NoteBookElementary";
+}
+
+<div name="content" class="content col-flex">
+    <div class="wrapped border-1" id="toolbarContainer" style="flex: 0;">
+        <div class="flex title" style="height: 100%;">
+            <div class="dot-bar bg-fa-wand-magic-sparkles">
+            </div>
+            <a class="btn btn2 small" href="javascript:void(0)" id="btnBackPage"><i class="fa-solid fa-arrow-left"></i>Back</a>
+            @Html.TextBoxFor(model => model.CurrentPage, new { @class = "tcc-input-number item tcc-input-page-number", @maxlength = "4", @size = "4" })
+            &nbsp;of&nbsp;@Html.DisplayFor(model => model.TotalPage)
+            <a class="btn btn1 small" href="javascript:void(0)" id="btnNextPage"><i class="fa-solid fa-arrow-right"></i>Next</a>
+            <div class="dot-bar bg-fa-wand-magic-sparkles">
+            </div>
+        </div>
+    </div>
+    <div class="resizer-y" id="btnResizer"></div>
+    <div class="wrapped border-2 scroll-y" style="flex: 1;">
+        <div class="row">
+            <div class="col-md-12" id="viewdata">
+                <div id="viewContent" style="background: #d1d1d1;display: initial;/* flex-wrap: wrap; */">
+                    <div class="" style="margin: auto; position: relative;">
+                        <div class="a4LandScape" style="position: absolute; box-sizing: content-box; border: 1px solid #d3d3d3; background: transparent; top: 48px; z-index: 3; ">
+                            <canvas id="myCanvas" width="1122" height="793" style="background: transparent;">
+                                YourbrowserdoesnotsupporttheHTML5canvastag.
+                            </canvas>
+                        </div>
+                        <div class="a4LandScape" style="position: absolute; box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 2;">
+                            <div id="myContent" class="a4LandScape" style="background: white;">
+                            </div>
+                        </div>
+                        <div class="a4LandScape" style="position: absolute;box-sizing: content-box; border: 1px solid transparent; top: 48px; z-index: 1; visibility: hidden;">
+                            <svg id="mySVG" width="1122" height="793" version="1.1" xmlns="http://www.w3.org/2000/svg" style="background: white;">
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+<style>
+</style>

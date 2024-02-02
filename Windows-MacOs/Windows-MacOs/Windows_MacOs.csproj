@@ -303,8 +303,10 @@
     <Compile Include="Business\IServices\Dual\En\Partial\IEnDualService.cs" />
     <Compile Include="Business\IServices\Dual\IDualService.cs" />
     <Compile Include="Business\IServices\Dual\Partial\IDualService.cs" />
+    <Compile Include="Business\IServices\Manager\INoteBookElementaryService.cs" />
     <Compile Include="Business\IServices\Manager\ICanvasService.cs" />
     <Compile Include="Business\IServices\Manager\ISQLCompareService.cs" />
+    <Compile Include="Business\IServices\Manager\Partial\INoteBookElementaryService.cs" />
     <Compile Include="Business\IServices\Manager\Partial\ICanvasService.cs" />
     <Compile Include="Business\IServices\Manager\Partial\ISQLCompareService.cs" />
     <Compile Include="Business\IServices\Reafs-R-Web\Common\ICommonService.cs" />
@@ -323,7 +325,9 @@
     <Compile Include="Business\Services\Dual\En\Partial\EnDualService.cs" />
     <Compile Include="Business\Services\Dual\Partial\DualService.cs" />
     <Compile Include="Business\Services\Dual\DualService.cs" />
+    <Compile Include="Business\Services\Manager\NoteBookElementaryService.cs" />
     <Compile Include="Business\Services\Manager\CanvasService.cs" />
+    <Compile Include="Business\Services\Manager\Partial\NoteBookElementaryService.cs" />
     <Compile Include="Business\Services\Manager\Partial\CanvasService.cs" />
     <Compile Include="Business\Services\Manager\Partial\SQLCompareService.cs" />
     <Compile Include="Business\Services\Manager\SQLCompareService.cs" />
@@ -339,6 +343,8 @@
     <Compile Include="Controllers\Dual\En\Partial\EnDualController.cs" />
     <Compile Include="Controllers\Dual\Partial\DualController.cs" />
     <Compile Include="Controllers\Dual\DualController.cs" />
+    <Compile Include="Controllers\Manager\Common\NoteBookElementaryController.cs" />
+    <Compile Include="Controllers\Manager\Common\Partial\NoteBookElementaryController.cs" />
     <Compile Include="Controllers\Manager\Common\Partial\SQLCompareController.cs" />
     <Compile Include="Controllers\Manager\Common\SQLCompareController.cs" />
     <Compile Include="Controllers\Reafs_T\Common\TD00001\TD00001Controller.cs" />
@@ -387,6 +393,7 @@
     <Compile Include="DataRepository\Repositories\Unit\S018Repository.cs" />
     <Compile Include="DataRepository\Repositories\Unit\SrtRepository.cs" />
     <Compile Include="Models\Dual\En\EnDualModel.cs" />
+    <Compile Include="Models\Manager\NoteBookElementary\NoteBookElementaryModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasMenuModel.cs" />
     <Compile Include="Models\Manager\Canvas\CanvasModel.cs" />
     <Compile Include="Models\Manager\SQLCompare\ModelHelper.cs" />
@@ -516,6 +523,7 @@
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Pages\Dual\dual.css" />
     <Content Include="Content\Pages\Dual\En\en.css" />
+    <Content Include="Content\Pages\Manager\notebookelementary.css" />
     <Content Include="Content\Pages\Manager\sqlcompare.css" />
     <Content Include="Content\Pages\Viewer\viewer.css" />
     <Content Include="Content\Site.css" />
@@ -590,6 +598,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\Pages\Dual\En\en.js" />
     <Content Include="Scripts\Pages\Dual\dual.js" />
+    <Content Include="Scripts\Pages\Manager\notebookelementary.js" />
     <Content Include="Scripts\Pages\Manager\sqlcompare.js" />
     <Content Include="Scripts\Pages\Manager\canvas.js" />
     <Content Include="Scripts\Pages\Viewer\viewer.js" />
@@ -725,6 +734,13 @@
     <Content Include="Views\Dual\_Dual.cshtml" />
     <Content Include="Views\Dual\_ViewStart.cshtml" />
     <Content Include="Views\Dual\Index.cshtml" />
+    <Content Include="Views\NoteBookElementary\_NoteBookElementary.cshtml" />
+    <Content Include="Views\NoteBookElementary\_ViewStart.cshtml" />
+    <Content Include="Views\NoteBookElementary\EditorTemplates\CanvasMenuModel.cshtml" />
+    <Content Include="Views\NoteBookElementary\EditorTemplates\CanvasMenus.cshtml" />
+    <Content Include="Views\NoteBookElementary\EditorTemplates\SubMenus.cshtml" />
+    <Content Include="Views\NoteBookElementary\Index.cshtml" />
+    <Content Include="Views\NoteBookElementary\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
