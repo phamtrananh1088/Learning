@@ -1,129 +1,117 @@
-﻿(function ($, global) {
-    var Enum = class {
-        static ActionTypes = {
-            none: 0,
-            select: 1
-        }
+﻿class Action  {
+    doEvent(evt) {
+
     };
-    var Action = class {
-        constructor(content, svg) {
-            if (content === undefined && svg === undefined) {
-                throw new Error("content and svg is not set");
-            };
-            this.content = content;
-            this.svg = svg;
+};
+class Enum {
+    static ActionTypes = {
+        none: 0,
+        select: 1,
+        path: 2
+    }
+};
+class BasicFunction {
+    static counter = (function () {
+        let privateHistory = [];
+        function addBy(val) {
+            privateHistory.push(val);
         }
+        function removeBy() {
+            return privateHistory.pop()
+        }
+        return {
+            add(val) {
+                addBy(val);
+            },
 
-        content = new TorihikiDIV();
-        svg = new TorihikiSVG();
-        actionType = Enum.ActionTypes.select;
-        p = null;
-
-        select(evt) {
-            if (evt.type === 'pointerdown') {
-                this.actionType = Enum.ActionTypes.select;
-                this.p = new Selection(evt.offsetX, evt.offsetY);
-                const cRect = this.content.addRect({
-                    x: this.p.x,
-                    y: this.p.y,
-                    width: 0,
-                    height: 0
-                });
-                const svgRect = this.svg.addRect({
-                    x: this.p.x,
-                    y: this.p.y,
-                    width: 0,
-                    height: 0
-                });
-                BasicFunction.addHistory([cRect, svgRect]);
-            } else if (evt.type === 'pointermove' || evt.type === 'pointerup') {
-                if (this.p == null) {
-                    return;
+            remove() {
+                const data = removeBy();
+                if (Array.isArray(data)) {
+                    data.forEach((element) => element.remove());
                 }
-                this.p.eX = evt.offsetX;
-                this.p.eY = evt.offsetY;
-                const cRect = this.content.editRect({
-                    x: this.p.x,
-                    y: this.p.y,
-                    width: this.p.width,
-                    height: this.p.height
-                });
-                const svgRect = this.svg.editRect({
-                    x: this.p.x,
-                    y: this.p.y,
-                    width: this.p.width,
-                    height: this.p.height
-                });
-                BasicFunction.editHistory([cRect, svgRect]);
-            }
-            if (evt.type === 'pointerup' || evt.type === 'pointerout') {
-                this.p = null;
-                console.log(null);
-            }
+            },
 
-        }
-    };
-    var Selection = class {
-        x = 0;
-        y = 0;
-        eX = 0;
-        eY = 0;
-        get height() {
-            return this.eY - this.y;
+            replace(val) {
+                removeBy();
+                addBy(val);
+            },
+
+            value() {
+                return privateHistory;
+            },
         };
-        get width() {
-            return this.eX - this.x;
-        }
-        constructor(x, y) {
-            this.x = x;
-            this.y = y;
-        }
-    };
+    })();
+
+    static keydown(evt, conf) {
+        return new Promise((re, rj) => {
+            if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
+                conf.keydown(evt, resolve, reject);
+            } else {
+                //TODO
+                //console.log('keydown', evt);
+                if (evt.ctrlKey === true && evt.key === 'z') {
+                    BasicFunction.undo()
+                } else if (evt.ctrlKey === true && evt.key === 'y') {
+                    BasicFunction.redo()
+                }
+                //evt.stopPropagation();
+                //evt.preventDefault();
+                re(true);
+            }
+        });
+    }
+
+    static keyup(evt) {
+        return new Promise((re, rj) => {
+            if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
+                conf.keyup(evt, resolve, reject);
+            } else {
+                //TODO
+                //console.log('keyup', evt);
+                //evt.stopPropagation();
+                //evt.preventDefault();
+                re(true);
+            }
+        });
+    }
+    static undo() {
+        console.log('undo')
+        BasicFunction.counter.remove();
+    }
+    static redo() {
+        console.log('redo')
+    }
+    static addHistory(data) {
+        BasicFunction.counter.add(data);
+    }
+    static editHistory(data) {
+        BasicFunction.counter.replace(data);
+    }
+};
+(function ($, global) {
+
     var HtmlEvent = function () {
         this._initialize.apply(this, arguments);
     };
 
-    var defaults = {
-        target: undefined,
-        content: undefined,
-        svg: undefined
-    };
-
     HtmlEvent.prototype = {
-        _initialize: function (conf) {
-            this.conf = $.extend({}, defaults, conf);
-            this._execute();
+        _initialize: function (action, target, conf) {
+            var self = this;
+            if (!(action instanceof Action)) {
+                throw new Error("action is not type of Action");
+            }
+            if (!target) {
+                throw new Error("target control is not set");
+            };
+            self.action = action;
+            self.target = target;
+            self.conf = $.extend({}, {} , conf);
+            self._execute();
         },
         _execute: function () {
             var self = this;
-            //var input = document.createElement('input');
-            //input.type = "file";
-            //input.id = "upload_file";
-            //input.style = "display:none";
-            ////input.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
-            //$(input).change(async function () {
-            //    if (!$(input)[0].files[0]) {
-            //        TorihikiUtils.hideLoading();
-            //        return;
-            //    }
 
-            //    if ($(input)[0].files[0].size > self.conf.fileSizeLimit) {
-            //        TorihikiMsg.alert("添付ファイルは10.0 MB以内でお願いします。");
-            //        $(input).val('');                   
-            //        return;
-            //    }
-            //    await self.conf.submit($(input)[0].files);
-            //    $(input).val('');  
-            //});
-
-            //$(self.conf.uploadControl).click(function () {
-            //    $(input).click();
-            //});
-            if (!self.conf.target) {
-                throw new Error("target control is not set");
-            };
-            self.action = new Action(self.conf.content, self.conf.svg);
-            self.conf.target
+            self.target
                 .bind('beforeinput', async function (evt) {
                     let res = await self.beforeinput(evt);
                     return res;
@@ -1068,9 +1056,7 @@
                 } else {
                     //TODO
                     console.log('pointerdown', evt);
-                    if (self.actionType === Enum.ActionTypes.select) {
-                        self.action.select(evt)
-                    }
+                    self.action.doEvent(evt)
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1113,9 +1099,7 @@
                 } else {
                     //TODO
                     console.log('pointermove', evt);
-                    if (self.actionType === Enum.ActionTypes.select) {
-                        self.action.select(evt)
-                    }
+                    self.action.doEvent(evt);
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1130,9 +1114,7 @@
                 } else {
                     //TODO
                     console.log('pointerout', evt);
-                    if (self.actionType === Enum.ActionTypes.select) {
-                        self.action.select(evt)
-                    }
+                    self.action.doEvent(evt);
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1161,9 +1143,7 @@
                 } else {
                     //TODO
                     console.log('pointerup', evt);
-                    if (self.actionType === Enum.ActionTypes.select) {
-                        self.action.select(evt)
-                    }
+                    self.action.doEvent(evt);
                     //evt.stopPropagation();
                     //evt.preventDefault();
                     re(true);
@@ -1366,88 +1346,9 @@
                 }
             });
         },
-        actionType: Enum.ActionTypes.select,
-        action: new Action(null, null),
     };
 
-    var BasicFunction = class {
-        static counter = (function () {
-                let privateHistory = [];
-                function addBy(val) {
-                    privateHistory.push(val);
-                }
-                function removeBy() {
-                    return privateHistory.pop()
-                }
-            return {
-                add(val) {
-                    addBy(val);
-                },
 
-                remove() {
-                    const data = removeBy();
-                    if (Array.isArray(data)) {
-                        data.forEach((element) => element.remove());
-                    }
-                },
-
-                replace(val) {
-                    removeBy();
-                    addBy(val);
-                },
-
-                value() {
-                    return privateHistory;
-                },
-                };
-            })();
-
-        static keydown(evt, conf) {
-            return new Promise((re, rj) => {
-                if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
-                    conf.keydown(evt, resolve, reject);
-                } else {
-                    //TODO
-                    //console.log('keydown', evt);
-                    if (evt.ctrlKey === true && evt.key === 'z') {
-                        BasicFunction.undo()
-                    } else if (evt.ctrlKey === true && evt.key === 'y') {
-                        BasicFunction.redo()
-                    }
-                    //evt.stopPropagation();
-                    //evt.preventDefault();
-                    re(true);
-                }
-            });
-        }
-
-        static keyup (evt) {
-            return new Promise((re, rj) => {
-                if (typeof conf === 'object' && typeof conf.keydown !== 'undefined' && typeof conf.keydown === 'function') {
-                    conf.keyup(evt, resolve, reject);
-                } else {
-                    //TODO
-                    //console.log('keyup', evt);
-                    //evt.stopPropagation();
-                    //evt.preventDefault();
-                    re(true);
-                }
-            });
-        }
-        static undo() {
-            console.log('undo')
-            BasicFunction.counter.remove();
-        }
-        static redo() {
-            console.log('redo')
-        }
-        static addHistory(data) {
-            BasicFunction.counter.add(data);
-        }
-        static editHistory(data) {
-            BasicFunction.counter.replace(data);
-        }
-    };
     global.TorihikiHtmlEvent = HtmlEvent;
 
 })(jQuery, this);
