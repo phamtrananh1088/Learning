@@ -37,6 +37,37 @@
             var Path = self.curPath;
             return Path;
         },
+        
+        geometry: {
+            distance: function (x, y, x1, y1) {
+                return Math.sqrt(Math.pow(x1 - x, 2) + Math.pow(y1 - y, 2));
+            },
+            ///Formula to find coordinates of intersection of two straight lines: y =ax + b
+            intersect: function (a1, b1, a2, b2) {
+                return [(-b1 + b2) / (a1 - a2), a1 * (-b1 + b2) / (a1 - a2) + b1];
+            },
+            ///the slope of a straight line passing through 2 points
+            a: function (x1, y1, x2, y2) {
+                return (y2 - y1) / (x2 - x1);
+            },
+            /// straight lines
+            y: function (x, a, b) {
+                return a * x + b;
+            },
+            b: function (x, y, a) {
+                y - a * x;
+            }
+        },
+        getControlPoint: function (x1, y1, x2, y2, angle1, angle2) {
+            var g = this.geometry;
+            var a1, b1, a2, b2;
+            a1 = Math.atan(g.a(x1, y1, x2, y2)) - angle1;
+            b1 = g.b(x1, y1, a1);
+            a2 = Math.atan(g.a(x1, y1, x2, y2)) + angle2
+            b2 = g.b(x2, y2, a2);
+
+            return g.intersect(a1, b1, a2, b2);
+        },
     };
     global.TorihikiSVGPath = SVG;
 
@@ -49,6 +80,9 @@
     };
 
     SVG.prototype = Object.create(TorihikiSVGPath.prototype);
+    $.extend({}, SVG.prototype, {
+        r: 5
+    });
     SVG.prototype.add = function (conf) {
         var self = this;
         var options = {
@@ -69,8 +103,6 @@
         $.extend(options, conf, true);
 
         var Path = $(`<path d="M ${options.x} ${options.y}" stroke="${options.stroke}" fill="${options.fill}" stroke-width="${options.strokeWidth}" />`);
-        //Path.attr('data-d', options);
-        //Path.data('l', [1,1]);
         Path.data('p', options);
         $(self.conf.target).append(Path);
         // Listen for the event.
@@ -90,6 +122,7 @@
         if (Path == null) {
             return;
         }
+
         var options = {
             x: 0,
             y: 0,
@@ -107,10 +140,13 @@
         };
         $.extend(options, conf, true);
         var p0 = Path.data('p');
+        if (self.geometry.distance(p0.ex, p0.ey, options.ex, options.ey) < 5) {
+            return;
+        }
         options.x1 = 2 * p0.ex - p0.x2, options.x2 = options.x1;
         options.y1 = 2 * p0.ey - p0.y2, options.y2 = options.y1;
 
-        Path.attr('d', `${Path.attr('d')} C ${options.x1} ${options.y1}, ${options.x2} ${options.y2}, ${options.ex} ${options.ey}`);
+        Path.attr('d', ` C ${options.x1} ${options.y1}, ${options.x2} ${options.y2}, ${options.ex} ${options.ey}`);
         //Path.data('l', [l1, l2]);
         Path.data('p', options);
 
@@ -445,11 +481,11 @@ class PathAction extends Action {
                 ex: this.p.eX,
                 ey: this.p.eY,
             });
-        //    var iframe = document.getElementById('iframeSVG');
-        //    var html = `<html><body style="margin: 0;">
-        //${$(this.svgTarget).prop('outerHTML')}
-        //</body></html>`;
-        //    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+            //    var iframe = document.getElementById('iframeSVG');
+            //    var html = `<html><body style="margin: 0;">
+            //${$(this.svgTarget).prop('outerHTML')}
+            //</body></html>`;
+            //    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
             BasicFunction.editHistory([cPath, svgPath]);
         }
         if (evt.type === 'pointerup' || evt.type === 'pointerout') {
