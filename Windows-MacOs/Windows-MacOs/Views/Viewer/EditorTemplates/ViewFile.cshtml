@@ -3,18 +3,15 @@
     ViewBag.Title = "ViewFile";
 }
 
-<div class="sql-data text-prewrap">@Html.DisplayFor(model => model.Content)</div>
+<div id="sql-data" class="sql-data text-prewrap"></div>
 <div>
+    @Html.HiddenFor(model => model.Content)
     @Html.HiddenFor(model => model.FileName)
     @Html.HiddenFor(model => model.ContentType)
 </div>
+@Scripts.Render("~/bundles/viewer/viewfile")
 <script>
-    $(document).ready(function () {
-        $("#btnSave").click(function () {
-            TorihikiUtils.saveFileDownload($("#viewdata").text(), $("#FileName").val(), $("#ContentType").val())
-        });
-
-    });
+    
 </script>
 <style>
 </style>

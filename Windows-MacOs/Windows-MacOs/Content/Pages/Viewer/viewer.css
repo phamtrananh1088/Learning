@@ -15,6 +15,9 @@
     --blue-1: #4179ac;
     --blue-2: #007ACC;
     --blue-3: #55AAE4;
+    --blue-4: #569CD6;
+    --yellow-1: #FFD710;
+    --purple-1: #B670D6;
 }
 
 .color-black-0 {
@@ -459,7 +462,15 @@ button.maximize, button.exit-full {
     .dep-right.active {
         display: initial;
     }
-
+.sql-1 {
+    color: var(--blue-4);
+}
+.sql-2 {
+    color: var(--yellow-1);
+}
+.sql-3 {
+    color: var(--purple-1);
+}
 @media screen and (max-width: 1280px) {
     .modal-deploy {
         width: 100%;

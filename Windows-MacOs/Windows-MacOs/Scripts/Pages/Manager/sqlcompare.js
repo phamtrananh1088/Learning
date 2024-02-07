@@ -240,7 +240,11 @@ var sqlcompare01 = {
             if (Array.isArray(evt.detail.newValue)) {
                 var li = [];
                 evt.detail.newValue.map((v) => {
-                    li.push(`<div key="${v.key}">[${v.SchemaName}].[${v.Name}]</div>`)
+                    li.push(`<div key="${v.key}">
+  <a target="_blank" href="${getSQLCreateObject + '?type=' + v.Type + '&schemaName=' + v.SchemaName + '&name=' + v.Name}">
+  [${v.SchemaName}].[${v.Name}]
+  </a>
+</div>`)
                 });
                 $(`*[data-bind='data.${evt.detail.property}']`).html(li.join(""));
             } else if ($(`*[data-bind='data.${evt.detail.property}']`).prop('nodeName') === 'input') {

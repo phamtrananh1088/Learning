@@ -600,6 +600,7 @@
     <Content Include="Scripts\Pages\Manager\sqlcompare.js" />
     <Content Include="Scripts\Pages\Manager\canvas.js" />
     <Content Include="Scripts\Pages\Viewer\viewer.js" />
+    <Content Include="Scripts\Pages\Viewer\ViewFile\viewfile.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />

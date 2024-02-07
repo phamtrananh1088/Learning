@@ -1,6 +1,6 @@
 var viewer = {
-   
-        init: function () {
+
+    init: function () {
         let self = this;
         //self.research = TorihikiUtils.initPageSession(sessionKey);
         this.setEvent();
@@ -9,7 +9,7 @@ var viewer = {
     setEvent: function () {
         var self = this;
 
-        
+
     },
     start: function () {
         const urlParams = new URLSearchParams(window.location.search);
@@ -27,7 +27,7 @@ var viewer = {
                 }
             });
         }
-    }
+    },
 }
 
 $(document).ready(function () {

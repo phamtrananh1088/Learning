@@ -48,6 +48,8 @@ namespace WinMacOs
                         "~/Scripts/Pages/manager/sqlcompare.js"));
             bundles.Add(new ScriptBundle("~/bundles/viewer").Include(
                        "~/Scripts/Pages/viewer/viewer.js"));
+            bundles.Add(new ScriptBundle("~/bundles/viewer/viewfile").Include(
+                       "~/Scripts/Pages/viewer/viewfile/viewfile.js"));
             bundles.Add(new ScriptBundle("~/bundles/dual").Include(
                        "~/Scripts/Pages/dual/dual.js"));
             bundles.Add(new ScriptBundle("~/bundles/dual/en").Include(
