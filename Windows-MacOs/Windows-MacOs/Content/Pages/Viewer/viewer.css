@@ -11,6 +11,7 @@
     --grey-3: #3F3F46;
     --grey-4: #3E3E40;
     --grey-5: #9f9d9d;
+    --grey-6: #CCCCCC;
     --blue-0: #264F78;
     --blue-1: #4179ac;
     --blue-2: #007ACC;
@@ -462,6 +463,9 @@ button.maximize, button.exit-full {
     .dep-right.active {
         display: initial;
     }
+.sql-0 {
+    color: var(--grey-6);
+}
 .sql-1 {
     color: var(--blue-4);
 }
