@@ -25,10 +25,11 @@ var viewfile = {
             css1: 'sql-1',
             css2: 'sql-2',
             css3: 'sql-3',
+            css4: 'sql-4',
+            css5: 'sql-5',
         };
         $.extend(options, conf, true);
-        var key1Rg = /(\bSET\b|\bANSI_NULLS\b|\bQUOTED_IDENTIFIER\b|\bCREATE\b|\bPROCEDURE\b|\bTABLE\b|\bNOT\b|\bNULL\b|\bCASE\b|\bWHEN\b|\bTHEN\b|\bELSE\b|\bEND\b|\bIS\b|\bFROM\b|\bLEFT\b|\bINNER\b|\bJOIN\b|\bAS\b|\bBEGIN\b|\bSELECT\b|\bTOP\b|\bCONSTRAINT\b|\bPRIMARY\b|\bKEY\b|\bCLUSTERED\b|\bASC\b|\bWITH\b|\bPAD_INDEX\b|\bOFF\b|\bSTATISTICS_NORECOMPUTE\b|\bIGNORE_DUP_KEY\b|\bALLOW_ROW_LOCKS\b|\bALLOW_PAGE_LOCKS\b|\bON\b|\bANSI_PADDING\b|\bNONCLUSTERED\b|\bINDEX\b|\bSORT_IN_TEMPDB\b|\bDROP_EXISTING\b|\bONLINE\b|\bALTER\b|\bADD\b|\bDEFAULT\b|\bFOR\b)|([\[\]\(\)]|\bFORMAT\b|\bGETDATE\b)/gi;
-        var key2Rg = /[\[\]\(\)]/g;
+        var key1Rg = /(\bSET\b|\bNOCOUNT\b|\bANSI_NULLS\b|\bQUOTED_IDENTIFIER\b|\bCREATE\b|\bPROCEDURE\b|\bTABLE\b|\bNOT\b|\bNULL\b|\bCASE\b|\bWHEN\b|\bTHEN\b|\bELSE\b|\bEND\b|\bIS\b|\bFROM\b|\bLEFT\b|\bINNER\b|\bJOIN\b|\bAS\b|\bBEGIN\b|\bSELECT\b|\bTOP\b|\bCONSTRAINT\b|\bPRIMARY\b|\bKEY\b|\bCLUSTERED\b|\bASC\b|\bWITH\b|\bPAD_INDEX\b|\bOFF\b|\bSTATISTICS_NORECOMPUTE\b|\bIGNORE_DUP_KEY\b|\bALLOW_ROW_LOCKS\b|\bALLOW_PAGE_LOCKS\b|\bON\b|\bANSI_PADDING\b|\bNONCLUSTERED\b|\bINDEX\b|\bSORT_IN_TEMPDB\b|\bDROP_EXISTING\b|\bONLINE\b|\bALTER\b|\bADD\b|\bDEFAULT\b|\bFOR\b)|([\[\]\(\)])|(\bFORMAT\b|\bGETDATE\b)|('.*')|(--.*\n)/gi;
         var m;
         var i = 0, j = 0;
         var fmtSql = [];
@@ -42,6 +43,12 @@ var viewfile = {
                     fmtSql.push(`<span class="${options.css1}">${m[0]}</span>`)
                 } else if (m[0] === m[2]) {
                     fmtSql.push(`<span class="${options.css2}">${m[0]}</span>`)
+                } else if (m[0] === m[3]) {
+                    fmtSql.push(`<span class="${options.css3}">${m[0]}</span>`)
+                } else if (m[0] === m[4]) {
+                    fmtSql.push(`<span class="${options.css4}">${m[0]}</span>`)
+                } else if (m[0] === m[5]) {
+                    fmtSql.push(`<span class="${options.css5}">${m[0]}</span>`)
                 }
                 i = j + m[0].length;
             } else {

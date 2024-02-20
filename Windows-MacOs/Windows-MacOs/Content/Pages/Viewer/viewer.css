@@ -1,6 +1,7 @@
 /*root*/
 :root {
     --green-0: #95DB7D;
+    --green-1: #6A9955;
     --violet-0: #7160E8;
     --black-0: #3D3D3D;
     --black-1: #2E2E2E;
@@ -18,7 +19,9 @@
     --blue-3: #55AAE4;
     --blue-4: #569CD6;
     --yellow-1: #FFD710;
+    --yellow-2: #DCDCAA;
     --purple-1: #B670D6;
+    --brown-1: #CE9178;
 }
 
 .color-black-0 {
@@ -473,8 +476,18 @@ button.maximize, button.exit-full {
     color: var(--yellow-1);
 }
 .sql-3 {
+    color: var(--yellow-2);
+}
+.sql-4 {
+    color: var(--brown-1);
+}
+.sql-5 {
+    color: var(--green-1);
+}
+.sql-6 {
     color: var(--purple-1);
 }
+
 @media screen and (max-width: 1280px) {
     .modal-deploy {
         width: 100%;
