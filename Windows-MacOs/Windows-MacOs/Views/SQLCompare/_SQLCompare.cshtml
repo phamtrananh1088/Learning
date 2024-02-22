@@ -170,11 +170,11 @@
                         <div class="col-md-12">
                             <div class="flex-column">
                                 <div>
-                                    <input type="radio" name="dep-type" id="dep-rad1" value="1" checked />
+                                    <input type="radio" name="dep-type" id="dep-rad1" value="1" data-bind="data.deployUseSqlCompare" />
                                     Deploy using SQL Compare
                                 </div>
                                 <div>
-                                    <input type="radio" name="dep-type" id="dep-rad2" value="2" />
+                                    <input type="radio" name="dep-type" id="dep-rad2" value="2" data-bind="data.createDeploymentScript"/>
                                     Create a deployment script
                                 </div>
                             </div>
@@ -184,15 +184,15 @@
                         <div class="col-md-12">
                             <div class="dep-group">
                                 <div>
-                                    <input type="checkbox" id="dep-chk1" value="1" />
+                                    <input type="checkbox" id="dep-chk1" value="1" data-bind="data.backupTarget" />
                                     Backup target before deployment
                                 </div>
                                 <div>
-                                    <input type="checkbox" id="dep-chk2" value="1" checked />
+                                    <input type="checkbox" id="dep-chk2" value="1" data-bind="data.recompareAfterDeployment" />
                                     Recompare after deployment
                                 </div>
                                 <div>
-                                    <input type="checkbox" id="dep-chk3" value="1" />
+                                    <input type="checkbox" id="dep-chk3" value="1" data-bind="data.saveCopyDeploymentScript1" />
                                     Save a copy of deployment script
                                 </div>
                                 <div class="details">

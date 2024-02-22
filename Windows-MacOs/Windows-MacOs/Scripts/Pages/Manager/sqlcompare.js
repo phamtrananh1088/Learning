@@ -1,49 +1,27 @@
 var sqlcompare01 = {
     // Declaration
-    Data: class {
-        #targetProxy = undefined;
-        #data = {};
-
-        constructor(data) {
-            this.#targetProxy = new Proxy(this, {
-                set: function (target, key, value) {
-                    var changeEvent = new CustomEvent("datachange", { detail: { property: key, oldValue: target.#data[`#${key}`], newValue: value } });
-                    // Dispatch the event.
-                    target.#data[`#${key}`] = value;
-                    document.dispatchEvent(changeEvent);
-                    return true;
-                }
-            });
-            for (const property in data) {
-                this.#data[`#${property}`] = data[property]
-                this.#targetProxy[property] = data[property]
-            }
+    handler: {
+        get: function (target, key) {
+            return target[key];
+        },
+        set: function (target, key, value) {
+            var changeEvent = new CustomEvent("datachange", { detail: { property: key, oldValue: target[key], newValue: value } });
+            // Dispatch the event.
+            target[key] = value;
+            document.dispatchEvent(changeEvent);
+            return true;
         }
-
-        get countRowSelected() {
-            return this.#data["#countRowSelected"];
-        };
-        set countRowSelected(v) {
-            this.#targetProxy.countRowSelected = v;
-        };
-
-        get objectsSelected() {
-            return this.#data["#objectsSelected"];
-        };
-        set objectsSelected(v) {
-            this.#targetProxy.objectsSelected = v;
-        };
-        get depAllDependencies() {
-            return this.#data["#depAllDependencies"];
-        };
-        set depAllDependencies(v) {
-            this.#targetProxy.depAllDependencies = v;
-        };
     },
+
     _data: {
         countRowSelected: 0,
         objectsSelected: [],
-        depAllDependencies: false
+        depAllDependencies: false,
+        backupTarget: false,
+        recompareAfterDeployment: true,
+        saveCopyDeploymentScript: false,
+        deployUseSqlCompare: true,
+        createDeploymentScript: false,
     }
     , data: undefined,
 
@@ -233,10 +211,22 @@ var sqlcompare01 = {
             $("#popCloseIcon").click();
         });
 
+        $("input[data-bind]").each(function (index, d) {
+            console.log(index, d);
+            if ($(d).data("bind") in self._data) {
+            } else {
+                try {
+                    throw Error(`${$(d).data("bind")} haven't been decare`);
+                } catch { }
+            }
+        })
         $("#chkdepAllDependencies").click(function () {
             self.data.depAllDependencies = this.checked
         });
         $(document).bind("datachange", function (evt) {
+            if ($(`*[data-bind='data.${evt.detail.property}']`).length === 0) {
+                return;
+            }
             if (Array.isArray(evt.detail.newValue)) {
                 var li = [];
                 evt.detail.newValue.map((v) => {
@@ -247,8 +237,8 @@ var sqlcompare01 = {
 </div>`)
                 });
                 $(`*[data-bind='data.${evt.detail.property}']`).html(li.join(""));
-            } else if ($(`*[data-bind='data.${evt.detail.property}']`).prop('nodeName') === 'input') {
-                if ($(`*[data-bind='data.${evt.detail.property}']`).prop('type') === 'checkbox') {
+            } else if ($(`*[data-bind='data.${evt.detail.property}']`).prop('nodeName').toLowerCase() === 'input') {
+                if ($(`*[data-bind='data.${evt.detail.property}']`).prop('type') === 'checkbox' || $(`*[data-bind='data.${evt.detail.property}']`).prop('type') === 'radio') {
                     $(`*[data-bind='data.${evt.detail.property}']`).prop('checked', evt.detail.newValue);
                 }
             } else {
@@ -260,7 +250,11 @@ var sqlcompare01 = {
     start: function () {
         $("#btnDeploy").click();
         $(".row.dep-row[data-index='1']").click();
-        this.data = new this.Data(this._data);
+        this.data = new Proxy(this._data, this.handler);
+        //set data to control
+        for (const property in this._data) {
+            this.data[property] = this._data[property]
+        }
     }
 }
 
