@@ -39,7 +39,7 @@ namespace WinMacOs.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TorihikiMvc.Resources.Messages", typeof(Messages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WinMacOs.Resources.Messages", typeof(Messages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -1236,6 +1236,15 @@ namespace WinMacOs.Resources {
         public static string MultiAddSuccess {
             get {
                 return ResourceManager.GetString("MultiAddSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 認証キーがありません。.
+        /// </summary>
+        public static string NeedAuthentication {
+            get {
+                return ResourceManager.GetString("NeedAuthentication", resourceCulture);
             }
         }
         

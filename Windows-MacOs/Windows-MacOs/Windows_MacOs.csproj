@@ -409,7 +409,11 @@
     <Compile Include="Models\Manager\SQLCompare\StepEnum.cs" />
     <Compile Include="Models\MenuModel.cs" />
     <Compile Include="Models\Viewer\MimeContentResultModel.cs" />
-    <Compile Include="Resources\Messages.Designer.cs" />
+    <Compile Include="Resources\Messages.Designer.cs">
+      <DependentUpon>Messages.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Utility\Attributes\Check\MaxLengthExAttribute.cs" />
     <Compile Include="Models\LoginUser.cs" />
     <Compile Include="Utility\Attributes\Common\Common.cs" />
@@ -743,6 +747,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Api\" />
     <Folder Include="Controllers\Manager\Partial\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
@@ -758,7 +763,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Messages.resx" />
+    <EmbeddedResource Include="Resources\Messages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

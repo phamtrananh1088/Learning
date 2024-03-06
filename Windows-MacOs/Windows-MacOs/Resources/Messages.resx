@@ -240,16 +240,16 @@
   <data name="KyakkaSuccess2" xml:space="preserve">
     <value>{0}を却下しました。</value>
   </data>
-    <data name="JitaiSuccess" xml:space="preserve">
+  <data name="JitaiSuccess" xml:space="preserve">
     <value>辞退しました</value>
   </data>
-    <data name="JitaiSuccess2" xml:space="preserve">
+  <data name="JitaiSuccess2" xml:space="preserve">
     <value>{0}を辞退しました</value>
   </data>
-    <data name="KakuninSuccess" xml:space="preserve">
+  <data name="KakuninSuccess" xml:space="preserve">
     <value>内容確認しました。</value>
   </data>
-    <data name="KakuninSuccess2" xml:space="preserve">
+  <data name="KakuninSuccess2" xml:space="preserve">
     <value>{0}を内容確認しました。</value>
   </data>
   <data name="KYC000003" xml:space="preserve">
@@ -602,5 +602,8 @@
   </data>
   <data name="ApiError" xml:space="preserve">
     <value>{0}に失敗しました。</value>
+  </data>
+  <data name="NeedAuthentication" xml:space="preserve">
+    <value>認証キーがありません。</value>
   </data>
 </root>
