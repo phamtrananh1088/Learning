@@ -27,13 +27,13 @@ export class SpeakerComponent  implements OnInit {
         .duration(100)
         .iterations(1)
         .keyframes([
-          { offset: 0, width: '95px', height: '95px' },
-          { offset: 1, width: '100px', height: '100px' },
+          { offset: 0, top: '5px', height: '100px' },
+          { offset: 1, top: '5px',  height: '100px' },
         ]);
       this.animationA = this.animationCtrl
         .create()
         .addElement(this.graphA!.nativeElement)
-        .duration(500)
+        .duration(400)
         .iterations(1)
         .keyframes([
           { offset: 0, display: 'none'},
@@ -44,7 +44,7 @@ export class SpeakerComponent  implements OnInit {
         this.animationB = this.animationCtrl
         .create()
         .addElement(this.graphB!.nativeElement)
-        .duration(500)
+        .duration(400)
         .iterations(1)
         // .keyframes([
         //   { offset: 0, transform: 'matrix(1.3600000143051147,0,0,1.3600000143051147,516.219970703125,522.4000244140625) translateX(-5px) scale(0.5,0.5)'},

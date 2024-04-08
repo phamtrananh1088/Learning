@@ -1,0 +1,26 @@
+.shadow-bottom {
+    // border-bottom-width: 4px ; 
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-bottom-style: solid;
+    border-color: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.shadow-bottom::after {
+    background-color: rgb(28,176,246);
+    border-color: #8f727200;
+    border-width: 0 0 4px;
+    border-radius: 25%;
+    bottom: -8px;
+    content: "";
+    left: 0;
+    right: 0;
+    top: 0;
+    background-clip: padding-box;
+    border-style: solid;
+    position: absolute;
+    z-index: -1;
+}
